@@ -1,0 +1,120 @@
+# Base image for Duck DAQ - contains all dependencies (HDF5, Blosc, Go tools)
+#
+# This image contains all time-consuming build steps (~10 min) and should be
+# built once and reused for faster iterations.
+#
+# Build: task e2e:build-base
+# Image: duck-backend-test-base:latest
+
+FROM golang:1.24-bookworm
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    iproute2 \
+    net-tools \
+    libpcap0.8 \
+    libpcap0.8-dev \
+    tcpdump \
+    inetutils-ping \
+    cmake \
+    build-essential \
+    wget \
+    git \
+    unzip \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 20 LTS
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash - && \
+    apt-get install -y nodejs
+
+# Install protobuf and connect code generators for TypeScript/JavaScript
+RUN npm install -g @bufbuild/protoc-gen-es@^2.10.0 @connectrpc/protoc-gen-connect-es@^1.7.0
+
+# Install protoc (using version 29.3 as specified)
+RUN wget https://github.com/protocolbuffers/protobuf/releases/download/v29.3/protoc-29.3-linux-x86_64.zip && \
+    unzip protoc-29.3-linux-x86_64.zip -d /usr/local/protoc && \
+    rm protoc-29.3-linux-x86_64.zip
+
+# Install buf (latest version v1.59.0)
+RUN wget https://github.com/bufbuild/buf/releases/latest/download/buf-Linux-x86_64 && \
+    chmod +x buf-Linux-x86_64 && \
+    mv buf-Linux-x86_64 /usr/local/bin/buf
+
+# Set up Go environment
+ ENV GOPATH=/root/go
+ ENV PATH=/usr/local/go/bin:${PATH}:/usr/local/bin:${GOPATH}/bin:/usr/local/protoc/bin:/usr/local/bin
+
+# Install Go tools as binaries (avoids Go cache bloat)
+RUN wget -q https://github.com/magefile/mage/releases/download/v1.15.0/mage_1.15.0_Linux-64bit.tar.gz -O /tmp/mage.tar.gz && \
+    tar -xzf /tmp/mage.tar.gz -C /usr/local/bin mage && \
+    rm /tmp/mage.tar.gz && \
+    wget -q https://github.com/go-task/task/releases/download/v3.48.0/task_linux_amd64.tar.gz -O /tmp/task.tar.gz && \
+    tar -xzf /tmp/task.tar.gz -C /usr/local/bin task && \
+    rm /tmp/task.tar.gz && \
+    wget -q https://github.com/golangci/golangci-lint/releases/download/v1.62.2/golangci-lint-1.62.2-linux-amd64.tar.gz -O /tmp/golangci-lint.tar.gz && \
+    tar -xzf /tmp/golangci-lint.tar.gz -C /tmp && \
+    mv /tmp/golangci-lint-1.62.2-linux-amd64/golangci-lint /usr/local/bin/ && \
+    rm -rf /tmp/golangci-lint* && \
+    wget -q https://github.com/gotestyourself/gotestsum/releases/download/v1.11.0/gotestsum_1.11.0_linux_amd64.tar.gz -O /tmp/gotestsum.tar.gz && \
+    tar -xzf /tmp/gotestsum.tar.gz -C /usr/local/bin gotestsum && \
+    rm /tmp/gotestsum.tar.gz && \
+    wget -q https://github.com/sqlc-dev/sqlc/releases/download/v1.27.0/sqlc_1.27.0_linux_amd64.tar.gz -O /tmp/sqlc.tar.gz && \
+    tar -xzf /tmp/sqlc.tar.gz -C /usr/local/bin sqlc && \
+    rm /tmp/sqlc.tar.gz && \
+    mkdir -p /root/go/bin && \
+    ln -s /usr/local/bin/sqlc /root/go/bin/sqlc
+
+# Install protoc Go plugins (no pre-built binaries, clean cache after)
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.11 && \
+    go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2.0 && \
+    go install connectrpc.com/connect/cmd/protoc-gen-connect-go@v1.19.1 && \
+    go install github.com/vektra/mockery/v2@v2.53.2 && \
+    rm -rf /root/.cache/go-build /root/go/pkg/mod
+
+# Build HDF5 from source (time-consuming step)
+RUN mkdir -p /root/hdf5-duck/
+WORKDIR /root/hdf5-duck/
+RUN wget https://support.hdfgroup.org/ftp/HDF5/releases/hdf5-1.14/hdf5-1.14.1/src/hdf5-1.14.1-2.tar.gz && \
+    tar xvf hdf5-1.14.1-2.tar.gz && \
+    cd ./hdf5-1.14.1-2 && \
+    ./configure --prefix=/usr/local/hdf5 --enable-threadsafe --enable-unsupported && \
+    make -j 8 && \
+    make install && \
+    cd /root/hdf5-duck && \
+    rm -rf hdf5-1.14.1-2.tar.gz hdf5-1.14.1-2
+
+# Set HDF5 environment
+ENV PATH=/usr/local/hdf5/bin:$PATH
+ENV LD_LIBRARY_PATH=/usr/local/hdf5/lib:$LD_LIBRARY_PATH
+
+# Build and install hdf5-blosc (time-consuming step)
+RUN git clone https://github.com/Blosc/hdf5-blosc && \
+    cd /root/hdf5-duck/hdf5-blosc && \
+    mkdir build && \
+    cd build && \
+    cmake -DCMAKE_INSTALL_PREFIX=/usr/local/hdf5-blosc ../ && \
+    make -j 8 && \
+    make install && \
+    cp -v /root/hdf5-duck/hdf5-blosc/build/blosc/include/*h /usr/local/hdf5-blosc/include/ && \
+    cp -rv /root/hdf5-duck/hdf5-blosc/build/blosc/lib/* /usr/local/hdf5-blosc/lib/ && \
+    cd /root && \
+    rm -rf /root/hdf5-duck
+
+# Set final environment variables to match real deployment
+ENV PATH=/usr/local/hdf5/bin:$PATH
+ENV LD_LIBRARY_PATH=/usr/local/hdf5/lib:/usr/local/hdf5-blosc/lib:$LD_LIBRARY_PATH
+ENV CGO_LDFLAGS="-L/usr/local/hdf5/lib -L/usr/local/hdf5-blosc/lib"
+ENV CGO_CFLAGS="-I/usr/local/hdf5/include -I/usr/local/hdf5-blosc/include"
+
+# Set git safe directory (important for Docker builds)
+RUN git config --global --add safe.directory /src
+
+# Set working directory
+WORKDIR /src
+
+# Create coverage directory
+RUN mkdir -p /app/coverage
+
+# Default command
+CMD ["/bin/bash"]

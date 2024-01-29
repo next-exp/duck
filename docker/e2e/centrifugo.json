@@ -1,0 +1,23 @@
+{
+  "token_hmac_secret_key": "dummy_token",
+  "admin_password": "dummy-uuid-admin-password",
+  "admin_secret": "dummy-uuid-admin-secret",
+  "api_key": "dummy-uuid-api-key",
+  "allowed_origins": [
+    "http://localhost:3000",
+    "http://localhost:5173",
+  ],
+  "allow_subscribe_for_client": true,
+  "allow_publish_for_client": true,
+  "client_insecure": true,
+  "admin": {
+    "enabled": true,
+    "insecure": true
+  },
+  "admin_password_insecure": true,
+  "admin_secret_insecure": true,
+  "api_insecure": true,
+  "health": {
+    "enabled": true
+  }
+}

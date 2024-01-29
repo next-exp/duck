@@ -1,0 +1,32 @@
+# Dockerfile for development and testing
+#
+# Extends the base image with project source code for running tests.
+# Source code is kept in the image for flexibility in running different test suites.
+#
+# Build: task test-unit (or any test-integration:* task)
+# Image: duck-backend-test:latest
+
+FROM duck-backend-test-base:latest
+
+# Set working directory
+WORKDIR /src
+
+# Copy go.mod and go.sum first for better caching
+COPY go.mod go.sum ./
+
+# Download dependencies (this layer will be cached unless go.mod/go.sum changes)
+RUN go mod download
+
+# Copy the entire project
+COPY . .
+
+# Set environment variables for CGO
+ENV CGO_ENABLED=1
+ENV CGO_LDFLAGS="-L/usr/local/hdf5/lib -L/usr/local/hdf5-blosc/lib"
+ENV CGO_CFLAGS="-I/usr/local/hdf5/include -I/usr/local/hdf5-blosc/include"
+
+# Pre-compile the project to speed up test runs (optional, can be commented out)
+# RUN go build -v ./...
+
+# Default command - keep container running for interactive use
+CMD ["/bin/bash"]

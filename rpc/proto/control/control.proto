@@ -1,0 +1,28 @@
+syntax = "proto3";
+option go_package = "github.com/jmbenlloch/next_duck/rpc/control";
+package rpcControl;
+
+service RunControl {
+  rpc StartRun(DuckRequest) returns (DuckReply) {}
+  rpc StopRun(DuckRequest) returns (DuckReply) {}
+  rpc GetState(DuckRequest) returns (DuckReply) {}
+  rpc PingDevices(DuckRequest) returns (PingReply) {}
+  rpc GetRunStatistics(DuckRequest) returns (RunStatisticsReply) {}
+}
+
+message DuckRequest {
+}
+
+message DuckReply {
+  string message = 1;
+}
+
+message PingReply {
+  bool success = 1;
+}
+
+message RunStatisticsReply {
+  int64 events = 1;
+  int64 bytes = 2;
+  int64 errors = 3;
+}

@@ -1,0 +1,38 @@
+# Dockerfile for running Playwright E2E tests
+# Based on Playwright's official Docker image with Node.js
+
+FROM mcr.microsoft.com/playwright:v1.48.2-jammy
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies
+# Copy package files first for better Docker layer caching
+COPY package*.json ./
+COPY package-lock.json ./
+
+# Install Node dependencies
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Build arguments for runtime API/WS URLs (can be overridden at build time)
+ARG VITE_API_SERVER=http://localhost:1323/daq
+ARG VITE_WS_SERVER=ws://localhost:8000
+
+# Set environment variables for build
+ENV VITE_API_SERVER=${VITE_API_SERVER}
+ENV VITE_WS_SERVER=${VITE_WS_SERVER}
+
+# Build the GUI
+RUN npm run build-only
+
+# Install Playwright browsers (already included in the image, but ensure they're installed)
+RUN npx playwright install --with-deps chromium firefox webkit
+
+# Create directory for test reports
+RUN mkdir -p /app/playwright-report /app/test-results
+
+# The command to run by default (can be overridden)
+CMD ["npx", "playwright", "test", "--project=chromium"]

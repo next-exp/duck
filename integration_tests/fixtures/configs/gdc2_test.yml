@@ -1,0 +1,17 @@
+# Test configuration for second GDC in multi-GDC tests
+
+dbname:
+  hostname: localhost
+  port: 3306
+  username: root
+  password: testpass
+  dbname: duck_test
+
+gdcs:
+  - name: gdc2
+    hostname: localhost
+    port: 17010
+    grpc_port: 17011
+    enabled: true
+
+ldcs: []  # No LDCs needed for GDC-only tests

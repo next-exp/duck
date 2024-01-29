@@ -1,0 +1,11 @@
+database:
+    username: ""
+    password: ""
+    hostname: ""
+    port: ""
+    dbname: ""
+centrifugal:
+    host: 172.17.0.3
+    port: 8000
+    token: testsecret
+log_level: INFO

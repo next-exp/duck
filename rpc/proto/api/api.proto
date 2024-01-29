@@ -1,0 +1,407 @@
+syntax = "proto3";
+option go_package = "github.com/jmbenlloch/next_duck/rpc/api";
+package apiService;
+
+// Web API Service for Duck Data Acquisition System
+service DuckAPI {
+  // Run Control Operations
+  rpc StartRun(StartRunRequest) returns (StartRunResponse) {}
+  rpc StopRun(StopRunRequest) returns (StopRunResponse) {}
+  rpc ForceStopRun(ForceStopRunRequest) returns (ForceStopRunResponse) {}
+  rpc GetProcessStates(GetProcessStatesRequest) returns (GetProcessStatesResponse) {}
+  rpc RestartServices(RestartServicesRequest) returns (RestartServicesResponse) {}
+
+  // GDC Management
+  rpc CreateGDC(CreateGDCRequest) returns (CreateGDCResponse) {}
+  rpc GetGDCs(GetGDCsRequest) returns (GetGDCsResponse) {}
+  rpc GetGDC(GetGDCRequest) returns (GetGDCResponse) {}
+  rpc UpdateGDC(UpdateGDCRequest) returns (UpdateGDCResponse) {}
+  rpc DeleteGDC(DeleteGDCRequest) returns (DeleteGDCResponse) {}
+
+  // LDC Management
+  rpc CreateLDC(CreateLDCRequest) returns (CreateLDCResponse) {}
+  rpc GetLDCs(GetLDCsRequest) returns (GetLDCsResponse) {}
+  rpc GetLDC(GetLDCRequest) returns (GetLDCResponse) {}
+  rpc UpdateLDC(UpdateLDCRequest) returns (UpdateLDCResponse) {}
+  rpc DeleteLDC(DeleteLDCRequest) returns (DeleteLDCResponse) {}
+
+  // Equipment Management
+  rpc CreateEquipment(CreateEquipmentRequest) returns (CreateEquipmentResponse) {}
+  rpc GetEquipments(GetEquipmentsRequest) returns (GetEquipmentsResponse) {}
+  rpc GetEquipment(GetEquipmentRequest) returns (GetEquipmentResponse) {}
+  rpc UpdateEquipment(UpdateEquipmentRequest) returns (UpdateEquipmentResponse) {}
+  rpc DeleteEquipment(DeleteEquipmentRequest) returns (DeleteEquipmentResponse) {}
+
+  // Decoder Configuration
+  rpc GetDecoderConfiguration(GetDecoderConfigurationRequest) returns (GetDecoderConfigurationResponse) {}
+  rpc UpdateDecoderConfiguration(UpdateDecoderConfigurationRequest) returns (UpdateDecoderConfigurationResponse) {}
+
+  // Run Information
+  rpc GetRunNumber(GetRunNumberRequest) returns (GetRunNumberResponse) {}
+  rpc CheckDisabled(CheckDisabledRequest) returns (CheckDisabledResponse) {}
+
+  // Authentication
+  rpc GetToken(GetTokenRequest) returns (GetTokenResponse) {}
+
+  // Test Device Management
+  rpc StartTestDevices(StartTestDevicesRequest) returns (StartTestDevicesResponse) {}
+  rpc StopTestDevices(StopTestDevicesRequest) returns (StopTestDevicesResponse) {}
+  rpc GetTestDevicesStates(GetTestDevicesStatesRequest) returns (GetTestDevicesStatesResponse) {}
+  rpc ListTestDevices(ListTestDevicesRequest) returns (ListTestDevicesResponse) {}
+  rpc GetTestDeviceStatistics(GetTestDeviceStatisticsRequest) returns (GetTestDeviceStatisticsResponse) {}
+}
+
+// ===== Common Messages =====
+
+message SuccessResponse {
+  bool success = 1;
+  string message = 2;
+  string error = 3;
+}
+
+// ===== Run Control Messages =====
+
+message StartRunRequest {}
+message StartRunResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message StopRunRequest {}
+message StopRunResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message ForceStopRunRequest {}
+message ForceStopRunResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetProcessStatesRequest {}
+message GetProcessStatesResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message RestartServicesRequest {}
+message RestartServicesResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ===== GDC Messages =====
+
+message GDC {
+  int32 id = 1;
+  string name = 2;
+  string hostname = 3;
+  string ip = 4;
+  int32 port = 5;
+  string datapath = 6;
+  bool enabled = 7;
+  bool write_output = 8;
+  bool decode = 9;
+  int32 grpc_port = 10;
+  int32 prometheus_port = 11;
+}
+
+message CreateGDCRequest {
+  string name = 1;
+  string hostname = 2;
+  string ip = 3;
+  int32 port = 4;
+  string datapath = 5;
+  bool enabled = 6;
+  bool write_output = 7;
+  bool decode = 8;
+  int32 grpc_port = 9;
+  int32 prometheus_port = 10;
+}
+
+message CreateGDCResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetGDCsRequest {}
+message GetGDCsResponse {
+  repeated GDC gdcs = 1;
+}
+
+message GetGDCRequest {
+  int32 id = 1;
+}
+message GetGDCResponse {
+  GDC gdc = 1;
+}
+
+message UpdateGDCRequest {
+  int32 id = 1;
+  string name = 2;
+  string hostname = 3;
+  string ip = 4;
+  int32 port = 5;
+  string datapath = 6;
+  bool enabled = 7;
+  bool write_output = 8;
+  bool decode = 9;
+  int32 grpc_port = 10;
+  int32 prometheus_port = 11;
+}
+
+message UpdateGDCResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteGDCRequest {
+  int32 id = 1;
+}
+message DeleteGDCResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ===== LDC Messages =====
+
+message Equipment {
+  int32 id = 1;
+  int32 type = 2;
+  string device_ip = 3;
+  string host_ip = 4;
+  int32 host_port = 5;
+  int32 ldc_id = 6;
+  bool enabled = 7;
+}
+
+message LDC {
+  int32 id = 1;
+  string name = 2;
+  string hostname = 3;
+  string ip = 4;
+  bool enabled = 5;
+  int32 grpc_port = 6;
+  int32 prometheus_port = 7;
+  repeated Equipment equipments = 8;
+}
+
+message CreateLDCRequest {
+  string name = 1;
+  string hostname = 2;
+  string ip = 3;
+  bool enabled = 4;
+  int32 grpc_port = 5;
+  int32 prometheus_port = 6;
+}
+
+message CreateLDCResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetLDCsRequest {}
+message GetLDCsResponse {
+  repeated LDC ldcs = 1;
+}
+
+message GetLDCRequest {
+  int32 id = 1;
+}
+message GetLDCResponse {
+  LDC ldc = 1;
+}
+
+message UpdateLDCRequest {
+  int32 id = 1;
+  string name = 2;
+  string hostname = 3;
+  string ip = 4;
+  bool enabled = 5;
+  int32 grpc_port = 6;
+  int32 prometheus_port = 7;
+}
+
+message UpdateLDCResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteLDCRequest {
+  int32 id = 1;
+}
+message DeleteLDCResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ===== Equipment Messages =====
+
+message CreateEquipmentRequest {
+  int32 type = 1;
+  string device_ip = 2;
+  string host_ip = 3;
+  int32 host_port = 4;
+  int32 ldc_id = 5;
+  bool enabled = 6;
+}
+
+message CreateEquipmentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetEquipmentsRequest {}
+message GetEquipmentsResponse {
+  repeated Equipment equipments = 1;
+}
+
+message GetEquipmentRequest {
+  int32 id = 1;
+}
+message GetEquipmentResponse {
+  Equipment equipment = 1;
+}
+
+message UpdateEquipmentRequest {
+  int32 id = 1;
+  int32 type = 2;
+  string device_ip = 3;
+  string host_ip = 4;
+  int32 host_port = 5;
+  int32 ldc_id = 6;
+  bool enabled = 7;
+}
+
+message UpdateEquipmentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message DeleteEquipmentRequest {
+  int32 id = 1;
+}
+message DeleteEquipmentResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ===== Decoder Configuration Messages =====
+
+message DecoderConfiguration {
+  int32 ext_trigger = 1;
+  int32 trg_code_1 = 2;
+  int32 trg_code_2 = 3;
+  bool read_pmts = 4;
+  bool read_sipms = 5;
+  bool read_trigger = 6;
+  bool split_trigger = 7;
+  bool no_db = 8;
+  bool discard = 9;
+  string host = 10;
+  string user = 11;
+  string password = 12;
+  string db_name = 13;
+  bool write_data = 14;
+  bool use_blosc = 15;
+  string blosc_algorithm = 16;
+  int32 compression_level = 17;
+  string bit_shuffle = 18;
+}
+
+message GetDecoderConfigurationRequest {}
+message GetDecoderConfigurationResponse {
+  DecoderConfiguration configuration = 1;
+}
+
+message UpdateDecoderConfigurationRequest {
+  DecoderConfiguration configuration = 1;
+}
+message UpdateDecoderConfigurationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+// ===== Run Information Messages =====
+
+message GetRunNumberRequest {}
+message GetRunNumberResponse {
+  int32 run_number = 1;
+}
+
+message DisabledWarning {
+  repeated string gdcs = 1;
+  repeated string ldcs = 2;
+  repeated string equipments = 3;
+  repeated string writing = 4;
+}
+
+message CheckDisabledRequest {}
+message CheckDisabledResponse {
+  DisabledWarning warnings = 1;
+}
+
+// ===== Authentication Messages =====
+
+message GetTokenRequest {}
+message GetTokenResponse {
+  string token = 1;
+}
+
+// ===== Test Device Messages =====
+
+message TestDevice {
+  int32 equipment_id = 1;
+  string device_name = 2;
+  string host_ip = 3;
+  int32 host_port = 4;
+  int32 grpc_port = 5;
+  int32 prometheus_port = 6;
+  double rate_hz = 7;
+  int32 packets_per_event = 8;
+  int32 packet_size = 9;
+  double error_injection_rate = 10;
+  int32 max_events = 11;
+  bool enabled = 12;
+}
+
+message TestDeviceStatistics {
+  int32 device_id = 1;
+  int64 events = 2;
+  int64 bytes = 3;
+  int64 errors = 4;
+}
+
+message StartTestDevicesRequest {
+  repeated int32 device_ids = 1;
+}
+message StartTestDevicesResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message StopTestDevicesRequest {
+  repeated int32 device_ids = 1;
+}
+message StopTestDevicesResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetTestDevicesStatesRequest {}
+message GetTestDevicesStatesResponse {
+  map<string, string> states = 1;
+}
+
+message ListTestDevicesRequest {}
+message ListTestDevicesResponse {
+  repeated TestDevice devices = 1;
+}
+
+message GetTestDeviceStatisticsRequest {
+  int32 device_id = 1;
+}
+message GetTestDeviceStatisticsResponse {
+  TestDeviceStatistics statistics = 1;
+}

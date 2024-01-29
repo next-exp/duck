@@ -1,0 +1,7 @@
+docker build . -t duck-frontend
+docker tag duck-frontend nextmgmt/duck-frontend
+docker push nextmgmt/duck-frontend
+
+docker pull nextmgmt/duck-frontend:latest
+docker compose down duck-frontend
+docker compose up -d duck-frontend

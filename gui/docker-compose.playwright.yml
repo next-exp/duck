@@ -1,0 +1,102 @@
+name: duck-gui-playwright
+
+networks:
+  playwright-net:
+    driver: bridge
+
+services:
+  # Playwright test container
+  playwright:
+    build:
+      context: .
+      dockerfile: Dockerfile.playwright
+      args:
+        VITE_API_SERVER: http://api:1323/daq
+        VITE_WS_SERVER: ws://centrifugo:8000
+    container_name: duck-playwright-tests
+    working_dir: /app
+    environment:
+      - NODE_ENV=production
+      - E2E_API_URL=http://api:1323/daq
+      - E2E_WS_URL=ws://centrifugo:8000
+      - CI=true
+    ports:
+      - "9323:9323"  # Playwright UI
+    volumes:
+      # Mount test results to host
+      - ./playwright-report:/app/playwright-report
+      - ./test-results:/app/test-results
+      # Mount source for development
+      - ./src:/app/src
+      - ./e2e:/app/e2e
+      - ./e2e-integration:/app/e2e-integration
+      - ./playwright.config.ts:/app/playwright.config.ts
+      - ./playwright.mocked.config.ts:/app/playwright.mocked.config.ts
+      - ./playwright.integration.config.ts:/app/playwright.integration.config.ts
+      - ./index.html:/app/index.html
+    command: npx playwright test --project=chromium
+    networks:
+      - playwright-net
+    profiles:
+      - test
+
+  # For integration tests - include backend services
+  api:
+    image: duck-e2e:latest
+    container_name: duck-playwright-api
+    working_dir: /app
+    command: ["/app/bin/duckAPI", "-config", "/app/docker/e2e/configuration.yml"]
+    ports:
+      - "1323:1323"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:1323/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 50
+    networks:
+      - playwright-net
+    profiles:
+      - integration
+
+  centrifugo:
+    image: centrifugo/centrifugo:v5.2.0
+    container_name: duck-playwright-centrifugo
+    command: centrifugo --config /etc/centrifugo/centrifugo.json
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../docker/e2e/centrifugo.json:/etc/centrifugo/centrifugo.json:ro
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8000/health"]
+      interval: 5s
+      timeout: 3s
+      retries: 50
+    networks:
+      - playwright-net
+    profiles:
+      - integration
+
+  mysql:
+    image: mysql:8
+    container_name: duck-playwright-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: dummy_root_password
+      MYSQL_DATABASE: duck
+      MYSQL_USER: duck
+      MYSQL_PASSWORD: dummy_password
+    healthcheck:
+      test: ["CMD", "mysql", "-u", "duck", "-pdummy_password", "-e", "SELECT 1 FROM gdcs LIMIT 1;", "duck"]
+      interval: 5s
+      timeout: 3s
+      retries: 50
+      start_period: 40s
+    volumes:
+      - mysql-playwright-data:/var/lib/mysql
+      - ../docker/e2e/mysql/init:/docker-entrypoint-initdb.d:ro
+    networks:
+      - playwright-net
+    profiles:
+      - integration
+
+volumes:
+  mysql-playwright-data:

@@ -1,0 +1,5 @@
+# Data directory for GDC runtime files
+data/
+
+# Node.js dependencies
+node_modules/

@@ -1,0 +1,74 @@
+
+services:
+  # Base image with HDF5 and Blosc (build once, reuse many times)
+  backend-test-base:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.base
+    image: duck-backend-test-base:latest
+    container_name: duck-backend-test-base
+    profiles:
+      - base
+
+  # Backend testing service (fast rebuild, uses base image)
+  backend-test:
+    build:
+      context: ../..
+      dockerfile: docker/Dockerfile.test
+    image: duck-backend-test:latest
+    container_name: duck-backend-test
+    volumes:
+      # Mount source code for live testing
+      - ../..:/src
+      # Mount coverage reports to host
+      - ../../coverage:/app/coverage
+      # Mount go modules cache for faster builds
+      - gocache:/root/.cache/go-build
+      - gopath:/go
+      # Mount Docker socket for dockertest (integration tests)
+      - /var/run/docker.sock:/var/run/docker.sock
+    working_dir: /src
+    environment:
+      - CGO_ENABLED=1
+      - GOPATH=/root/go
+      - PATH=/usr/local/go/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/root/go/bin:/usr/local/protoc/bin:/usr/local/hdf5/bin
+      - LD_LIBRARY_PATH=/usr/local/hdf5-blosc/lib:/usr/local/hdf5/lib
+      - CGO_LDFLAGS=-L/usr/local/hdf5/lib -L/usr/local/hdf5-blosc/lib
+      - CGO_CFLAGS=-I/usr/local/hdf5/include -I/usr/local/hdf5-blosc/include
+    networks:
+      - duck-test-network
+    # Keep container running for interactive use
+    command: /bin/bash
+    profiles:
+      - test
+
+  # MySQL service for integration tests (if needed)
+  mysql-test:
+    image: mysql:8.0
+    container_name: duck-mysql-test
+    environment:
+      MYSQL_ROOT_PASSWORD: testpassword
+      MYSQL_DATABASE: duck_test
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: testpass
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql-test-data:/var/lib/mysql
+      - ../e2e/mysql:/docker-entrypoint-initdb.d
+    networks:
+      - duck-test-network
+    profiles:
+      - integration
+
+volumes:
+  gocache:
+    driver: local
+  gopath:
+    driver: local
+  mysql-test-data:
+    driver: local
+
+networks:
+  duck-test-network:
+    driver: bridge

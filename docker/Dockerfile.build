@@ -1,0 +1,52 @@
+# Dockerfile for building production-ready binaries
+# Used for: E2E testing environment and production deployments
+#
+# Uses the duck-backend-test-base image that contains HDF5, Blosc, and other dependencies
+# Multi-stage build: compiles all binaries once, then creates a lean runtime image
+#
+# Build: docker build -f docker/Dockerfile.build -t duck-e2e:latest .
+
+FROM duck-backend-test-base:latest AS builder
+
+# Set working directory
+WORKDIR /workspace
+
+# Copy the entire source code first (needed for local module replacements)
+COPY . .
+
+# Download Go dependencies
+RUN go mod download
+
+# Install protoc plugins locally to avoid buf.build rate limits
+RUN go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.11 && \
+    go install connectrpc.com/connect/cmd/protoc-gen-connect-go@v1.19.1
+
+# Install npm dependencies for TypeScript code generation
+RUN cd gui && npm install
+
+# Generate all ConnectRPC code first
+RUN task gen:all
+
+# Build all binaries using mage (compile once for all services)
+RUN mage build
+
+# Runtime stage - use the base image for runtime as well (includes HDF5 libraries)
+FROM duck-backend-test-base:latest
+
+# Set working directory
+WORKDIR /app
+
+# Copy compiled binaries from builder
+COPY --from=builder /workspace/bin/ /app/bin/
+
+# Copy configuration and docker files
+COPY --from=builder /workspace/docker/ /app/docker/
+
+# Copy NEXT-100 data files for device simulator
+COPY --from=builder /workspace/next100/ /app/next100/
+
+# Set PATH to include /app/bin
+ENV PATH="/app/bin:${PATH}"
+
+# Default command (overridden by docker-compose for each service)
+CMD ["/bin/bash"]

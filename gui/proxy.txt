@@ -1,0 +1,3 @@
+ssh -N -L 1323:localhost:1323 -o ProxyCommand="ssh -W %h:%p root@192.168.142.162" root@ldc1next
+ssh -N -L 1324:localhost:8123 root@192.168.142.104
+ssh -N -L 3000:localhost:8081 root@192.168.142.104

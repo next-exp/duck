@@ -1,0 +1,11 @@
+database:
+  username: "duck"
+  password: "dummy_password"
+  hostname: "mysql"
+  port: "3306"
+  dbname: "duck"
+centrifugal:
+  host: "centrifugo"
+  port: 8000
+  token: "dummy_token"
+log_level: "INFO"

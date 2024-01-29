@@ -1,0 +1,11 @@
+version: v2
+plugins:
+  # Go plugins - use locally installed protoc-gen-go
+  - local: protoc-gen-go
+    out: ../../control
+    opt:
+      - paths=source_relative
+  - local: protoc-gen-connect-go
+    out: ../../control
+    opt:
+      - paths=source_relative

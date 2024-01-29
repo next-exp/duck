@@ -1,0 +1,717 @@
+version: '3'
+
+vars:
+  DOCKER_BASE_IMAGE: duck-backend-test-base
+  DOCKER_HUB_IMAGE: nextmgmt/duck-backend-test-base
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  test:
+    desc: Run all tests in Docker (unit + integration)
+    cmds:
+      - echo 'Running all tests in Docker...'
+      - task test-unit
+      - task test-integration:all
+
+  test-unit:
+    desc: Run unit tests only (fast) in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Running unit tests in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -v -short \$(go list ./... | grep -v integration_tests)"
+
+  test-coverage:
+    desc: Run tests with coverage report in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Running tests with coverage in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -coverprofile=coverage.out ./... && go tool cover -func=coverage.out | grep total"
+      - echo 'Generate HTML coverage report with task test-coverage-html'
+
+  test-coverage-html:
+    desc: Generate HTML coverage report in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Generating HTML coverage report in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -coverprofile=coverage.out ./... && go tool cover -html=coverage.out -o coverage.html"
+      - "echo 'Coverage report generated: coverage.html'"
+
+  clean-coverage:
+    desc: Clean test cache and coverage files
+    cmds:
+      - echo 'Cleaning test cache and coverage files...'
+      - rm -f coverage.out coverage.html
+
+  clean-containers:
+    desc: Remove all integration test containers (MySQL, Centrifuge, etc.)
+    cmds:
+      - echo 'Removing all integration test containers...'
+      - docker ps -a | grep -E "(mysql|centrifugo|duck-integration)" | awk '{print $1}' | xargs -r docker rm -f 2>/dev/null || echo 'No test containers found'
+      - echo 'Test containers cleaned up'
+
+  test-integration:all:
+    desc: Run integration tests in Docker sequentially to avoid port conflicts
+    deps: [e2e:check-base]
+    cmds:
+      - echo "Running integration tests in Docker with host networking..."
+      - docker run --rm --network host --privileged -v $(pwd):/src -v /var/run/docker.sock:/var/run/docker.sock -v gocache:/root/.cache/go-build -v gopath:/go -e CGO_ENABLED=1 -e GOPATH=/root/go -e LD_LIBRARY_PATH=/usr/local/hdf5-blosc/lib:/usr/local/hdf5/lib -e CGO_LDFLAGS="-L/usr/local/hdf5/lib -L/usr/local/hdf5-blosc/lib" -e CGO_CFLAGS="-I/usr/local/hdf5/include -I/usr/local/hdf5-blosc/include" --name duck-integration-test-$RANDOM duck-backend-test bash -c "sysctl -w net.ipv4.ping_group_range='0 2147483647' && cd /src && go test -v -tags=integration -timeout=30m -p=1 ./integration_tests/..."
+
+  test-integration:centrifuge:
+    desc: Run centrifuge integration tests in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo "Running centrifuge integration tests in Docker..."
+      - docker run --rm --network host --privileged -v $(pwd):/src -v /var/run/docker.sock:/var/run/docker.sock -v gocache:/root/.cache/go-build -v gopath:/go -e CGO_ENABLED=1 -e GOPATH=/root/go -e LD_LIBRARY_PATH=/usr/local/hdf5-blosc/lib:/usr/local/hdf5/lib -e CGO_LDFLAGS="-L/usr/local/hdf5/lib -L/usr/local/hdf5-blosc/lib" -e CGO_CFLAGS="-I/usr/local/hdf5/include -I/usr/local/hdf5-blosc/include" --name duck-integration-test-$RANDOM duck-backend-test bash -c "sysctl -w net.ipv4.ping_group_range='0 2147483647' && cd /src && go test -v -tags=integration -timeout=30m -p=1 ./integration_tests/centrifuge/..."
+
+  test-integration:database:
+    desc: Run database integration tests in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo "Running database integration tests in Docker..."
+      - docker run --rm --network host --privileged -v $(pwd):/src -v /var/run/docker.sock:/var/run/docker.sock -v gocache:/root/.cache/go-build -v gopath:/go -e CGO_ENABLED=1 -e GOPATH=/root/go -e LD_LIBRARY_PATH=/usr/local/hdf5-blosc/lib:/usr/local/hdf5/lib -e CGO_LDFLAGS="-L/usr/local/hdf5/lib -L/usr/local/hdf5-blosc/lib" -e CGO_CFLAGS="-I/usr/local/hdf5/include -I/usr/local/hdf5-blosc/include" --name duck-integration-test-$RANDOM duck-backend-test bash -c "sysctl -w net.ipv4.ping_group_range='0 2147483647' && cd /src && go test -v -tags=integration -timeout=30m -p=1 ./integration_tests/database/..."
+
+  test-integration:e2e:
+    desc: Run e2e integration tests in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo "Running e2e integration tests in Docker..."
+      - docker run --rm --network host --privileged -v $(pwd):/src -v /var/run/docker.sock:/var/run/docker.sock -v gocache:/root/.cache/go-build -v gopath:/go -e CGO_ENABLED=1 -e GOPATH=/root/go -e LD_LIBRARY_PATH=/usr/local/hdf5-blosc/lib:/usr/local/hdf5/lib -e CGO_LDFLAGS="-L/usr/local/hdf5/lib -L/usr/local/hdf5-blosc/lib" -e CGO_CFLAGS="-I/usr/local/hdf5/include -I/usr/local/hdf5-blosc/include" --name duck-integration-test-$RANDOM duck-backend-test bash -c "sysctl -w net.ipv4.ping_group_range='0 2147483647' && cd /src && go test -v -tags=integration -timeout=30m -p=1 ./integration_tests/e2e/..."
+
+  test-integration:gdc:
+    desc: Run gdc integration tests in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo "Running gdc integration tests in Docker..."
+      - docker run --rm --network host --privileged -v $(pwd):/src -v /var/run/docker.sock:/var/run/docker.sock -v gocache:/root/.cache/go-build -v gopath:/go -e CGO_ENABLED=1 -e GOPATH=/root/go -e LD_LIBRARY_PATH=/usr/local/hdf5-blosc/lib:/usr/local/hdf5/lib -e CGO_LDFLAGS="-L/usr/local/hdf5/lib -L/usr/local/hdf5-blosc/lib" -e CGO_CFLAGS="-I/usr/local/hdf5/include -I/usr/local/hdf5-blosc/include" --name duck-integration-test-$RANDOM duck-backend-test bash -c "sysctl -w net.ipv4.ping_group_range='0 2147483647' && cd /src && go test -v -tags=integration -timeout=30m -p=1 ./integration_tests/gdc/..."
+
+  test-integration:ldc:
+    desc: Run ldc integration tests in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo "Running ldc integration tests in Docker..."
+      - docker run --rm --network host --privileged -v $(pwd):/src -v /var/run/docker.sock:/var/run/docker.sock -v gocache:/root/.cache/go-build -v gopath:/go -e CGO_ENABLED=1 -e GOPATH=/root/go -e LD_LIBRARY_PATH=/usr/local/hdf5-blosc/lib:/usr/local/hdf5/lib -e CGO_LDFLAGS="-L/usr/local/hdf5/lib -L/usr/local/hdf5-blosc/lib" -e CGO_CFLAGS="-I/usr/local/hdf5/include -I/usr/local/hdf5-blosc/include" --name duck-integration-test-$RANDOM duck-backend-test bash -c "sysctl -w net.ipv4.ping_group_range='0 2147483647' && cd /src && go test -v -tags=integration -timeout=30m -p=1 ./integration_tests/ldc/..."
+
+
+  go-lint:
+    desc: Run linter in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Running linter in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && if command -v golangci-lint > /dev/null; then golangci-lint run; else echo 'golangci-lint not available in container'; fi"
+
+  # E2E testing targets
+
+  e2e:build-base:
+    desc: Build base Docker image with HDF5 and Blosc (one-time setup, ~10 min)
+    cmds:
+      - echo 'Building base Docker image with HDF5 and Blosc...'
+      - echo 'This will take ~10 minutes. You only need to do this once.'
+      - docker compose --profile base -f docker/testing/docker-compose.yml build --no-cache backend-test-base
+      - "echo 'Base image built successfully: duck-backend-test-base:latest'"
+
+  e2e:push-base:
+    desc: Push base Docker image to Docker Hub
+    cmds:
+      - echo 'Pushing base Docker image to Docker Hub...'
+      - docker tag {{.DOCKER_BASE_IMAGE}}:latest {{.DOCKER_HUB_IMAGE}}:latest
+      - docker push {{.DOCKER_HUB_IMAGE}}:latest
+      - echo 'Base image pushed to {{.DOCKER_HUB_IMAGE}}:latest'
+
+  e2e:check-base:
+    desc: Check if base Docker image exists, build if needed
+    cmds:
+      - |
+        if ! docker images | grep -q duck-backend-test-base; then
+          echo "Base image 'duck-backend-test-base' not found. Building it now..."
+          echo "This will take ~10 minutes. You only need to do this once."
+          docker compose --profile base -f docker/testing/docker-compose.yml build --no-cache backend-test-base
+        else
+          echo "Base image 'duck-backend-test-base' found."
+        fi
+    silent: false
+
+  e2e:clean-base:
+    desc: Remove base Docker image (will require full rebuild)
+    cmds:
+      - echo 'Removing base image (HDF5 + Blosc)...'
+      - "echo 'You will need to rebuild with: task e2e:build-base (~10 min)'"
+      - docker rmi duck-backend-test-base:latest 2>/dev/null || echo 'Base image not found or already removed'
+
+  e2e:build:
+    desc: Build E2E Docker image with compiled binaries (requires base image)
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Building E2E Docker image with compiled binaries...'
+      - echo 'This compiles the project once and creates an image shared by all services'
+      - docker build -f docker/Dockerfile.build -t duck-e2e:latest .
+
+  e2e:gen:
+    desc: Generate E2E compose and seed
+    cmds:
+      - go run ./docker/e2e/setups/standard/gen-compose.go
+
+  e2e:up:
+    desc: Bring up E2E stack (uses docker-compose.gen.yml)
+    deps: [e2e:build, e2e:gen]
+    cmds:
+      - |
+        docker compose \
+          -f docker/e2e/docker-compose.yml \
+          -f docker/e2e/setups/standard/docker-compose.gen.yml \
+          --env-file docker/e2e/.env.example \
+          up -d --remove-orphans
+      - |
+        echo ''
+        echo 'E2E environment started!'
+        echo 'API - http://localhost:1323'
+        echo 'Centrifugo - http://localhost:8000'
+        echo ''
+        echo 'To start GUI dev server - task e2e:up:dev'
+        echo 'To view logs - task e2e:logs'
+        echo 'To stop - task e2e:down'
+
+  e2e:up:dev:
+    desc: Bring up E2E stack WITH GUI dev server (full system with hot reload)
+    deps: [e2e:build, e2e:gen]
+    cmds:
+      - |
+        docker compose \
+          -f docker/e2e/docker-compose.yml \
+          -f docker/e2e/setups/standard/docker-compose.gen.yml \
+          --env-file docker/e2e/.env.example \
+          --profile dev \
+          up -d --remove-orphans
+      - |
+        echo ''
+        echo 'E2E environment with GUI dev server started!'
+        echo ''
+        echo 'Services available-'
+        echo '  - GUI Dev - http://localhost:5173 (with hot reload!)'
+        echo '  - API - http://localhost:1323'
+        echo '  - Centrifugo - http://localhost:8000'
+        echo '  - MySQL - localhost:3306'
+        echo ''
+        echo 'Full system running - MySQL, Centrifugo, API, GDCs, LDCs, Test Devices, and GUI'
+        echo ''
+        echo 'Edit files in gui/src/* and see changes instantly!'
+        echo ''
+        echo 'View logs - task e2e:logs'
+        echo 'View GUI logs - task e2e:logs-gui'
+        echo 'Recompile Go code - task e2e:recompile'
+        echo 'Stop - task e2e:down'
+
+  e2e:down:
+    desc: Tear down E2E stack
+    cmds:
+      - docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/setups/standard/docker-compose.gen.yml --profile dev down -v
+
+  e2e:logs:
+    desc: View logs from E2E stack
+    cmds:
+      - docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/setups/standard/docker-compose.gen.yml logs -f
+
+  e2e:logs-gui:
+    desc: View GUI dev server logs from E2E stack
+    cmds:
+      - docker compose -f docker/e2e/docker-compose.yml logs -f gui
+
+  e2e:logs-api:
+    desc: View API server logs from E2E stack
+    cmds:
+      - docker compose -f docker/e2e/docker-compose.yml logs -f api
+
+  e2e:recompile:
+    desc: Recompile Go code and restart Go services (api, gdc, ldc, devices) without resetting MySQL/Centrifugo
+    deps: [e2e:build, e2e:gen]
+    cmds:
+      - |
+        echo 'Stopping and removing Go-related containers...'
+        docker compose \
+          -f docker/e2e/docker-compose.yml \
+          -f docker/e2e/setups/standard/docker-compose.gen.yml \
+          --env-file docker/e2e/.env.example \
+          stop api $(docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/setups/standard/docker-compose.gen.yml --env-file docker/e2e/.env.example config --services | grep -E '^(gdc-|ldc-|dev-)')
+      - |
+        docker compose \
+          -f docker/e2e/docker-compose.yml \
+          -f docker/e2e/setups/standard/docker-compose.gen.yml \
+          --env-file docker/e2e/.env.example \
+          rm -f api $(docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/setups/standard/docker-compose.gen.yml --env-file docker/e2e/.env.example config --services | grep -E '^(gdc-|ldc-|dev-)')
+      - |
+        echo 'Restarting Go-related containers...'
+        docker compose \
+          -f docker/e2e/docker-compose.yml \
+          -f docker/e2e/setups/standard/docker-compose.gen.yml \
+          --env-file docker/e2e/.env.example \
+          up -d api $(docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/setups/standard/docker-compose.gen.yml --env-file docker/e2e/.env.example config --services | grep -E '^(gdc-|ldc-|dev-)')
+      - |
+        echo ''
+        echo 'Go services recompiled and restarted!'
+        echo 'MySQL and Centrifugo were kept running.'
+        echo ''
+
+  e2e:restart:
+    desc: Restart E2E stack
+    cmds:
+      - task e2e:down
+      - task e2e:up
+
+  e2e:restart:dev:
+    desc: Restart E2E stack with GUI dev server
+    cmds:
+      - task e2e:down
+      - task e2e:up:dev
+
+  # NEXT-100 simulation targets (using device simulators with real data)
+
+  e2e:gen:next100:
+    desc: Generate NEXT-100 compose and seed (7 LDCs, 7 GDCs, 28 equipments with real data)
+    cmds:
+      - go run ./docker/e2e/setups/next100/gen-compose-next100.go
+
+  e2e:up:next100:
+    desc: Bring up NEXT-100 simulation stack (uses docker-compose.gen-next100.yml)
+    deps: [e2e:build, e2e:gen:next100]
+    cmds:
+      - |
+        docker compose \
+          -f docker/e2e/docker-compose.yml \
+          -f docker/e2e/setups/next100/docker-compose.gen-next100.yml \
+          --env-file docker/e2e/.env.example \
+          up -d --remove-orphans
+      - |
+        echo ''
+        echo 'NEXT-100 simulation environment started!'
+        echo 'This simulates the full NEXT-100 DAQ system with real data replay:'
+        echo '  - 7 LDCs (ldc1next - ldc7next)'
+        echo '  - 7 GDCs (gdc1next - gdc7next)'
+        echo '  - 28 Device Simulators (4 per LDC, replaying real NEXT-100 data)'
+        echo ''
+        echo 'Services available-'
+        echo '  - API - http://localhost:1323'
+        echo '  - Centrifugo - http://localhost:8000'
+        echo '  - MySQL - localhost:3306'
+        echo ''
+        echo 'To start GUI dev server - task e2e:up:next100:dev'
+        echo 'To view logs - task e2e:logs:next100'
+        echo 'To stop - task e2e:down:next100'
+
+  e2e:up:next100:dev:
+    desc: Bring up NEXT-100 simulation WITH GUI dev server (full system with hot reload)
+    deps: [e2e:build, e2e:gen:next100]
+    cmds:
+      - |
+        docker compose \
+          -f docker/e2e/docker-compose.yml \
+          -f docker/e2e/setups/next100/docker-compose.gen-next100.yml \
+          --env-file docker/e2e/.env.example \
+          --profile dev \
+          up -d --remove-orphans
+      - |
+        echo ''
+        echo 'NEXT-100 simulation environment with GUI dev server started!'
+        echo ''
+        echo 'This simulates the full NEXT-100 DAQ system with real data replay:'
+        echo '  - 7 LDCs (ldc1next - ldc7next)'
+        echo '  - 7 GDCs (gdc1next - gdc7next)'
+        echo '  - 28 Device Simulators (4 per LDC, replaying real NEXT-100 data)'
+        echo ''
+        echo 'Services available-'
+        echo '  - GUI Dev - http://localhost:5173 (with hot reload!)'
+        echo '  - API - http://localhost:1323'
+        echo '  - Centrifugo - http://localhost:8000'
+        echo '  - MySQL - localhost:3306'
+        echo ''
+        echo 'Full NEXT-100 system running - MySQL, Centrifugo, API, GDCs, LDCs, Device Simulators, and GUI'
+        echo ''
+        echo 'Edit files in gui/src/* and see changes instantly!'
+        echo ''
+        echo 'View logs - task e2e:logs:next100'
+        echo 'View GUI logs - task e2e:logs-gui'
+        echo 'Recompile Go code - task e2e:recompile:next100'
+        echo 'Stop - task e2e:down:next100'
+
+  e2e:down:next100:
+    desc: Tear down NEXT-100 simulation stack
+    cmds:
+      - docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/setups/next100/docker-compose.gen-next100.yml --profile dev down -v
+
+  e2e:logs:next100:
+    desc: View logs from NEXT-100 simulation stack
+    cmds:
+      - docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/setups/next100/docker-compose.gen-next100.yml logs -f
+
+  e2e:recompile:next100:
+    desc: Recompile Go code and restart Go services for NEXT-100 simulation without resetting MySQL/Centrifugo
+    deps: [e2e:build, e2e:gen:next100]
+    cmds:
+      - |
+        echo 'Stopping and removing Go-related containers...'
+        docker compose \
+          -f docker/e2e/docker-compose.yml \
+          -f docker/e2e/setups/next100/docker-compose.gen-next100.yml \
+          --env-file docker/e2e/.env.example \
+          stop api $(docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/setups/next100/docker-compose.gen-next100.yml --env-file docker/e2e/.env.example config --services | grep -E '^(gdc|ldc|sim-)')
+      - |
+        docker compose \
+          -f docker/e2e/docker-compose.yml \
+          -f docker/e2e/setups/next100/docker-compose.gen-next100.yml \
+          --env-file docker/e2e/.env.example \
+          rm -f api $(docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/setups/next100/docker-compose.gen-next100.yml --env-file docker/e2e/.env.example config --services | grep -E '^(gdc|ldc|sim-)')
+      - |
+        echo 'Restarting Go-related containers...'
+        docker compose \
+          -f docker/e2e/docker-compose.yml \
+          -f docker/e2e/setups/next100/docker-compose.gen-next100.yml \
+          --env-file docker/e2e/.env.example \
+          up -d api $(docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/setups/next100/docker-compose.gen-next100.yml --env-file docker/e2e/.env.example config --services | grep -E '^(gdc|ldc|sim-)')
+      - |
+        echo ''
+        echo 'Go services recompiled and restarted for NEXT-100 simulation!'
+        echo 'MySQL and Centrifugo were kept running.'
+        echo ''
+
+  e2e:restart:next100:
+    desc: Restart NEXT-100 simulation stack
+    cmds:
+      - task e2e:down:next100
+      - task e2e:up:next100
+
+  e2e:restart:next100:dev:
+    desc: Restart NEXT-100 simulation stack with GUI dev server
+    cmds:
+      - task e2e:down:next100
+      - task e2e:up:next100:dev
+
+  # Frontend testing targets
+
+  frontend-docker:build:
+    desc: Build Playwright Docker image for e2e tests
+    dir: gui
+    cmds:
+      - echo 'Building Playwright Docker image...'
+      - npm run docker:build
+
+  frontend-test:
+    desc: Run all frontend tests (unit locally + e2e in Docker)
+    dir: gui
+    cmds:
+      - echo 'Running frontend unit tests...'
+      - npm run test:unit -- --run
+      - echo 'Running frontend e2e tests in Docker...'
+      - npm run docker:test
+
+  frontend-test-unit:
+    desc: Run frontend unit tests (watch mode)
+    dir: gui
+    cmds:
+      - echo 'Running frontend unit tests...'
+      - npm run test:unit
+
+  frontend-test-unit-run:
+    desc: Run frontend unit tests once (CI mode)
+    dir: gui
+    cmds:
+      - echo 'Running frontend unit tests once...'
+      - npm run test:unit -- --run
+
+  frontend-test-coverage:
+    desc: Run frontend tests with coverage report (requires @vitest/coverage-v8)
+    dir: gui
+    cmds:
+      - echo 'Running frontend tests with coverage...'
+      - |
+        if npm list @vitest/coverage-v8 >/dev/null 2>&1; then
+          npm run test:coverage -- --run
+        else
+          echo "Coverage dependency not installed. Install with:"
+          echo "  cd gui && npm install --save-dev @vitest/coverage-v8"
+          exit 1
+        fi
+
+  frontend-test-e2e:
+    desc: Run frontend e2e tests in Docker
+    dir: gui
+    cmds:
+      - echo 'Running frontend e2e tests in Docker...'
+      - npm run docker:test
+
+  frontend-test-e2e:chromium:
+    desc: Run frontend e2e tests in Docker (Chromium only)
+    dir: gui
+    cmds:
+      - echo 'Running frontend e2e tests in Docker (Chromium)...'
+      - npm run docker:test:chromium
+
+  frontend-test-e2e:firefox:
+    desc: Run frontend e2e tests in Docker (Firefox only)
+    dir: gui
+    cmds:
+      - echo 'Running frontend e2e tests in Docker (Firefox)...'
+      - npm run docker:test:firefox
+
+  frontend-test-e2e:webkit:
+    desc: Run frontend e2e tests in Docker (WebKit only)
+    dir: gui
+    cmds:
+      - echo 'Running frontend e2e tests in Docker (WebKit)...'
+      - npm run docker:test:webkit
+
+  frontend-test-e2e:ui:
+    desc: Run frontend e2e tests with UI in Docker
+    dir: gui
+    cmds:
+      - echo 'Running frontend e2e tests with UI in Docker...'
+      - npm run docker:test:ui
+
+  frontend-test-e2e:integration:
+    desc: Run frontend e2e integration tests in Docker
+    dir: gui
+    cmds:
+      - echo 'Running frontend e2e integration tests in Docker...'
+      - npm run docker:test:integration
+
+  frontend-test-e2e:integration:full:
+    desc: Run frontend e2e integration tests with full stack in Docker
+    dir: gui
+    cmds:
+      - echo 'Running full integration test stack in Docker...'
+      - npm run docker:test:integration:full
+
+  frontend-test-e2e:shell:
+    desc: Open shell in Playwright Docker container
+    dir: gui
+    cmds:
+      - npm run docker:shell
+
+  frontend-type-check:
+    desc: Run TypeScript type checking for frontend in Docker
+    dir: gui
+    cmds:
+      - echo 'Running TypeScript type checking in Docker...'
+      - |
+        docker run --rm -v $(pwd):/app -w /app mcr.microsoft.com/playwright:v1.48.2-jammy bash -c "npm ci --include=dev --quiet && npm run type-check"
+
+  frontend-build:
+    desc: Build frontend for production
+    dir: gui
+    cmds:
+      - echo 'Building frontend...'
+      - npm run build
+
+  frontend-dev:
+    desc: Start frontend development server
+    dir: gui
+    cmds:
+      - echo 'Starting frontend development server...'
+      - npm run dev
+
+  # Code generation targets
+
+  gen:rpc:
+    desc: Generate ConnectRPC stubs for internal services (control)
+    cmds:
+      - echo 'Generating ConnectRPC stubs for internal services...'
+      - cd rpc/proto/control && buf generate
+
+  gen:api:
+    desc: Generate ConnectRPC stubs for Web API (api + TypeScript)
+    cmds:
+      - echo 'Generating ConnectRPC stubs for Web API...'
+      - cd gui && npm install --silent
+      - cd rpc/proto/api && PATH="{{.ROOT_DIR}}/gui/node_modules/.bin:$PATH" buf generate
+
+  gen:setup:
+    desc: Install all protoc plugins needed for code generation
+    cmds:
+      - echo 'Installing Go protoc plugins...'
+      - go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.36.11
+      - go install connectrpc.com/connect/cmd/protoc-gen-connect-go@v1.19.1
+      - echo 'Installing npm dependencies...'
+      - cd gui && npm install
+      - echo 'Setup complete!'
+
+  gen:mocks:
+    desc: Generate mock implementations using mockery
+    cmds:
+      - echo 'Generating mock implementations...'
+      - mockery --dir=pkg/database --name=Querier --output=pkg/database/mocks --outpkg=mocks
+      - echo 'Mocks generated in pkg/database/mocks/'
+
+  gen:all:
+    desc: Generate all code (ConnectRPC stubs + mocks)
+    deps: [gen:rpc, gen:api, gen:mocks]
+    cmds:
+      - echo 'All code generation completed!'
+
+  # gdcRPC testing targets
+
+  # gdcRPC Development Workflow Targets
+
+  gdcrpc:check:
+    desc: Quick compilation check for gdcRPC in Docker - FASTEST feedback
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Checking gdcRPC compilation in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go build -o /dev/null ./gdcRPC/"
+      - echo '✓ gdcRPC compiles successfully'
+
+  gdcrpc:shell:
+    desc: Start interactive development shell for gdcRPC with HDF5 support
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Starting gdcRPC development shell with HDF5 support...'
+      - "echo 'Working directory will be: /src'"
+      - echo ''
+      - echo 'Available commands inside shell:'
+      - "echo '  cd gdcRPC && go test -v              # Run tests'"
+      - "echo '  cd gdcRPC && go build -v             # Check compilation'"
+      - "echo '  cd gdcRPC && go test -race -v        # Race detector'"
+      - "echo '  cd gdcRPC && go test -cover          # Coverage'"
+      - echo ''
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash
+
+  gdcrpc:test:unit:
+    desc: Run gdcRPC tests in Docker with HDF5 environment
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Running gdcRPC tests in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -v -timeout=10m ./gdcRPC/"
+
+  gdcrpc:test:race:
+    desc: Run gdcRPC tests with race detector in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Running gdcRPC tests with race detector in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -v -race -timeout=10m ./gdcRPC/"
+
+  gdcrpc:test:coverage:
+    desc: Run gdcRPC tests with coverage report in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Running gdcRPC tests with coverage in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -coverprofile=gdcrpc_coverage.out ./gdcRPC/ && go tool cover -func=gdcrpc_coverage.out | grep total"
+
+  gdcrpc:test:coverage-html:
+    desc: Generate HTML coverage report for gdcRPC in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Generating gdcRPC HTML coverage report in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -coverprofile=gdcrpc_coverage.out ./gdcRPC/ && go tool cover -html=gdcrpc_coverage.out -o gdcrpc_coverage.html"
+      - "echo 'Coverage report: gdcrpc_coverage.html'"
+
+  gdcrpc:test:bench:
+    desc: Run gdcRPC benchmark tests in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Running gdcRPC benchmarks in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -v -bench=. -benchmem ./gdcRPC/"
+
+  gdcrpc:test:all:
+    desc: Run all gdcRPC tests (unit + race + coverage) in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo '=== Running gdcRPC unit tests ==='
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -v -timeout=10m ./gdcRPC/"
+      - echo ''
+      - echo '=== Running gdcPC race detector tests ==='
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -race -v -timeout=10m ./gdcRPC/"
+      - echo ''
+      - echo '=== Running gdcRPC coverage tests ==='
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -coverprofile=gdcrpc_coverage.out ./gdcRPC/ && go tool cover -func=gdcrpc_coverage.out | grep total"
+
+  gdcrpc:build:
+    desc: Build gdcRPC binary in Docker with HDF5 support
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Building gdcRPC in Docker with HDF5 support...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && mage build:BuildGDCServer"
+      - "echo 'Binary: ./bin/gdcRPC'"
+
+  # ============================================================================
+  # ldcRPC Test Tasks
+  # ============================================================================
+
+  ldcrpc:test:unit:
+    desc: Run ldcRPC tests in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Running ldcRPC tests in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -v -timeout=10m ./ldcRPC/"
+
+  ldcrpc:test:race:
+    desc: Run ldcRPC tests with race detector in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Running ldcRPC tests with race detector in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -race -v -timeout=10m ./ldcRPC/"
+
+  ldcrpc:test:coverage:
+    desc: Run ldcRPC tests with coverage report in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Running ldcRPC tests with coverage in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -coverprofile=ldcrpc_coverage.out ./ldcRPC/ && go tool cover -func=ldcrpc_coverage.out | grep total"
+
+  ldcrpc:test:coverage-html:
+    desc: Generate HTML coverage report for ldcRPC in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Generating ldcRPC HTML coverage report in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -coverprofile=ldcrpc_coverage.out ./ldcRPC/ && go tool cover -html=ldcrpc_coverage.out -o ldcrpc_coverage.html"
+      - "echo 'Coverage report: ldcrpc_coverage.html'"
+
+  ldcrpc:test:bench:
+    desc: Run ldcRPC benchmark tests in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Running ldcRPC benchmarks in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -v -bench=. -benchmem ./ldcRPC/"
+
+  ldcrpc:test:all:
+    desc: Run all ldcRPC tests (unit + race + coverage) in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo '=== Running ldcRPC unit tests ==='
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -v -timeout=10m ./ldcRPC/"
+      - echo ''
+      - echo '=== Running ldcRPC race detector tests ==='
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -race -v -timeout=10m ./ldcRPC/"
+      - echo ''
+      - echo '=== Running ldcRPC coverage tests ==='
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go test -coverprofile=ldcrpc_coverage.out ./ldcRPC/ && go tool cover -func=ldcrpc_coverage.out | grep total"
+
+  ldcrpc:check:
+    desc: Quick compilation check for ldcRPC in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Checking ldcRPC compilation in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && go build -o /dev/null ./ldcRPC/"
+      - echo '✓ ldcRPC compiles successfully'
+
+  ldcrpc:shell:
+    desc: Start interactive development shell for ldcRPC
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Starting ldcRPC development shell...'
+      - "echo 'Working directory will be: /src'"
+      - echo ''
+      - echo 'Available commands inside shell:'
+      - "echo '  cd ldcRPC && go test -v              # Run tests'"
+      - "echo '  cd ldcRPC && go build -v             # Check compilation'"
+      - "echo '  cd ldcRPC && go test -race -v        # Race detector'"
+      - "echo '  cd ldcRPC && go test -cover          # Coverage'"
+      - echo ''
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash
+
+  ldcrpc:build:
+    desc: Build ldcRPC binary in Docker
+    deps: [e2e:check-base]
+    cmds:
+      - echo 'Building ldcRPC in Docker...'
+      - docker compose --profile test -f docker/testing/docker-compose.yml run --rm backend-test bash -c "cd /src && mage build:BuildLDCServer"
+      - "echo 'Binary: ./bin/ldcRPC'"

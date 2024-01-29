@@ -1,0 +1,35 @@
+name: Frontend Tests
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  frontend-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: gui/package-lock.json
+
+      - name: Install dependencies
+        working-directory: gui
+        run: npm ci
+
+      - name: Install Task
+        run: sh -c "$(curl --location https://taskfile.dev/install.sh)" -- -d -b /usr/local/bin
+
+      - name: Run type checking
+        run: task frontend-type-check
+
+      - name: Run frontend unit tests
+        run: task frontend-test-unit-run

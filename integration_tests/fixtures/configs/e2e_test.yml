@@ -1,0 +1,11 @@
+database:
+    username: root
+    password: testpass
+    hostname: 127.0.0.1
+    port: "33519"
+    dbname: duck_test
+centrifugal:
+    host: ""
+    port: 0
+    token: ""
+log_level: INFO

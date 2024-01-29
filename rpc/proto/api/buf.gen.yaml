@@ -1,0 +1,20 @@
+version: v2
+plugins:
+  # Go plugins - use locally installed protoc-gen-go
+  - local: protoc-gen-go
+    out: ../../api
+    opt:
+      - paths=source_relative
+  - local: protoc-gen-connect-go
+    out: ../../api
+    opt:
+      - paths=source_relative
+  # TypeScript plugins - use local npm packages
+  - local: protoc-gen-es
+    out: ../../../gui/src/gen
+    opt:
+      - target=ts
+  - local: protoc-gen-connect-es
+    out: ../../../gui/src/gen
+    opt:
+      - target=ts

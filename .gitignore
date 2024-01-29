@@ -1,0 +1,20 @@
+# Data directory for GDC runtime files
+data/
+
+# Node.js dependencies
+node_modules/
+
+# Generated E2E files (compose and seed, but not generator scripts)
+docker/e2e/setups/*/docker-compose.gen*.yml
+docker/e2e/setups/*/mysql/init/
+
+# Configuration files with secrets (use .example templates)
+configuration.yml
+database/.env
+gui/.env
+
+# IDE/Editor
+.vscode/
+.idea/
+*.swp
+*.swo
