@@ -1,0 +1,53 @@
+# DUCK DAQ - Caddy Frontend Overlay
+#
+# Adds Caddy reverse proxy + frontend build to the base e2e stack.
+#
+# Usage (overlay on top of base + gen compose):
+#   docker compose \
+#     -f docker/e2e/docker-compose.yml \
+#     -f docker/e2e/setups/standard/docker-compose.gen.yml \
+#     -f docker/e2e/docker-compose.caddy.yml \
+#     --env-file docker/e2e/.env.example \
+#     up -d
+
+volumes:
+  frontend_dist:
+  caddy_data:
+  caddy_config:
+
+services:
+  # Build-only container: populates the frontend_dist volume with dist/ assets.
+  # Docker copies image contents into the named volume on first run.
+  frontend:
+    build:
+      context: ../../gui
+      dockerfile: Dockerfile.caddy
+    image: duck-frontend:latest
+    restart: "no"
+    volumes:
+      - frontend_dist:/app/dist
+
+  # Caddy serves the static frontend and proxies API + WebSocket requests.
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "${CADDY_PORT:-80}:80"
+      - "${CADDY_HEALTH_PORT:-9090}:9090"
+    volumes:
+      - ../../deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - frontend_dist:/var/www/html:ro
+    networks:
+      - daq_ctrl
+    depends_on:
+      - frontend
+      - api
+      - centrifugo
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:9090/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s

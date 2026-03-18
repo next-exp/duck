@@ -53,6 +53,9 @@ services:
       interval: 5s
       timeout: 3s
       retries: 50
+    depends_on:
+      mysql:
+        condition: service_healthy
     networks:
       - playwright-net
     profiles:

@@ -1,0 +1,39 @@
+# DUCK DAQ - Frontend Build Image (for Caddy deployment)
+# Build-only stage - output is served by Caddy from a shared volume.
+# No nginx needed since Caddy handles both static files and reverse proxy.
+
+# ============================================
+# BUILDER STAGE
+# ============================================
+FROM node:20-alpine AS builder
+
+WORKDIR /app
+
+# Install dependencies first (better layer caching)
+COPY package*.json ./
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Build arguments - empty by default so frontend uses relative URLs via Caddy
+ARG VITE_API_SERVER=""
+ARG VITE_WS_SERVER=""
+ENV VITE_API_SERVER=${VITE_API_SERVER}
+ENV VITE_WS_SERVER=${VITE_WS_SERVER}
+
+RUN npm run build
+
+# ============================================
+# OUTPUT STAGE
+# ============================================
+# Minimal image that holds the dist files.
+# Caddy mounts this container's volume and serves the files directly.
+FROM alpine:3.19
+
+COPY --from=builder /app/dist /app/dist
+
+RUN echo "built" > /app/.built
+
+# Container exits after writing files to the mounted volume
+CMD ["cat", "/app/.built"]

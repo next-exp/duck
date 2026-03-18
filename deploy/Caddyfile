@@ -1,0 +1,85 @@
+# DUCK DAQ - Caddy Reverse Proxy Configuration
+#
+# This Caddyfile handles:
+# - HTTP only (no HTTPS)
+# - Static file serving for Vue.js frontend (base path: /daq/)
+# - Reverse proxy to Go backend API (ConnectRPC) at /duck_api/
+# - WebSocket proxy for Centrifugo real-time updates at /connection/websocket
+
+{
+    auto_https off
+}
+
+# ============================================
+# MAIN SITE CONFIGURATION (HTTP only)
+# ============================================
+:80 {
+    log {
+        output file /var/log/caddy/access.log
+        format json
+    }
+
+    encode gzip zstd
+
+    root * /var/www/html
+
+    # ---- API ROUTES ----
+
+    # ConnectRPC Backend API - strip /duck_api prefix and proxy to api service
+    handle /duck_api/* {
+        uri strip_prefix /duck_api
+        reverse_proxy {$API_HOST:api}:1323 {
+            transport http {
+                read_timeout 300s
+                write_timeout 300s
+            }
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # ---- WEBSOCKET ROUTES ----
+
+    # Centrifugo WebSocket endpoint
+    handle /connection/websocket {
+        reverse_proxy {$CENTRIFUGO_HOST:centrifugo}:8000 {
+            header_up Host {host}
+            header_up X-Real-IP {remote_host}
+        }
+    }
+
+    # ---- STATIC FILES (Vue.js Frontend) ----
+
+    # Cache immutable static assets
+    @staticFiles {
+        path_regexp \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|eot)$
+    }
+    handle @staticFiles {
+        uri strip_prefix /daq
+        file_server {
+            precompressed br gzip
+        }
+        header Cache-Control "public, max-age=31536000, immutable"
+    }
+
+    # Vue.js SPA - strip /daq prefix and serve with index.html fallback
+    handle /daq/* {
+        uri strip_prefix /daq
+        try_files {path} /index.html
+        file_server
+    }
+
+    # Redirect root to /daq/
+    handle / {
+        redir /daq/ permanent
+    }
+}
+
+# ============================================
+# HEALTH CHECK ENDPOINT (internal)
+# ============================================
+:9090 {
+    handle /health {
+        respond "Caddy OK" 200
+    }
+}

@@ -387,6 +387,54 @@ tasks:
       - task e2e:down:next100
       - task e2e:up:next100:dev
 
+  # Caddy deployment targets
+
+  deploy:build:
+    desc: Build frontend Docker image for Caddy deployment
+    cmds:
+      - echo 'Building frontend Docker image for Caddy...'
+      - docker build -f gui/Dockerfile.caddy -t duck-frontend:latest gui/
+
+  deploy:up:
+    desc: Bring up E2E stack with Caddy serving the frontend (production-like)
+    deps: [e2e:build, e2e:gen, deploy:build]
+    cmds:
+      - |
+        docker compose \
+          -f docker/e2e/docker-compose.yml \
+          -f docker/e2e/setups/standard/docker-compose.gen.yml \
+          -f docker/e2e/docker-compose.caddy.yml \
+          --env-file docker/e2e/.env.example \
+          up -d --remove-orphans
+      - |
+        echo ''
+        echo 'E2E environment with Caddy started!'
+        echo ''
+        echo 'Services available-'
+        echo '  - GUI - http://localhost:80/daq/ (via Caddy)'
+        echo '  - API - http://localhost:1323'
+        echo '  - Centrifugo - http://localhost:8000'
+        echo '  - MySQL - localhost:3306'
+        echo ''
+        echo 'View logs - task deploy:logs'
+        echo 'View Caddy logs - task deploy:logs-caddy'
+        echo 'Stop - task deploy:down'
+
+  deploy:down:
+    desc: Tear down Caddy stack
+    cmds:
+      - docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/setups/standard/docker-compose.gen.yml -f docker/e2e/docker-compose.caddy.yml --env-file docker/e2e/.env.example down -v
+
+  deploy:logs:
+    desc: View logs from Caddy stack
+    cmds:
+      - docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/setups/standard/docker-compose.gen.yml -f docker/e2e/docker-compose.caddy.yml logs -f
+
+  deploy:logs-caddy:
+    desc: View Caddy logs from Caddy stack
+    cmds:
+      - docker compose -f docker/e2e/docker-compose.yml -f docker/e2e/docker-compose.caddy.yml logs -f caddy
+
   # Frontend testing targets
 
   frontend-docker:build:
@@ -481,6 +529,12 @@ tasks:
     cmds:
       - echo 'Running full integration test stack in Docker...'
       - npm run docker:test:integration:full
+
+  frontend-test-e2e:integration:down:
+    desc: Stop and clean up integration test containers
+    dir: gui
+    cmds:
+      - docker compose -f docker-compose.playwright.yml --profile integration down -v
 
   frontend-test-e2e:shell:
     desc: Open shell in Playwright Docker container
