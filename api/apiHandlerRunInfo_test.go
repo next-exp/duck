@@ -15,6 +15,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func decoderParamsWriting(writing bool) database.Decoderparam {
+	return database.Decoderparam{
+		WriteData: sql.NullBool{Bool: writing, Valid: true},
+	}
+}
+
 func TestCheckDisabled_NothingDisabled(t *testing.T) {
 	mockQuerier := mocks.NewQuerier(t)
 
@@ -22,6 +28,7 @@ func TestCheckDisabled_NothingDisabled(t *testing.T) {
 	mockQuerier.On("GetDisabledLDCs", mock.Anything).Return([]database.Ldc{}, nil)
 	mockQuerier.On("GetDisabledEquipments", mock.Anything).Return([]database.Equipment{}, nil)
 	mockQuerier.On("GetGDCsWithoutWrite", mock.Anything).Return([]database.Gdc{}, nil)
+	mockQuerier.On("GetDecoderParams", mock.Anything).Return(decoderParamsWriting(false), nil)
 
 	server := NewDuckAPIServerWithQuerier(mockQuerier, "", "", false)
 	req := connect.NewRequest(&pb.CheckDisabledRequest{})
@@ -73,6 +80,7 @@ func TestCheckDisabled_DisabledGDCs(t *testing.T) {
 	mockQuerier.On("GetDisabledLDCs", mock.Anything).Return([]database.Ldc{}, nil)
 	mockQuerier.On("GetDisabledEquipments", mock.Anything).Return([]database.Equipment{}, nil)
 	mockQuerier.On("GetGDCsWithoutWrite", mock.Anything).Return([]database.Gdc{}, nil)
+	mockQuerier.On("GetDecoderParams", mock.Anything).Return(decoderParamsWriting(false), nil)
 
 	server := NewDuckAPIServerWithQuerier(mockQuerier, "", "", false)
 	req := connect.NewRequest(&pb.CheckDisabledRequest{})
@@ -109,6 +117,7 @@ func TestCheckDisabled_DisabledLDCs(t *testing.T) {
 	mockQuerier.On("GetDisabledLDCs", mock.Anything).Return(disabledLDCs, nil)
 	mockQuerier.On("GetDisabledEquipments", mock.Anything).Return([]database.Equipment{}, nil)
 	mockQuerier.On("GetGDCsWithoutWrite", mock.Anything).Return([]database.Gdc{}, nil)
+	mockQuerier.On("GetDecoderParams", mock.Anything).Return(decoderParamsWriting(false), nil)
 
 	server := NewDuckAPIServerWithQuerier(mockQuerier, "", "", false)
 	req := connect.NewRequest(&pb.CheckDisabledRequest{})
@@ -144,6 +153,7 @@ func TestCheckDisabled_DisabledEquipments(t *testing.T) {
 	mockQuerier.On("GetDisabledLDCs", mock.Anything).Return([]database.Ldc{}, nil)
 	mockQuerier.On("GetDisabledEquipments", mock.Anything).Return(disabledEquipments, nil)
 	mockQuerier.On("GetGDCsWithoutWrite", mock.Anything).Return([]database.Gdc{}, nil)
+	mockQuerier.On("GetDecoderParams", mock.Anything).Return(decoderParamsWriting(false), nil)
 
 	server := NewDuckAPIServerWithQuerier(mockQuerier, "", "", false)
 	req := connect.NewRequest(&pb.CheckDisabledRequest{})
@@ -183,6 +193,7 @@ func TestCheckDisabled_DisabledWriting(t *testing.T) {
 	mockQuerier.On("GetDisabledLDCs", mock.Anything).Return([]database.Ldc{}, nil)
 	mockQuerier.On("GetDisabledEquipments", mock.Anything).Return([]database.Equipment{}, nil)
 	mockQuerier.On("GetGDCsWithoutWrite", mock.Anything).Return(gdcsWithoutWrite, nil)
+	mockQuerier.On("GetDecoderParams", mock.Anything).Return(decoderParamsWriting(false), nil)
 
 	server := NewDuckAPIServerWithQuerier(mockQuerier, "", "", false)
 	req := connect.NewRequest(&pb.CheckDisabledRequest{})
@@ -194,6 +205,129 @@ func TestCheckDisabled_DisabledWriting(t *testing.T) {
 	assert.Empty(t, resp.Msg.Warnings.Gdcs)
 	assert.Empty(t, resp.Msg.Warnings.Ldcs)
 	assert.Empty(t, resp.Msg.Warnings.Equipments)
+	assert.Len(t, resp.Msg.Warnings.Writing, 1)
+	assert.Contains(t, resp.Msg.Warnings.Writing, "gdc1")
+	mockQuerier.AssertExpectations(t)
+}
+
+func TestCheckDisabled_WriteOutputDisabled_DecoderWriting_NoWarning(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+
+	// GDC has writeOutput=false but decode=true, and decoder write_data=true → no warning
+	gdcsWithoutWrite := []database.Gdc{
+		{
+			ID:          1,
+			Name:        sql.NullString{String: "gdc1", Valid: true},
+			Enabled:     sql.NullBool{Bool: true, Valid: true},
+			Writeoutput: sql.NullBool{Bool: false, Valid: true},
+			Decode:      sql.NullBool{Bool: true, Valid: true},
+		},
+	}
+
+	mockQuerier.On("GetDisabledGDCs", mock.Anything).Return([]database.Gdc{}, nil)
+	mockQuerier.On("GetDisabledLDCs", mock.Anything).Return([]database.Ldc{}, nil)
+	mockQuerier.On("GetDisabledEquipments", mock.Anything).Return([]database.Equipment{}, nil)
+	mockQuerier.On("GetGDCsWithoutWrite", mock.Anything).Return(gdcsWithoutWrite, nil)
+	mockQuerier.On("GetDecoderParams", mock.Anything).Return(decoderParamsWriting(true), nil)
+
+	server := NewDuckAPIServerWithQuerier(mockQuerier, "", "", false)
+	req := connect.NewRequest(&pb.CheckDisabledRequest{})
+
+	resp, err := server.CheckDisabled(context.Background(), req)
+
+	require.NoError(t, err)
+	assert.Empty(t, resp.Msg.Warnings.Writing)
+	mockQuerier.AssertExpectations(t)
+}
+
+func TestCheckDisabled_WriteOutputDisabled_DecodeDisabled_Warning(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+
+	// GDC has writeOutput=false and decode=false → warn even if decoder write_data=true
+	gdcsWithoutWrite := []database.Gdc{
+		{
+			ID:          1,
+			Name:        sql.NullString{String: "gdc1", Valid: true},
+			Enabled:     sql.NullBool{Bool: true, Valid: true},
+			Writeoutput: sql.NullBool{Bool: false, Valid: true},
+			Decode:      sql.NullBool{Bool: false, Valid: true},
+		},
+	}
+
+	mockQuerier.On("GetDisabledGDCs", mock.Anything).Return([]database.Gdc{}, nil)
+	mockQuerier.On("GetDisabledLDCs", mock.Anything).Return([]database.Ldc{}, nil)
+	mockQuerier.On("GetDisabledEquipments", mock.Anything).Return([]database.Equipment{}, nil)
+	mockQuerier.On("GetGDCsWithoutWrite", mock.Anything).Return(gdcsWithoutWrite, nil)
+	mockQuerier.On("GetDecoderParams", mock.Anything).Return(decoderParamsWriting(true), nil)
+
+	server := NewDuckAPIServerWithQuerier(mockQuerier, "", "", false)
+	req := connect.NewRequest(&pb.CheckDisabledRequest{})
+
+	resp, err := server.CheckDisabled(context.Background(), req)
+
+	require.NoError(t, err)
+	assert.Len(t, resp.Msg.Warnings.Writing, 1)
+	assert.Contains(t, resp.Msg.Warnings.Writing, "gdc1")
+	mockQuerier.AssertExpectations(t)
+}
+
+func TestCheckDisabled_WriteOutputDisabled_DecoderNotWriting_Warning(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+
+	// GDC has writeOutput=false, decode=true, but decoder write_data=false → warn
+	gdcsWithoutWrite := []database.Gdc{
+		{
+			ID:          1,
+			Name:        sql.NullString{String: "gdc1", Valid: true},
+			Enabled:     sql.NullBool{Bool: true, Valid: true},
+			Writeoutput: sql.NullBool{Bool: false, Valid: true},
+			Decode:      sql.NullBool{Bool: true, Valid: true},
+		},
+	}
+
+	mockQuerier.On("GetDisabledGDCs", mock.Anything).Return([]database.Gdc{}, nil)
+	mockQuerier.On("GetDisabledLDCs", mock.Anything).Return([]database.Ldc{}, nil)
+	mockQuerier.On("GetDisabledEquipments", mock.Anything).Return([]database.Equipment{}, nil)
+	mockQuerier.On("GetGDCsWithoutWrite", mock.Anything).Return(gdcsWithoutWrite, nil)
+	mockQuerier.On("GetDecoderParams", mock.Anything).Return(decoderParamsWriting(false), nil)
+
+	server := NewDuckAPIServerWithQuerier(mockQuerier, "", "", false)
+	req := connect.NewRequest(&pb.CheckDisabledRequest{})
+
+	resp, err := server.CheckDisabled(context.Background(), req)
+
+	require.NoError(t, err)
+	assert.Len(t, resp.Msg.Warnings.Writing, 1)
+	assert.Contains(t, resp.Msg.Warnings.Writing, "gdc1")
+	mockQuerier.AssertExpectations(t)
+}
+
+func TestCheckDisabled_WriteOutputDisabled_NoDecoderParams_Warning(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+
+	// GDC has writeOutput=false and no decoder params in DB → warn
+	gdcsWithoutWrite := []database.Gdc{
+		{
+			ID:          1,
+			Name:        sql.NullString{String: "gdc1", Valid: true},
+			Enabled:     sql.NullBool{Bool: true, Valid: true},
+			Writeoutput: sql.NullBool{Bool: false, Valid: true},
+			Decode:      sql.NullBool{Bool: true, Valid: true},
+		},
+	}
+
+	mockQuerier.On("GetDisabledGDCs", mock.Anything).Return([]database.Gdc{}, nil)
+	mockQuerier.On("GetDisabledLDCs", mock.Anything).Return([]database.Ldc{}, nil)
+	mockQuerier.On("GetDisabledEquipments", mock.Anything).Return([]database.Equipment{}, nil)
+	mockQuerier.On("GetGDCsWithoutWrite", mock.Anything).Return(gdcsWithoutWrite, nil)
+	mockQuerier.On("GetDecoderParams", mock.Anything).Return(database.Decoderparam{}, sql.ErrNoRows)
+
+	server := NewDuckAPIServerWithQuerier(mockQuerier, "", "", false)
+	req := connect.NewRequest(&pb.CheckDisabledRequest{})
+
+	resp, err := server.CheckDisabled(context.Background(), req)
+
+	require.NoError(t, err)
 	assert.Len(t, resp.Msg.Warnings.Writing, 1)
 	assert.Contains(t, resp.Msg.Warnings.Writing, "gdc1")
 	mockQuerier.AssertExpectations(t)

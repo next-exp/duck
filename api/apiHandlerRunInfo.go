@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 
 	"connectrpc.com/connect"
@@ -61,7 +63,18 @@ func (s *DuckAPIServer) CheckDisabled(ctx context.Context, req *connect.Request[
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("database error: %w", err))
 	}
+
+	decoderParams, err := s.queries.GetDecoderParams(ctx)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return nil, connect.NewError(connect.CodeInternal, fmt.Errorf("database error: %w", err))
+	}
+	decoderWriting := err == nil && decoderParams.WriteData.Bool
+
 	for _, gdc := range gdcsWithoutWrite {
+		// Skip if the decoder is writing HDF5 files for this GDC
+		if gdc.Decode.Bool && decoderWriting {
+			continue
+		}
 		warnings.Writing = append(warnings.Writing, gdc.Name.String)
 	}
 
