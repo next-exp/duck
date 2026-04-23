@@ -39,12 +39,12 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - frontend_dist:/var/www/html:ro
-    networks:
-      - daq_ctrl
-    depends_on:
-      - frontend
-      - api
-      - centrifugo
+    #networks:
+    #  - daq_ctrl
+    #depends_on:
+    #  - frontend
+    #  - api
+    #  - centrifugo
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:9090/health"]
       interval: 10s

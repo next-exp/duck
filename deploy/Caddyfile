@@ -25,9 +25,15 @@
 
     # ---- API ROUTES ----
 
-    # ConnectRPC Backend API - strip /duck_api prefix and proxy to api service
-    handle /duck_api/* {
-        uri strip_prefix /duck_api
+    # ConnectRPC Backend API
+    # Frontend uses VITE_API_SERVER=/daq/duck_api, so requests arrive as:
+    #   /daq/duck_api/apiService.DuckAPI/GetToken
+    # Backend mounts at /daq/apiService.DuckAPI/ (server.go:103), so it expects:
+    #   /daq/apiService.DuckAPI/GetToken
+    # Regex strips /duck_api from the middle, preserving the /daq prefix.
+    @duck_api path_regexp duck_api ^/daq/duck_api(.*)$
+    handle @duck_api {
+        rewrite * /daq{re.duck_api.1}
         reverse_proxy {$API_HOST:api}:1323 {
             transport http {
                 read_timeout 300s
@@ -41,7 +47,10 @@
     # ---- WEBSOCKET ROUTES ----
 
     # Centrifugo WebSocket endpoint
-    handle /connection/websocket {
+    # When VITE_WS_SERVER is unset, the frontend auto-detects ws://host/daq/connection/websocket
+    # Centrifugo expects /connection/websocket, so strip the /daq prefix before proxying.
+    handle /daq/connection/websocket {
+        uri strip_prefix /daq
         reverse_proxy {$CENTRIFUGO_HOST:centrifugo}:8000 {
             header_up Host {host}
             header_up X-Real-IP {remote_host}
