@@ -77,10 +77,10 @@ func addEquipmentHeader(logger duck.DuckLogger, subevent []byte, equipment duck.
 	// Copy remaining bytes (0-3 bytes) without endianness flip
 	remainder := len(subevent) % 4
 	if remainder > 0 {
-		logger.Slog.Error("Non-word-aligned equipment data",
-			"equipment_id", equipment.ID,
-			"data_size", len(subevent),
-			"remainder_bytes", remainder)
+		//		logger.Slog.Error("Non-word-aligned equipment data",
+		//			"equipment_id", equipment.ID,
+		//			"data_size", len(subevent),
+		//			"remainder_bytes", remainder)
 		copy(equipmentData[28+numWords*4:28+numWords*4+remainder], subevent[numWords*4:])
 	}
 
