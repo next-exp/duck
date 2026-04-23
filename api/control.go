@@ -36,7 +36,7 @@ func startProcesses(s *DuckAPIServer) {
 
 	// Wait for GDCs to start their TCP data listeners before starting LDCs
 	// GDCs need time to: receive StartRun, start goroutine, read DB config, and listen on TCP port
-	time.Sleep(3 * time.Second)
+	time.Sleep(1 * time.Second)
 
 	success = startLDCs(enabledLDCs, s.rpcClient)
 	if !success {
