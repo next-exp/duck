@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+
+const enableTestDevices = import.meta.env.VITE_ENABLE_TEST_DEVICES === 'true'
 </script>
 
 <template>
@@ -17,7 +19,7 @@ import { RouterLink, RouterView } from 'vue-router'
             <li>
               <RouterLink to="/detector">Configuration</RouterLink>
             </li>
-            <li>
+            <li v-if="enableTestDevices">
               <RouterLink to="/test-devices">Test Devices</RouterLink>
             </li>
           </ul>

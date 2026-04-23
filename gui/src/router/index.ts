@@ -8,7 +8,9 @@ const router = createRouter({
   routes: [
     { path: '/', name: 'home', component: HomeView },
     { path: '/detector', name: 'detector', component: DetectorView },
-    { path: '/test-devices', name: 'test-devices', component: TestDevicesView },
+    ...(import.meta.env.VITE_ENABLE_TEST_DEVICES === 'true'
+      ? [{ path: '/test-devices', name: 'test-devices', component: TestDevicesView }]
+      : []),
   ]
 })
 
