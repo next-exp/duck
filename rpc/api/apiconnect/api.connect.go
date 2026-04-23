@@ -44,6 +44,9 @@ const (
 	DuckAPIGetProcessStatesProcedure = "/apiService.DuckAPI/GetProcessStates"
 	// DuckAPIRestartServicesProcedure is the fully-qualified name of the DuckAPI's RestartServices RPC.
 	DuckAPIRestartServicesProcedure = "/apiService.DuckAPI/RestartServices"
+	// DuckAPIGetRunTransitionStatusProcedure is the fully-qualified name of the DuckAPI's
+	// GetRunTransitionStatus RPC.
+	DuckAPIGetRunTransitionStatusProcedure = "/apiService.DuckAPI/GetRunTransitionStatus"
 	// DuckAPICreateGDCProcedure is the fully-qualified name of the DuckAPI's CreateGDC RPC.
 	DuckAPICreateGDCProcedure = "/apiService.DuckAPI/CreateGDC"
 	// DuckAPIGetGDCsProcedure is the fully-qualified name of the DuckAPI's GetGDCs RPC.
@@ -109,6 +112,7 @@ type DuckAPIClient interface {
 	ForceStopRun(context.Context, *connect.Request[api.ForceStopRunRequest]) (*connect.Response[api.ForceStopRunResponse], error)
 	GetProcessStates(context.Context, *connect.Request[api.GetProcessStatesRequest]) (*connect.Response[api.GetProcessStatesResponse], error)
 	RestartServices(context.Context, *connect.Request[api.RestartServicesRequest]) (*connect.Response[api.RestartServicesResponse], error)
+	GetRunTransitionStatus(context.Context, *connect.Request[api.GetRunTransitionStatusRequest]) (*connect.Response[api.GetRunTransitionStatusResponse], error)
 	// GDC Management
 	CreateGDC(context.Context, *connect.Request[api.CreateGDCRequest]) (*connect.Response[api.CreateGDCResponse], error)
 	GetGDCs(context.Context, *connect.Request[api.GetGDCsRequest]) (*connect.Response[api.GetGDCsResponse], error)
@@ -182,6 +186,12 @@ func NewDuckAPIClient(httpClient connect.HTTPClient, baseURL string, opts ...con
 			httpClient,
 			baseURL+DuckAPIRestartServicesProcedure,
 			connect.WithSchema(duckAPIMethods.ByName("RestartServices")),
+			connect.WithClientOptions(opts...),
+		),
+		getRunTransitionStatus: connect.NewClient[api.GetRunTransitionStatusRequest, api.GetRunTransitionStatusResponse](
+			httpClient,
+			baseURL+DuckAPIGetRunTransitionStatusProcedure,
+			connect.WithSchema(duckAPIMethods.ByName("GetRunTransitionStatus")),
 			connect.WithClientOptions(opts...),
 		),
 		createGDC: connect.NewClient[api.CreateGDCRequest, api.CreateGDCResponse](
@@ -344,6 +354,7 @@ type duckAPIClient struct {
 	forceStopRun               *connect.Client[api.ForceStopRunRequest, api.ForceStopRunResponse]
 	getProcessStates           *connect.Client[api.GetProcessStatesRequest, api.GetProcessStatesResponse]
 	restartServices            *connect.Client[api.RestartServicesRequest, api.RestartServicesResponse]
+	getRunTransitionStatus     *connect.Client[api.GetRunTransitionStatusRequest, api.GetRunTransitionStatusResponse]
 	createGDC                  *connect.Client[api.CreateGDCRequest, api.CreateGDCResponse]
 	getGDCs                    *connect.Client[api.GetGDCsRequest, api.GetGDCsResponse]
 	getGDC                     *connect.Client[api.GetGDCRequest, api.GetGDCResponse]
@@ -394,6 +405,11 @@ func (c *duckAPIClient) GetProcessStates(ctx context.Context, req *connect.Reque
 // RestartServices calls apiService.DuckAPI.RestartServices.
 func (c *duckAPIClient) RestartServices(ctx context.Context, req *connect.Request[api.RestartServicesRequest]) (*connect.Response[api.RestartServicesResponse], error) {
 	return c.restartServices.CallUnary(ctx, req)
+}
+
+// GetRunTransitionStatus calls apiService.DuckAPI.GetRunTransitionStatus.
+func (c *duckAPIClient) GetRunTransitionStatus(ctx context.Context, req *connect.Request[api.GetRunTransitionStatusRequest]) (*connect.Response[api.GetRunTransitionStatusResponse], error) {
+	return c.getRunTransitionStatus.CallUnary(ctx, req)
 }
 
 // CreateGDC calls apiService.DuckAPI.CreateGDC.
@@ -529,6 +545,7 @@ type DuckAPIHandler interface {
 	ForceStopRun(context.Context, *connect.Request[api.ForceStopRunRequest]) (*connect.Response[api.ForceStopRunResponse], error)
 	GetProcessStates(context.Context, *connect.Request[api.GetProcessStatesRequest]) (*connect.Response[api.GetProcessStatesResponse], error)
 	RestartServices(context.Context, *connect.Request[api.RestartServicesRequest]) (*connect.Response[api.RestartServicesResponse], error)
+	GetRunTransitionStatus(context.Context, *connect.Request[api.GetRunTransitionStatusRequest]) (*connect.Response[api.GetRunTransitionStatusResponse], error)
 	// GDC Management
 	CreateGDC(context.Context, *connect.Request[api.CreateGDCRequest]) (*connect.Response[api.CreateGDCResponse], error)
 	GetGDCs(context.Context, *connect.Request[api.GetGDCsRequest]) (*connect.Response[api.GetGDCsResponse], error)
@@ -598,6 +615,12 @@ func NewDuckAPIHandler(svc DuckAPIHandler, opts ...connect.HandlerOption) (strin
 		DuckAPIRestartServicesProcedure,
 		svc.RestartServices,
 		connect.WithSchema(duckAPIMethods.ByName("RestartServices")),
+		connect.WithHandlerOptions(opts...),
+	)
+	duckAPIGetRunTransitionStatusHandler := connect.NewUnaryHandler(
+		DuckAPIGetRunTransitionStatusProcedure,
+		svc.GetRunTransitionStatus,
+		connect.WithSchema(duckAPIMethods.ByName("GetRunTransitionStatus")),
 		connect.WithHandlerOptions(opts...),
 	)
 	duckAPICreateGDCHandler := connect.NewUnaryHandler(
@@ -762,6 +785,8 @@ func NewDuckAPIHandler(svc DuckAPIHandler, opts ...connect.HandlerOption) (strin
 			duckAPIGetProcessStatesHandler.ServeHTTP(w, r)
 		case DuckAPIRestartServicesProcedure:
 			duckAPIRestartServicesHandler.ServeHTTP(w, r)
+		case DuckAPIGetRunTransitionStatusProcedure:
+			duckAPIGetRunTransitionStatusHandler.ServeHTTP(w, r)
 		case DuckAPICreateGDCProcedure:
 			duckAPICreateGDCHandler.ServeHTTP(w, r)
 		case DuckAPIGetGDCsProcedure:
@@ -839,6 +864,10 @@ func (UnimplementedDuckAPIHandler) GetProcessStates(context.Context, *connect.Re
 
 func (UnimplementedDuckAPIHandler) RestartServices(context.Context, *connect.Request[api.RestartServicesRequest]) (*connect.Response[api.RestartServicesResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("apiService.DuckAPI.RestartServices is not implemented"))
+}
+
+func (UnimplementedDuckAPIHandler) GetRunTransitionStatus(context.Context, *connect.Request[api.GetRunTransitionStatusRequest]) (*connect.Response[api.GetRunTransitionStatusResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("apiService.DuckAPI.GetRunTransitionStatus is not implemented"))
 }
 
 func (UnimplementedDuckAPIHandler) CreateGDC(context.Context, *connect.Request[api.CreateGDCRequest]) (*connect.Response[api.CreateGDCResponse], error) {

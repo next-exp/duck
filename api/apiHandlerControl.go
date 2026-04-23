@@ -10,7 +10,18 @@ import (
 // ===== Run Control Operations =====
 
 func (s *DuckAPIServer) StartRun(ctx context.Context, req *connect.Request[pb.StartRunRequest]) (*connect.Response[pb.StartRunResponse], error) {
-	startProcesses(s)
+	ok, conflictMsg := s.runTransition.tryBeginStart()
+	if !ok {
+		return connect.NewResponse(&pb.StartRunResponse{
+			Success: false,
+			Message: conflictMsg,
+		}), nil
+	}
+	go func() {
+		defer recoverToError(&s.runTransition)
+		startProcesses(s)
+		s.runTransition.setDone()
+	}()
 	return connect.NewResponse(&pb.StartRunResponse{
 		Success: true,
 		Message: "starting processes",
@@ -18,7 +29,18 @@ func (s *DuckAPIServer) StartRun(ctx context.Context, req *connect.Request[pb.St
 }
 
 func (s *DuckAPIServer) StopRun(ctx context.Context, req *connect.Request[pb.StopRunRequest]) (*connect.Response[pb.StopRunResponse], error) {
-	stopProcesses(s)
+	ok, conflictMsg := s.runTransition.tryBeginStop()
+	if !ok {
+		return connect.NewResponse(&pb.StopRunResponse{
+			Success: false,
+			Message: conflictMsg,
+		}), nil
+	}
+	go func() {
+		defer recoverToError(&s.runTransition)
+		stopProcesses(s)
+		s.runTransition.setDone()
+	}()
 	return connect.NewResponse(&pb.StopRunResponse{
 		Success: true,
 		Message: "stopping processes",
@@ -46,5 +68,13 @@ func (s *DuckAPIServer) RestartServices(ctx context.Context, req *connect.Reques
 	return connect.NewResponse(&pb.RestartServicesResponse{
 		Success: true,
 		Message: "restarting services",
+	}), nil
+}
+
+func (s *DuckAPIServer) GetRunTransitionStatus(ctx context.Context, req *connect.Request[pb.GetRunTransitionStatusRequest]) (*connect.Response[pb.GetRunTransitionStatusResponse], error) {
+	state, errMsg := s.runTransition.Status()
+	return connect.NewResponse(&pb.GetRunTransitionStatusResponse{
+		State:   stateString(state),
+		Message: errMsg,
 	}), nil
 }

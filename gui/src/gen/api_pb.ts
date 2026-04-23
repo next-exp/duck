@@ -426,6 +426,80 @@ export class RestartServicesResponse extends Message<RestartServicesResponse> {
 }
 
 /**
+ * @generated from message apiService.GetRunTransitionStatusRequest
+ */
+export class GetRunTransitionStatusRequest extends Message<GetRunTransitionStatusRequest> {
+  constructor(data?: PartialMessage<GetRunTransitionStatusRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.GetRunTransitionStatusRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetRunTransitionStatusRequest {
+    return new GetRunTransitionStatusRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetRunTransitionStatusRequest {
+    return new GetRunTransitionStatusRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetRunTransitionStatusRequest {
+    return new GetRunTransitionStatusRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetRunTransitionStatusRequest | PlainMessage<GetRunTransitionStatusRequest> | undefined, b: GetRunTransitionStatusRequest | PlainMessage<GetRunTransitionStatusRequest> | undefined): boolean {
+    return proto3.util.equals(GetRunTransitionStatusRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message apiService.GetRunTransitionStatusResponse
+ */
+export class GetRunTransitionStatusResponse extends Message<GetRunTransitionStatusResponse> {
+  /**
+   * @generated from field: string state = 1;
+   */
+  state = "";
+
+  /**
+   * @generated from field: string message = 2;
+   */
+  message = "";
+
+  constructor(data?: PartialMessage<GetRunTransitionStatusResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.GetRunTransitionStatusResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "message", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetRunTransitionStatusResponse {
+    return new GetRunTransitionStatusResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetRunTransitionStatusResponse {
+    return new GetRunTransitionStatusResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetRunTransitionStatusResponse {
+    return new GetRunTransitionStatusResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetRunTransitionStatusResponse | PlainMessage<GetRunTransitionStatusResponse> | undefined, b: GetRunTransitionStatusResponse | PlainMessage<GetRunTransitionStatusResponse> | undefined): boolean {
+    return proto3.util.equals(GetRunTransitionStatusResponse, a, b);
+  }
+}
+
+/**
  * @generated from message apiService.GDC
  */
 export class GDC extends Message<GDC> {

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"testing"
+	"time"
 
 	duck "github.com/jmbenlloch/next_duck/pkg"
 	pb "github.com/jmbenlloch/next_duck/rpc/api"
@@ -79,11 +80,14 @@ func TestStartRun(t *testing.T) {
 	// Execute
 	resp, err := server.StartRun(context.Background(), req)
 
-	// Assert - handler returns valid response
+	// Assert - handler returns immediately
 	require.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.True(t, resp.Msg.Success)
 	assert.Equal(t, "starting processes", resp.Msg.Message)
+
+	// Wait for background goroutine to complete
+	require.True(t, server.runTransition.WaitForIdle(5*time.Second), "start goroutine did not finish in time")
 
 	// Assert - StartRun should have called Ping (via sendPingToAllLDCs)
 	// and StartServer (via startGDCs/startLDCs)
@@ -127,14 +131,116 @@ func TestStopRun(t *testing.T) {
 	// Execute
 	resp, err := server.StopRun(context.Background(), req)
 
-	// Assert - handler returns valid response
+	// Assert - handler returns immediately
 	require.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.True(t, resp.Msg.Success)
 	assert.Equal(t, "stopping processes", resp.Msg.Message)
 
+	// Wait for background goroutine to complete
+	require.True(t, server.runTransition.WaitForIdle(5*time.Second), "stop goroutine did not finish in time")
+
 	// Assert - StopRun should have called StopServer (via stopLDCs)
 	assert.Greater(t, mockRPC.StopServerCalledCount(), 0, "StopRun should stop LDCs")
+}
+
+func TestStopRun_AlreadyStopping(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+	stopped := make(chan struct{})
+	mockRPC := &MockRPCClient{
+		StopServerFunc: func(ctx context.Context, ip string, port int) error {
+			<-stopped // block until test releases it
+			return nil
+		},
+	}
+
+	server := NewDuckAPIServerWithMocks(mockQuerier, mockRPC, "test_config.yml", "test_token", false)
+	logger = duck.NewDuckLogger("test", nil, 0)
+
+	mockQuerier.On("GetLatestRun", mock.Anything).Return(int32(1), nil).Maybe()
+	mockQuerier.On("ListGDCs", mock.Anything).Return(getTestGDCs(), nil).Maybe()
+	mockQuerier.On("ListLDCs", mock.Anything).Return(getTestLDCs(), nil).Maybe()
+	mockQuerier.On("ListEquipments", mock.Anything).Return([]database.Equipment{}, nil).Maybe()
+	mockQuerier.On("GetDuckParams", mock.Anything).Return(database.Duckparam{}, nil).Maybe()
+	mockQuerier.On("GetDecoderParams", mock.Anything).Return(database.Decoderparam{}, nil).Maybe()
+	mockQuerier.On("GetTestDeviceParams", mock.Anything).Return([]database.Testdeviceparam{}, nil).Maybe()
+	mockQuerier.On("GetLatestRunWithTimestamp", mock.Anything).Return(database.Run{ID: 1, Start: sql.NullTime{Valid: true}, Stop: sql.NullTime{Valid: false}}, nil).Maybe()
+	mockQuerier.On("UpdateRunStopTime", mock.Anything, mock.Anything).Return(nil).Maybe()
+	mockQuerier.On("InsertGDCEvents", mock.Anything, mock.Anything).Return(nil).Maybe()
+	mockQuerier.On("InsertGDCBytes", mock.Anything, mock.Anything).Return(nil).Maybe()
+	mockQuerier.On("InsertGDCErrorCount", mock.Anything, mock.Anything).Return(nil).Maybe()
+	mockQuerier.On("InsertLDCEvents", mock.Anything, mock.Anything).Return(nil).Maybe()
+	mockQuerier.On("InsertLDCBytes", mock.Anything, mock.Anything).Return(nil).Maybe()
+	mockQuerier.On("InsertLDCErrorCount", mock.Anything, mock.Anything).Return(nil).Maybe()
+	mockQuerier.On("InsertNewRun", mock.Anything).Return(nil).Maybe()
+
+	// First call — starts a goroutine that is blocked on StopServer
+	resp1, err := server.StopRun(context.Background(), connect.NewRequest(&pb.StopRunRequest{}))
+	require.NoError(t, err)
+	assert.True(t, resp1.Msg.Success)
+
+	// Second call — should be rejected because stop is in progress
+	resp2, err := server.StopRun(context.Background(), connect.NewRequest(&pb.StopRunRequest{}))
+	require.NoError(t, err)
+	assert.False(t, resp2.Msg.Success)
+	assert.Equal(t, "stop already in progress", resp2.Msg.Message)
+
+	// Release the blocked goroutine and wait for it to finish
+	close(stopped)
+	require.True(t, server.runTransition.WaitForIdle(5*time.Second))
+}
+
+func TestStartRun_AlreadyStarting(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+	started := make(chan struct{})
+	mockRPC := &MockRPCClient{
+		PingFunc: func(ctx context.Context, ip string, port int) (bool, error) {
+			<-started // block until test releases it
+			return true, nil
+		},
+	}
+
+	server := NewDuckAPIServerWithMocks(mockQuerier, mockRPC, "test_config.yml", "test_token", false)
+	logger = duck.NewDuckLogger("test", nil, 0)
+
+	mockQuerier.On("GetLatestRun", mock.Anything).Return(int32(1), nil).Maybe()
+	mockQuerier.On("ListGDCs", mock.Anything).Return(getTestGDCs(), nil).Maybe()
+	mockQuerier.On("ListLDCs", mock.Anything).Return(getTestLDCs(), nil).Maybe()
+	mockQuerier.On("ListEquipments", mock.Anything).Return([]database.Equipment{}, nil).Maybe()
+	mockQuerier.On("GetDuckParams", mock.Anything).Return(database.Duckparam{}, nil).Maybe()
+	mockQuerier.On("GetDecoderParams", mock.Anything).Return(database.Decoderparam{}, nil).Maybe()
+	mockQuerier.On("GetTestDeviceParams", mock.Anything).Return([]database.Testdeviceparam{}, nil).Maybe()
+	mockQuerier.On("GetLatestRunWithTimestamp", mock.Anything).Return(database.Run{ID: 1, Start: sql.NullTime{Valid: true}}, nil).Maybe()
+	mockQuerier.On("UpdateRunStartTime", mock.Anything, mock.Anything).Return(nil).Maybe()
+
+	// First call — starts a goroutine blocked on Ping
+	resp1, err := server.StartRun(context.Background(), connect.NewRequest(&pb.StartRunRequest{}))
+	require.NoError(t, err)
+	assert.True(t, resp1.Msg.Success)
+
+	// Second call — should be rejected because start is in progress
+	resp2, err := server.StartRun(context.Background(), connect.NewRequest(&pb.StartRunRequest{}))
+	require.NoError(t, err)
+	assert.False(t, resp2.Msg.Success)
+	assert.Equal(t, "start already in progress", resp2.Msg.Message)
+
+	// Release and clean up
+	close(started)
+	server.runTransition.WaitForIdle(5 * time.Second)
+}
+
+// ===== GetRunTransitionStatus Handler Tests =====
+
+func TestGetRunTransitionStatus_Idle(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+	mockRPC := &MockRPCClient{}
+	server := NewDuckAPIServerWithMocks(mockQuerier, mockRPC, "test_config.yml", "test_token", false)
+	logger = duck.NewDuckLogger("test", nil, 0)
+
+	resp, err := server.GetRunTransitionStatus(context.Background(), connect.NewRequest(&pb.GetRunTransitionStatusRequest{}))
+	require.NoError(t, err)
+	assert.Equal(t, "idle", resp.Msg.State)
+	assert.Empty(t, resp.Msg.Message)
 }
 
 // ===== ForceStopRun Handler Tests =====

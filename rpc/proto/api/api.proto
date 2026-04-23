@@ -10,6 +10,7 @@ service DuckAPI {
   rpc ForceStopRun(ForceStopRunRequest) returns (ForceStopRunResponse) {}
   rpc GetProcessStates(GetProcessStatesRequest) returns (GetProcessStatesResponse) {}
   rpc RestartServices(RestartServicesRequest) returns (RestartServicesResponse) {}
+  rpc GetRunTransitionStatus(GetRunTransitionStatusRequest) returns (GetRunTransitionStatusResponse) {}
 
   // GDC Management
   rpc CreateGDC(CreateGDCRequest) returns (CreateGDCResponse) {}
@@ -88,6 +89,12 @@ message GetProcessStatesResponse {
 message RestartServicesRequest {}
 message RestartServicesResponse {
   bool success = 1;
+  string message = 2;
+}
+
+message GetRunTransitionStatusRequest {}
+message GetRunTransitionStatusResponse {
+  string state   = 1;
   string message = 2;
 }
 

@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CheckDisabledRequest, CheckDisabledResponse, CreateEquipmentRequest, CreateEquipmentResponse, CreateGDCRequest, CreateGDCResponse, CreateLDCRequest, CreateLDCResponse, DeleteEquipmentRequest, DeleteEquipmentResponse, DeleteGDCRequest, DeleteGDCResponse, DeleteLDCRequest, DeleteLDCResponse, ForceStopRunRequest, ForceStopRunResponse, GetDecoderConfigurationRequest, GetDecoderConfigurationResponse, GetEquipmentRequest, GetEquipmentResponse, GetEquipmentsRequest, GetEquipmentsResponse, GetGDCRequest, GetGDCResponse, GetGDCsRequest, GetGDCsResponse, GetLDCRequest, GetLDCResponse, GetLDCsRequest, GetLDCsResponse, GetProcessStatesRequest, GetProcessStatesResponse, GetRunNumberRequest, GetRunNumberResponse, GetTestDevicesStatesRequest, GetTestDevicesStatesResponse, GetTestDeviceStatisticsRequest, GetTestDeviceStatisticsResponse, GetTokenRequest, GetTokenResponse, ListTestDevicesRequest, ListTestDevicesResponse, RestartServicesRequest, RestartServicesResponse, StartRunRequest, StartRunResponse, StartTestDevicesRequest, StartTestDevicesResponse, StopRunRequest, StopRunResponse, StopTestDevicesRequest, StopTestDevicesResponse, UpdateDecoderConfigurationRequest, UpdateDecoderConfigurationResponse, UpdateEquipmentRequest, UpdateEquipmentResponse, UpdateGDCRequest, UpdateGDCResponse, UpdateLDCRequest, UpdateLDCResponse } from "./api_pb.js";
+import { CheckDisabledRequest, CheckDisabledResponse, CreateEquipmentRequest, CreateEquipmentResponse, CreateGDCRequest, CreateGDCResponse, CreateLDCRequest, CreateLDCResponse, DeleteEquipmentRequest, DeleteEquipmentResponse, DeleteGDCRequest, DeleteGDCResponse, DeleteLDCRequest, DeleteLDCResponse, ForceStopRunRequest, ForceStopRunResponse, GetDecoderConfigurationRequest, GetDecoderConfigurationResponse, GetEquipmentRequest, GetEquipmentResponse, GetEquipmentsRequest, GetEquipmentsResponse, GetGDCRequest, GetGDCResponse, GetGDCsRequest, GetGDCsResponse, GetLDCRequest, GetLDCResponse, GetLDCsRequest, GetLDCsResponse, GetProcessStatesRequest, GetProcessStatesResponse, GetRunNumberRequest, GetRunNumberResponse, GetRunTransitionStatusRequest, GetRunTransitionStatusResponse, GetTestDevicesStatesRequest, GetTestDevicesStatesResponse, GetTestDeviceStatisticsRequest, GetTestDeviceStatisticsResponse, GetTokenRequest, GetTokenResponse, ListTestDevicesRequest, ListTestDevicesResponse, RestartServicesRequest, RestartServicesResponse, StartRunRequest, StartRunResponse, StartTestDevicesRequest, StartTestDevicesResponse, StopRunRequest, StopRunResponse, StopTestDevicesRequest, StopTestDevicesResponse, UpdateDecoderConfigurationRequest, UpdateDecoderConfigurationResponse, UpdateEquipmentRequest, UpdateEquipmentResponse, UpdateGDCRequest, UpdateGDCResponse, UpdateLDCRequest, UpdateLDCResponse } from "./api_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -59,6 +59,15 @@ export const DuckAPI = {
       name: "RestartServices",
       I: RestartServicesRequest,
       O: RestartServicesResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc apiService.DuckAPI.GetRunTransitionStatus
+     */
+    getRunTransitionStatus: {
+      name: "GetRunTransitionStatus",
+      I: GetRunTransitionStatusRequest,
+      O: GetRunTransitionStatusResponse,
       kind: MethodKind.Unary,
     },
     /**

@@ -521,6 +521,94 @@ func (x *RestartServicesResponse) GetMessage() string {
 	return ""
 }
 
+type GetRunTransitionStatusRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRunTransitionStatusRequest) Reset() {
+	*x = GetRunTransitionStatusRequest{}
+	mi := &file_api_proto_msgTypes[11]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRunTransitionStatusRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRunTransitionStatusRequest) ProtoMessage() {}
+
+func (x *GetRunTransitionStatusRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[11]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRunTransitionStatusRequest.ProtoReflect.Descriptor instead.
+func (*GetRunTransitionStatusRequest) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{11}
+}
+
+type GetRunTransitionStatusResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	State         string                 `protobuf:"bytes,1,opt,name=state,proto3" json:"state,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRunTransitionStatusResponse) Reset() {
+	*x = GetRunTransitionStatusResponse{}
+	mi := &file_api_proto_msgTypes[12]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRunTransitionStatusResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRunTransitionStatusResponse) ProtoMessage() {}
+
+func (x *GetRunTransitionStatusResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[12]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRunTransitionStatusResponse.ProtoReflect.Descriptor instead.
+func (*GetRunTransitionStatusResponse) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{12}
+}
+
+func (x *GetRunTransitionStatusResponse) GetState() string {
+	if x != nil {
+		return x.State
+	}
+	return ""
+}
+
+func (x *GetRunTransitionStatusResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
 type GDC struct {
 	state          protoimpl.MessageState `protogen:"open.v1"`
 	Id             int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -540,7 +628,7 @@ type GDC struct {
 
 func (x *GDC) Reset() {
 	*x = GDC{}
-	mi := &file_api_proto_msgTypes[11]
+	mi := &file_api_proto_msgTypes[13]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -552,7 +640,7 @@ func (x *GDC) String() string {
 func (*GDC) ProtoMessage() {}
 
 func (x *GDC) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[11]
+	mi := &file_api_proto_msgTypes[13]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -565,7 +653,7 @@ func (x *GDC) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GDC.ProtoReflect.Descriptor instead.
 func (*GDC) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{11}
+	return file_api_proto_rawDescGZIP(), []int{13}
 }
 
 func (x *GDC) GetId() int32 {
@@ -663,7 +751,7 @@ type CreateGDCRequest struct {
 
 func (x *CreateGDCRequest) Reset() {
 	*x = CreateGDCRequest{}
-	mi := &file_api_proto_msgTypes[12]
+	mi := &file_api_proto_msgTypes[14]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -675,7 +763,7 @@ func (x *CreateGDCRequest) String() string {
 func (*CreateGDCRequest) ProtoMessage() {}
 
 func (x *CreateGDCRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[12]
+	mi := &file_api_proto_msgTypes[14]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -688,7 +776,7 @@ func (x *CreateGDCRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateGDCRequest.ProtoReflect.Descriptor instead.
 func (*CreateGDCRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{12}
+	return file_api_proto_rawDescGZIP(), []int{14}
 }
 
 func (x *CreateGDCRequest) GetName() string {
@@ -771,7 +859,7 @@ type CreateGDCResponse struct {
 
 func (x *CreateGDCResponse) Reset() {
 	*x = CreateGDCResponse{}
-	mi := &file_api_proto_msgTypes[13]
+	mi := &file_api_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -783,7 +871,7 @@ func (x *CreateGDCResponse) String() string {
 func (*CreateGDCResponse) ProtoMessage() {}
 
 func (x *CreateGDCResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[13]
+	mi := &file_api_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -796,7 +884,7 @@ func (x *CreateGDCResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateGDCResponse.ProtoReflect.Descriptor instead.
 func (*CreateGDCResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{13}
+	return file_api_proto_rawDescGZIP(), []int{15}
 }
 
 func (x *CreateGDCResponse) GetSuccess() bool {
@@ -821,7 +909,7 @@ type GetGDCsRequest struct {
 
 func (x *GetGDCsRequest) Reset() {
 	*x = GetGDCsRequest{}
-	mi := &file_api_proto_msgTypes[14]
+	mi := &file_api_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -833,7 +921,7 @@ func (x *GetGDCsRequest) String() string {
 func (*GetGDCsRequest) ProtoMessage() {}
 
 func (x *GetGDCsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[14]
+	mi := &file_api_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -846,7 +934,7 @@ func (x *GetGDCsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGDCsRequest.ProtoReflect.Descriptor instead.
 func (*GetGDCsRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{14}
+	return file_api_proto_rawDescGZIP(), []int{16}
 }
 
 type GetGDCsResponse struct {
@@ -858,7 +946,7 @@ type GetGDCsResponse struct {
 
 func (x *GetGDCsResponse) Reset() {
 	*x = GetGDCsResponse{}
-	mi := &file_api_proto_msgTypes[15]
+	mi := &file_api_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -870,7 +958,7 @@ func (x *GetGDCsResponse) String() string {
 func (*GetGDCsResponse) ProtoMessage() {}
 
 func (x *GetGDCsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[15]
+	mi := &file_api_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -883,7 +971,7 @@ func (x *GetGDCsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGDCsResponse.ProtoReflect.Descriptor instead.
 func (*GetGDCsResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{15}
+	return file_api_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetGDCsResponse) GetGdcs() []*GDC {
@@ -902,7 +990,7 @@ type GetGDCRequest struct {
 
 func (x *GetGDCRequest) Reset() {
 	*x = GetGDCRequest{}
-	mi := &file_api_proto_msgTypes[16]
+	mi := &file_api_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -914,7 +1002,7 @@ func (x *GetGDCRequest) String() string {
 func (*GetGDCRequest) ProtoMessage() {}
 
 func (x *GetGDCRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[16]
+	mi := &file_api_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -927,7 +1015,7 @@ func (x *GetGDCRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGDCRequest.ProtoReflect.Descriptor instead.
 func (*GetGDCRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{16}
+	return file_api_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetGDCRequest) GetId() int32 {
@@ -946,7 +1034,7 @@ type GetGDCResponse struct {
 
 func (x *GetGDCResponse) Reset() {
 	*x = GetGDCResponse{}
-	mi := &file_api_proto_msgTypes[17]
+	mi := &file_api_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -958,7 +1046,7 @@ func (x *GetGDCResponse) String() string {
 func (*GetGDCResponse) ProtoMessage() {}
 
 func (x *GetGDCResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[17]
+	mi := &file_api_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -971,7 +1059,7 @@ func (x *GetGDCResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetGDCResponse.ProtoReflect.Descriptor instead.
 func (*GetGDCResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{17}
+	return file_api_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *GetGDCResponse) GetGdc() *GDC {
@@ -1000,7 +1088,7 @@ type UpdateGDCRequest struct {
 
 func (x *UpdateGDCRequest) Reset() {
 	*x = UpdateGDCRequest{}
-	mi := &file_api_proto_msgTypes[18]
+	mi := &file_api_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1012,7 +1100,7 @@ func (x *UpdateGDCRequest) String() string {
 func (*UpdateGDCRequest) ProtoMessage() {}
 
 func (x *UpdateGDCRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[18]
+	mi := &file_api_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1025,7 +1113,7 @@ func (x *UpdateGDCRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateGDCRequest.ProtoReflect.Descriptor instead.
 func (*UpdateGDCRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{18}
+	return file_api_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *UpdateGDCRequest) GetId() int32 {
@@ -1115,7 +1203,7 @@ type UpdateGDCResponse struct {
 
 func (x *UpdateGDCResponse) Reset() {
 	*x = UpdateGDCResponse{}
-	mi := &file_api_proto_msgTypes[19]
+	mi := &file_api_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1127,7 +1215,7 @@ func (x *UpdateGDCResponse) String() string {
 func (*UpdateGDCResponse) ProtoMessage() {}
 
 func (x *UpdateGDCResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[19]
+	mi := &file_api_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1140,7 +1228,7 @@ func (x *UpdateGDCResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateGDCResponse.ProtoReflect.Descriptor instead.
 func (*UpdateGDCResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{19}
+	return file_api_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *UpdateGDCResponse) GetSuccess() bool {
@@ -1166,7 +1254,7 @@ type DeleteGDCRequest struct {
 
 func (x *DeleteGDCRequest) Reset() {
 	*x = DeleteGDCRequest{}
-	mi := &file_api_proto_msgTypes[20]
+	mi := &file_api_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1178,7 +1266,7 @@ func (x *DeleteGDCRequest) String() string {
 func (*DeleteGDCRequest) ProtoMessage() {}
 
 func (x *DeleteGDCRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[20]
+	mi := &file_api_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1191,7 +1279,7 @@ func (x *DeleteGDCRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteGDCRequest.ProtoReflect.Descriptor instead.
 func (*DeleteGDCRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{20}
+	return file_api_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *DeleteGDCRequest) GetId() int32 {
@@ -1211,7 +1299,7 @@ type DeleteGDCResponse struct {
 
 func (x *DeleteGDCResponse) Reset() {
 	*x = DeleteGDCResponse{}
-	mi := &file_api_proto_msgTypes[21]
+	mi := &file_api_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1223,7 +1311,7 @@ func (x *DeleteGDCResponse) String() string {
 func (*DeleteGDCResponse) ProtoMessage() {}
 
 func (x *DeleteGDCResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[21]
+	mi := &file_api_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1236,7 +1324,7 @@ func (x *DeleteGDCResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteGDCResponse.ProtoReflect.Descriptor instead.
 func (*DeleteGDCResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{21}
+	return file_api_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *DeleteGDCResponse) GetSuccess() bool {
@@ -1268,7 +1356,7 @@ type Equipment struct {
 
 func (x *Equipment) Reset() {
 	*x = Equipment{}
-	mi := &file_api_proto_msgTypes[22]
+	mi := &file_api_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1280,7 +1368,7 @@ func (x *Equipment) String() string {
 func (*Equipment) ProtoMessage() {}
 
 func (x *Equipment) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[22]
+	mi := &file_api_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1293,7 +1381,7 @@ func (x *Equipment) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Equipment.ProtoReflect.Descriptor instead.
 func (*Equipment) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{22}
+	return file_api_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *Equipment) GetId() int32 {
@@ -1361,7 +1449,7 @@ type LDC struct {
 
 func (x *LDC) Reset() {
 	*x = LDC{}
-	mi := &file_api_proto_msgTypes[23]
+	mi := &file_api_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1373,7 +1461,7 @@ func (x *LDC) String() string {
 func (*LDC) ProtoMessage() {}
 
 func (x *LDC) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[23]
+	mi := &file_api_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1386,7 +1474,7 @@ func (x *LDC) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use LDC.ProtoReflect.Descriptor instead.
 func (*LDC) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{23}
+	return file_api_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *LDC) GetId() int32 {
@@ -1459,7 +1547,7 @@ type CreateLDCRequest struct {
 
 func (x *CreateLDCRequest) Reset() {
 	*x = CreateLDCRequest{}
-	mi := &file_api_proto_msgTypes[24]
+	mi := &file_api_proto_msgTypes[26]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1471,7 +1559,7 @@ func (x *CreateLDCRequest) String() string {
 func (*CreateLDCRequest) ProtoMessage() {}
 
 func (x *CreateLDCRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[24]
+	mi := &file_api_proto_msgTypes[26]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1484,7 +1572,7 @@ func (x *CreateLDCRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateLDCRequest.ProtoReflect.Descriptor instead.
 func (*CreateLDCRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{24}
+	return file_api_proto_rawDescGZIP(), []int{26}
 }
 
 func (x *CreateLDCRequest) GetName() string {
@@ -1539,7 +1627,7 @@ type CreateLDCResponse struct {
 
 func (x *CreateLDCResponse) Reset() {
 	*x = CreateLDCResponse{}
-	mi := &file_api_proto_msgTypes[25]
+	mi := &file_api_proto_msgTypes[27]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1551,7 +1639,7 @@ func (x *CreateLDCResponse) String() string {
 func (*CreateLDCResponse) ProtoMessage() {}
 
 func (x *CreateLDCResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[25]
+	mi := &file_api_proto_msgTypes[27]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1564,7 +1652,7 @@ func (x *CreateLDCResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateLDCResponse.ProtoReflect.Descriptor instead.
 func (*CreateLDCResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{25}
+	return file_api_proto_rawDescGZIP(), []int{27}
 }
 
 func (x *CreateLDCResponse) GetSuccess() bool {
@@ -1589,7 +1677,7 @@ type GetLDCsRequest struct {
 
 func (x *GetLDCsRequest) Reset() {
 	*x = GetLDCsRequest{}
-	mi := &file_api_proto_msgTypes[26]
+	mi := &file_api_proto_msgTypes[28]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1601,7 +1689,7 @@ func (x *GetLDCsRequest) String() string {
 func (*GetLDCsRequest) ProtoMessage() {}
 
 func (x *GetLDCsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[26]
+	mi := &file_api_proto_msgTypes[28]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1614,7 +1702,7 @@ func (x *GetLDCsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLDCsRequest.ProtoReflect.Descriptor instead.
 func (*GetLDCsRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{26}
+	return file_api_proto_rawDescGZIP(), []int{28}
 }
 
 type GetLDCsResponse struct {
@@ -1626,7 +1714,7 @@ type GetLDCsResponse struct {
 
 func (x *GetLDCsResponse) Reset() {
 	*x = GetLDCsResponse{}
-	mi := &file_api_proto_msgTypes[27]
+	mi := &file_api_proto_msgTypes[29]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1638,7 +1726,7 @@ func (x *GetLDCsResponse) String() string {
 func (*GetLDCsResponse) ProtoMessage() {}
 
 func (x *GetLDCsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[27]
+	mi := &file_api_proto_msgTypes[29]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1651,7 +1739,7 @@ func (x *GetLDCsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLDCsResponse.ProtoReflect.Descriptor instead.
 func (*GetLDCsResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{27}
+	return file_api_proto_rawDescGZIP(), []int{29}
 }
 
 func (x *GetLDCsResponse) GetLdcs() []*LDC {
@@ -1670,7 +1758,7 @@ type GetLDCRequest struct {
 
 func (x *GetLDCRequest) Reset() {
 	*x = GetLDCRequest{}
-	mi := &file_api_proto_msgTypes[28]
+	mi := &file_api_proto_msgTypes[30]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1682,7 +1770,7 @@ func (x *GetLDCRequest) String() string {
 func (*GetLDCRequest) ProtoMessage() {}
 
 func (x *GetLDCRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[28]
+	mi := &file_api_proto_msgTypes[30]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1695,7 +1783,7 @@ func (x *GetLDCRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLDCRequest.ProtoReflect.Descriptor instead.
 func (*GetLDCRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{28}
+	return file_api_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *GetLDCRequest) GetId() int32 {
@@ -1714,7 +1802,7 @@ type GetLDCResponse struct {
 
 func (x *GetLDCResponse) Reset() {
 	*x = GetLDCResponse{}
-	mi := &file_api_proto_msgTypes[29]
+	mi := &file_api_proto_msgTypes[31]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1726,7 +1814,7 @@ func (x *GetLDCResponse) String() string {
 func (*GetLDCResponse) ProtoMessage() {}
 
 func (x *GetLDCResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[29]
+	mi := &file_api_proto_msgTypes[31]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1739,7 +1827,7 @@ func (x *GetLDCResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetLDCResponse.ProtoReflect.Descriptor instead.
 func (*GetLDCResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{29}
+	return file_api_proto_rawDescGZIP(), []int{31}
 }
 
 func (x *GetLDCResponse) GetLdc() *LDC {
@@ -1764,7 +1852,7 @@ type UpdateLDCRequest struct {
 
 func (x *UpdateLDCRequest) Reset() {
 	*x = UpdateLDCRequest{}
-	mi := &file_api_proto_msgTypes[30]
+	mi := &file_api_proto_msgTypes[32]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1776,7 +1864,7 @@ func (x *UpdateLDCRequest) String() string {
 func (*UpdateLDCRequest) ProtoMessage() {}
 
 func (x *UpdateLDCRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[30]
+	mi := &file_api_proto_msgTypes[32]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1789,7 +1877,7 @@ func (x *UpdateLDCRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateLDCRequest.ProtoReflect.Descriptor instead.
 func (*UpdateLDCRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{30}
+	return file_api_proto_rawDescGZIP(), []int{32}
 }
 
 func (x *UpdateLDCRequest) GetId() int32 {
@@ -1851,7 +1939,7 @@ type UpdateLDCResponse struct {
 
 func (x *UpdateLDCResponse) Reset() {
 	*x = UpdateLDCResponse{}
-	mi := &file_api_proto_msgTypes[31]
+	mi := &file_api_proto_msgTypes[33]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1863,7 +1951,7 @@ func (x *UpdateLDCResponse) String() string {
 func (*UpdateLDCResponse) ProtoMessage() {}
 
 func (x *UpdateLDCResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[31]
+	mi := &file_api_proto_msgTypes[33]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1876,7 +1964,7 @@ func (x *UpdateLDCResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateLDCResponse.ProtoReflect.Descriptor instead.
 func (*UpdateLDCResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{31}
+	return file_api_proto_rawDescGZIP(), []int{33}
 }
 
 func (x *UpdateLDCResponse) GetSuccess() bool {
@@ -1902,7 +1990,7 @@ type DeleteLDCRequest struct {
 
 func (x *DeleteLDCRequest) Reset() {
 	*x = DeleteLDCRequest{}
-	mi := &file_api_proto_msgTypes[32]
+	mi := &file_api_proto_msgTypes[34]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1914,7 +2002,7 @@ func (x *DeleteLDCRequest) String() string {
 func (*DeleteLDCRequest) ProtoMessage() {}
 
 func (x *DeleteLDCRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[32]
+	mi := &file_api_proto_msgTypes[34]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1927,7 +2015,7 @@ func (x *DeleteLDCRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteLDCRequest.ProtoReflect.Descriptor instead.
 func (*DeleteLDCRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{32}
+	return file_api_proto_rawDescGZIP(), []int{34}
 }
 
 func (x *DeleteLDCRequest) GetId() int32 {
@@ -1947,7 +2035,7 @@ type DeleteLDCResponse struct {
 
 func (x *DeleteLDCResponse) Reset() {
 	*x = DeleteLDCResponse{}
-	mi := &file_api_proto_msgTypes[33]
+	mi := &file_api_proto_msgTypes[35]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1959,7 +2047,7 @@ func (x *DeleteLDCResponse) String() string {
 func (*DeleteLDCResponse) ProtoMessage() {}
 
 func (x *DeleteLDCResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[33]
+	mi := &file_api_proto_msgTypes[35]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1972,7 +2060,7 @@ func (x *DeleteLDCResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteLDCResponse.ProtoReflect.Descriptor instead.
 func (*DeleteLDCResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{33}
+	return file_api_proto_rawDescGZIP(), []int{35}
 }
 
 func (x *DeleteLDCResponse) GetSuccess() bool {
@@ -2003,7 +2091,7 @@ type CreateEquipmentRequest struct {
 
 func (x *CreateEquipmentRequest) Reset() {
 	*x = CreateEquipmentRequest{}
-	mi := &file_api_proto_msgTypes[34]
+	mi := &file_api_proto_msgTypes[36]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2015,7 +2103,7 @@ func (x *CreateEquipmentRequest) String() string {
 func (*CreateEquipmentRequest) ProtoMessage() {}
 
 func (x *CreateEquipmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[34]
+	mi := &file_api_proto_msgTypes[36]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2028,7 +2116,7 @@ func (x *CreateEquipmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateEquipmentRequest.ProtoReflect.Descriptor instead.
 func (*CreateEquipmentRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{34}
+	return file_api_proto_rawDescGZIP(), []int{36}
 }
 
 func (x *CreateEquipmentRequest) GetType() int32 {
@@ -2083,7 +2171,7 @@ type CreateEquipmentResponse struct {
 
 func (x *CreateEquipmentResponse) Reset() {
 	*x = CreateEquipmentResponse{}
-	mi := &file_api_proto_msgTypes[35]
+	mi := &file_api_proto_msgTypes[37]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2095,7 +2183,7 @@ func (x *CreateEquipmentResponse) String() string {
 func (*CreateEquipmentResponse) ProtoMessage() {}
 
 func (x *CreateEquipmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[35]
+	mi := &file_api_proto_msgTypes[37]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2108,7 +2196,7 @@ func (x *CreateEquipmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CreateEquipmentResponse.ProtoReflect.Descriptor instead.
 func (*CreateEquipmentResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{35}
+	return file_api_proto_rawDescGZIP(), []int{37}
 }
 
 func (x *CreateEquipmentResponse) GetSuccess() bool {
@@ -2133,7 +2221,7 @@ type GetEquipmentsRequest struct {
 
 func (x *GetEquipmentsRequest) Reset() {
 	*x = GetEquipmentsRequest{}
-	mi := &file_api_proto_msgTypes[36]
+	mi := &file_api_proto_msgTypes[38]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2145,7 +2233,7 @@ func (x *GetEquipmentsRequest) String() string {
 func (*GetEquipmentsRequest) ProtoMessage() {}
 
 func (x *GetEquipmentsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[36]
+	mi := &file_api_proto_msgTypes[38]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2158,7 +2246,7 @@ func (x *GetEquipmentsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEquipmentsRequest.ProtoReflect.Descriptor instead.
 func (*GetEquipmentsRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{36}
+	return file_api_proto_rawDescGZIP(), []int{38}
 }
 
 type GetEquipmentsResponse struct {
@@ -2170,7 +2258,7 @@ type GetEquipmentsResponse struct {
 
 func (x *GetEquipmentsResponse) Reset() {
 	*x = GetEquipmentsResponse{}
-	mi := &file_api_proto_msgTypes[37]
+	mi := &file_api_proto_msgTypes[39]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2182,7 +2270,7 @@ func (x *GetEquipmentsResponse) String() string {
 func (*GetEquipmentsResponse) ProtoMessage() {}
 
 func (x *GetEquipmentsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[37]
+	mi := &file_api_proto_msgTypes[39]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2195,7 +2283,7 @@ func (x *GetEquipmentsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEquipmentsResponse.ProtoReflect.Descriptor instead.
 func (*GetEquipmentsResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{37}
+	return file_api_proto_rawDescGZIP(), []int{39}
 }
 
 func (x *GetEquipmentsResponse) GetEquipments() []*Equipment {
@@ -2214,7 +2302,7 @@ type GetEquipmentRequest struct {
 
 func (x *GetEquipmentRequest) Reset() {
 	*x = GetEquipmentRequest{}
-	mi := &file_api_proto_msgTypes[38]
+	mi := &file_api_proto_msgTypes[40]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2226,7 +2314,7 @@ func (x *GetEquipmentRequest) String() string {
 func (*GetEquipmentRequest) ProtoMessage() {}
 
 func (x *GetEquipmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[38]
+	mi := &file_api_proto_msgTypes[40]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2239,7 +2327,7 @@ func (x *GetEquipmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEquipmentRequest.ProtoReflect.Descriptor instead.
 func (*GetEquipmentRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{38}
+	return file_api_proto_rawDescGZIP(), []int{40}
 }
 
 func (x *GetEquipmentRequest) GetId() int32 {
@@ -2258,7 +2346,7 @@ type GetEquipmentResponse struct {
 
 func (x *GetEquipmentResponse) Reset() {
 	*x = GetEquipmentResponse{}
-	mi := &file_api_proto_msgTypes[39]
+	mi := &file_api_proto_msgTypes[41]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2270,7 +2358,7 @@ func (x *GetEquipmentResponse) String() string {
 func (*GetEquipmentResponse) ProtoMessage() {}
 
 func (x *GetEquipmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[39]
+	mi := &file_api_proto_msgTypes[41]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2283,7 +2371,7 @@ func (x *GetEquipmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetEquipmentResponse.ProtoReflect.Descriptor instead.
 func (*GetEquipmentResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{39}
+	return file_api_proto_rawDescGZIP(), []int{41}
 }
 
 func (x *GetEquipmentResponse) GetEquipment() *Equipment {
@@ -2308,7 +2396,7 @@ type UpdateEquipmentRequest struct {
 
 func (x *UpdateEquipmentRequest) Reset() {
 	*x = UpdateEquipmentRequest{}
-	mi := &file_api_proto_msgTypes[40]
+	mi := &file_api_proto_msgTypes[42]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2320,7 +2408,7 @@ func (x *UpdateEquipmentRequest) String() string {
 func (*UpdateEquipmentRequest) ProtoMessage() {}
 
 func (x *UpdateEquipmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[40]
+	mi := &file_api_proto_msgTypes[42]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2333,7 +2421,7 @@ func (x *UpdateEquipmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateEquipmentRequest.ProtoReflect.Descriptor instead.
 func (*UpdateEquipmentRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{40}
+	return file_api_proto_rawDescGZIP(), []int{42}
 }
 
 func (x *UpdateEquipmentRequest) GetId() int32 {
@@ -2395,7 +2483,7 @@ type UpdateEquipmentResponse struct {
 
 func (x *UpdateEquipmentResponse) Reset() {
 	*x = UpdateEquipmentResponse{}
-	mi := &file_api_proto_msgTypes[41]
+	mi := &file_api_proto_msgTypes[43]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2407,7 +2495,7 @@ func (x *UpdateEquipmentResponse) String() string {
 func (*UpdateEquipmentResponse) ProtoMessage() {}
 
 func (x *UpdateEquipmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[41]
+	mi := &file_api_proto_msgTypes[43]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2420,7 +2508,7 @@ func (x *UpdateEquipmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use UpdateEquipmentResponse.ProtoReflect.Descriptor instead.
 func (*UpdateEquipmentResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{41}
+	return file_api_proto_rawDescGZIP(), []int{43}
 }
 
 func (x *UpdateEquipmentResponse) GetSuccess() bool {
@@ -2446,7 +2534,7 @@ type DeleteEquipmentRequest struct {
 
 func (x *DeleteEquipmentRequest) Reset() {
 	*x = DeleteEquipmentRequest{}
-	mi := &file_api_proto_msgTypes[42]
+	mi := &file_api_proto_msgTypes[44]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2458,7 +2546,7 @@ func (x *DeleteEquipmentRequest) String() string {
 func (*DeleteEquipmentRequest) ProtoMessage() {}
 
 func (x *DeleteEquipmentRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[42]
+	mi := &file_api_proto_msgTypes[44]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2471,7 +2559,7 @@ func (x *DeleteEquipmentRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteEquipmentRequest.ProtoReflect.Descriptor instead.
 func (*DeleteEquipmentRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{42}
+	return file_api_proto_rawDescGZIP(), []int{44}
 }
 
 func (x *DeleteEquipmentRequest) GetId() int32 {
@@ -2491,7 +2579,7 @@ type DeleteEquipmentResponse struct {
 
 func (x *DeleteEquipmentResponse) Reset() {
 	*x = DeleteEquipmentResponse{}
-	mi := &file_api_proto_msgTypes[43]
+	mi := &file_api_proto_msgTypes[45]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2503,7 +2591,7 @@ func (x *DeleteEquipmentResponse) String() string {
 func (*DeleteEquipmentResponse) ProtoMessage() {}
 
 func (x *DeleteEquipmentResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[43]
+	mi := &file_api_proto_msgTypes[45]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2516,7 +2604,7 @@ func (x *DeleteEquipmentResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DeleteEquipmentResponse.ProtoReflect.Descriptor instead.
 func (*DeleteEquipmentResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{43}
+	return file_api_proto_rawDescGZIP(), []int{45}
 }
 
 func (x *DeleteEquipmentResponse) GetSuccess() bool {
@@ -2559,7 +2647,7 @@ type DecoderConfiguration struct {
 
 func (x *DecoderConfiguration) Reset() {
 	*x = DecoderConfiguration{}
-	mi := &file_api_proto_msgTypes[44]
+	mi := &file_api_proto_msgTypes[46]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2571,7 +2659,7 @@ func (x *DecoderConfiguration) String() string {
 func (*DecoderConfiguration) ProtoMessage() {}
 
 func (x *DecoderConfiguration) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[44]
+	mi := &file_api_proto_msgTypes[46]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2584,7 +2672,7 @@ func (x *DecoderConfiguration) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DecoderConfiguration.ProtoReflect.Descriptor instead.
 func (*DecoderConfiguration) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{44}
+	return file_api_proto_rawDescGZIP(), []int{46}
 }
 
 func (x *DecoderConfiguration) GetExtTrigger() int32 {
@@ -2721,7 +2809,7 @@ type GetDecoderConfigurationRequest struct {
 
 func (x *GetDecoderConfigurationRequest) Reset() {
 	*x = GetDecoderConfigurationRequest{}
-	mi := &file_api_proto_msgTypes[45]
+	mi := &file_api_proto_msgTypes[47]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2733,7 +2821,7 @@ func (x *GetDecoderConfigurationRequest) String() string {
 func (*GetDecoderConfigurationRequest) ProtoMessage() {}
 
 func (x *GetDecoderConfigurationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[45]
+	mi := &file_api_proto_msgTypes[47]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2746,7 +2834,7 @@ func (x *GetDecoderConfigurationRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDecoderConfigurationRequest.ProtoReflect.Descriptor instead.
 func (*GetDecoderConfigurationRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{45}
+	return file_api_proto_rawDescGZIP(), []int{47}
 }
 
 type GetDecoderConfigurationResponse struct {
@@ -2758,7 +2846,7 @@ type GetDecoderConfigurationResponse struct {
 
 func (x *GetDecoderConfigurationResponse) Reset() {
 	*x = GetDecoderConfigurationResponse{}
-	mi := &file_api_proto_msgTypes[46]
+	mi := &file_api_proto_msgTypes[48]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2770,7 +2858,7 @@ func (x *GetDecoderConfigurationResponse) String() string {
 func (*GetDecoderConfigurationResponse) ProtoMessage() {}
 
 func (x *GetDecoderConfigurationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[46]
+	mi := &file_api_proto_msgTypes[48]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2783,7 +2871,7 @@ func (x *GetDecoderConfigurationResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDecoderConfigurationResponse.ProtoReflect.Descriptor instead.
 func (*GetDecoderConfigurationResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{46}
+	return file_api_proto_rawDescGZIP(), []int{48}
 }
 
 func (x *GetDecoderConfigurationResponse) GetConfiguration() *DecoderConfiguration {
@@ -2802,7 +2890,7 @@ type UpdateDecoderConfigurationRequest struct {
 
 func (x *UpdateDecoderConfigurationRequest) Reset() {
 	*x = UpdateDecoderConfigurationRequest{}
-	mi := &file_api_proto_msgTypes[47]
+	mi := &file_api_proto_msgTypes[49]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2814,7 +2902,7 @@ func (x *UpdateDecoderConfigurationRequest) String() string {
 func (*UpdateDecoderConfigurationRequest) ProtoMessage() {}
 
 func (x *UpdateDecoderConfigurationRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[47]
+	mi := &file_api_proto_msgTypes[49]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2827,7 +2915,7 @@ func (x *UpdateDecoderConfigurationRequest) ProtoReflect() protoreflect.Message 
 
 // Deprecated: Use UpdateDecoderConfigurationRequest.ProtoReflect.Descriptor instead.
 func (*UpdateDecoderConfigurationRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{47}
+	return file_api_proto_rawDescGZIP(), []int{49}
 }
 
 func (x *UpdateDecoderConfigurationRequest) GetConfiguration() *DecoderConfiguration {
@@ -2847,7 +2935,7 @@ type UpdateDecoderConfigurationResponse struct {
 
 func (x *UpdateDecoderConfigurationResponse) Reset() {
 	*x = UpdateDecoderConfigurationResponse{}
-	mi := &file_api_proto_msgTypes[48]
+	mi := &file_api_proto_msgTypes[50]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2859,7 +2947,7 @@ func (x *UpdateDecoderConfigurationResponse) String() string {
 func (*UpdateDecoderConfigurationResponse) ProtoMessage() {}
 
 func (x *UpdateDecoderConfigurationResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[48]
+	mi := &file_api_proto_msgTypes[50]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2872,7 +2960,7 @@ func (x *UpdateDecoderConfigurationResponse) ProtoReflect() protoreflect.Message
 
 // Deprecated: Use UpdateDecoderConfigurationResponse.ProtoReflect.Descriptor instead.
 func (*UpdateDecoderConfigurationResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{48}
+	return file_api_proto_rawDescGZIP(), []int{50}
 }
 
 func (x *UpdateDecoderConfigurationResponse) GetSuccess() bool {
@@ -2897,7 +2985,7 @@ type GetRunNumberRequest struct {
 
 func (x *GetRunNumberRequest) Reset() {
 	*x = GetRunNumberRequest{}
-	mi := &file_api_proto_msgTypes[49]
+	mi := &file_api_proto_msgTypes[51]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2909,7 +2997,7 @@ func (x *GetRunNumberRequest) String() string {
 func (*GetRunNumberRequest) ProtoMessage() {}
 
 func (x *GetRunNumberRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[49]
+	mi := &file_api_proto_msgTypes[51]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2922,7 +3010,7 @@ func (x *GetRunNumberRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRunNumberRequest.ProtoReflect.Descriptor instead.
 func (*GetRunNumberRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{49}
+	return file_api_proto_rawDescGZIP(), []int{51}
 }
 
 type GetRunNumberResponse struct {
@@ -2934,7 +3022,7 @@ type GetRunNumberResponse struct {
 
 func (x *GetRunNumberResponse) Reset() {
 	*x = GetRunNumberResponse{}
-	mi := &file_api_proto_msgTypes[50]
+	mi := &file_api_proto_msgTypes[52]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2946,7 +3034,7 @@ func (x *GetRunNumberResponse) String() string {
 func (*GetRunNumberResponse) ProtoMessage() {}
 
 func (x *GetRunNumberResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[50]
+	mi := &file_api_proto_msgTypes[52]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -2959,7 +3047,7 @@ func (x *GetRunNumberResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRunNumberResponse.ProtoReflect.Descriptor instead.
 func (*GetRunNumberResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{50}
+	return file_api_proto_rawDescGZIP(), []int{52}
 }
 
 func (x *GetRunNumberResponse) GetRunNumber() int32 {
@@ -2981,7 +3069,7 @@ type DisabledWarning struct {
 
 func (x *DisabledWarning) Reset() {
 	*x = DisabledWarning{}
-	mi := &file_api_proto_msgTypes[51]
+	mi := &file_api_proto_msgTypes[53]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -2993,7 +3081,7 @@ func (x *DisabledWarning) String() string {
 func (*DisabledWarning) ProtoMessage() {}
 
 func (x *DisabledWarning) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[51]
+	mi := &file_api_proto_msgTypes[53]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3006,7 +3094,7 @@ func (x *DisabledWarning) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DisabledWarning.ProtoReflect.Descriptor instead.
 func (*DisabledWarning) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{51}
+	return file_api_proto_rawDescGZIP(), []int{53}
 }
 
 func (x *DisabledWarning) GetGdcs() []string {
@@ -3045,7 +3133,7 @@ type CheckDisabledRequest struct {
 
 func (x *CheckDisabledRequest) Reset() {
 	*x = CheckDisabledRequest{}
-	mi := &file_api_proto_msgTypes[52]
+	mi := &file_api_proto_msgTypes[54]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3057,7 +3145,7 @@ func (x *CheckDisabledRequest) String() string {
 func (*CheckDisabledRequest) ProtoMessage() {}
 
 func (x *CheckDisabledRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[52]
+	mi := &file_api_proto_msgTypes[54]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3070,7 +3158,7 @@ func (x *CheckDisabledRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckDisabledRequest.ProtoReflect.Descriptor instead.
 func (*CheckDisabledRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{52}
+	return file_api_proto_rawDescGZIP(), []int{54}
 }
 
 type CheckDisabledResponse struct {
@@ -3082,7 +3170,7 @@ type CheckDisabledResponse struct {
 
 func (x *CheckDisabledResponse) Reset() {
 	*x = CheckDisabledResponse{}
-	mi := &file_api_proto_msgTypes[53]
+	mi := &file_api_proto_msgTypes[55]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3094,7 +3182,7 @@ func (x *CheckDisabledResponse) String() string {
 func (*CheckDisabledResponse) ProtoMessage() {}
 
 func (x *CheckDisabledResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[53]
+	mi := &file_api_proto_msgTypes[55]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3107,7 +3195,7 @@ func (x *CheckDisabledResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckDisabledResponse.ProtoReflect.Descriptor instead.
 func (*CheckDisabledResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{53}
+	return file_api_proto_rawDescGZIP(), []int{55}
 }
 
 func (x *CheckDisabledResponse) GetWarnings() *DisabledWarning {
@@ -3125,7 +3213,7 @@ type GetTokenRequest struct {
 
 func (x *GetTokenRequest) Reset() {
 	*x = GetTokenRequest{}
-	mi := &file_api_proto_msgTypes[54]
+	mi := &file_api_proto_msgTypes[56]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3137,7 +3225,7 @@ func (x *GetTokenRequest) String() string {
 func (*GetTokenRequest) ProtoMessage() {}
 
 func (x *GetTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[54]
+	mi := &file_api_proto_msgTypes[56]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3150,7 +3238,7 @@ func (x *GetTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTokenRequest.ProtoReflect.Descriptor instead.
 func (*GetTokenRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{54}
+	return file_api_proto_rawDescGZIP(), []int{56}
 }
 
 type GetTokenResponse struct {
@@ -3162,7 +3250,7 @@ type GetTokenResponse struct {
 
 func (x *GetTokenResponse) Reset() {
 	*x = GetTokenResponse{}
-	mi := &file_api_proto_msgTypes[55]
+	mi := &file_api_proto_msgTypes[57]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3174,7 +3262,7 @@ func (x *GetTokenResponse) String() string {
 func (*GetTokenResponse) ProtoMessage() {}
 
 func (x *GetTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[55]
+	mi := &file_api_proto_msgTypes[57]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3187,7 +3275,7 @@ func (x *GetTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTokenResponse.ProtoReflect.Descriptor instead.
 func (*GetTokenResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{55}
+	return file_api_proto_rawDescGZIP(), []int{57}
 }
 
 func (x *GetTokenResponse) GetToken() string {
@@ -3217,7 +3305,7 @@ type TestDevice struct {
 
 func (x *TestDevice) Reset() {
 	*x = TestDevice{}
-	mi := &file_api_proto_msgTypes[56]
+	mi := &file_api_proto_msgTypes[58]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3229,7 +3317,7 @@ func (x *TestDevice) String() string {
 func (*TestDevice) ProtoMessage() {}
 
 func (x *TestDevice) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[56]
+	mi := &file_api_proto_msgTypes[58]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3242,7 +3330,7 @@ func (x *TestDevice) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestDevice.ProtoReflect.Descriptor instead.
 func (*TestDevice) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{56}
+	return file_api_proto_rawDescGZIP(), []int{58}
 }
 
 func (x *TestDevice) GetEquipmentId() int32 {
@@ -3341,7 +3429,7 @@ type TestDeviceStatistics struct {
 
 func (x *TestDeviceStatistics) Reset() {
 	*x = TestDeviceStatistics{}
-	mi := &file_api_proto_msgTypes[57]
+	mi := &file_api_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3353,7 +3441,7 @@ func (x *TestDeviceStatistics) String() string {
 func (*TestDeviceStatistics) ProtoMessage() {}
 
 func (x *TestDeviceStatistics) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[57]
+	mi := &file_api_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3366,7 +3454,7 @@ func (x *TestDeviceStatistics) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestDeviceStatistics.ProtoReflect.Descriptor instead.
 func (*TestDeviceStatistics) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{57}
+	return file_api_proto_rawDescGZIP(), []int{59}
 }
 
 func (x *TestDeviceStatistics) GetDeviceId() int32 {
@@ -3406,7 +3494,7 @@ type StartTestDevicesRequest struct {
 
 func (x *StartTestDevicesRequest) Reset() {
 	*x = StartTestDevicesRequest{}
-	mi := &file_api_proto_msgTypes[58]
+	mi := &file_api_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3418,7 +3506,7 @@ func (x *StartTestDevicesRequest) String() string {
 func (*StartTestDevicesRequest) ProtoMessage() {}
 
 func (x *StartTestDevicesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[58]
+	mi := &file_api_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3431,7 +3519,7 @@ func (x *StartTestDevicesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartTestDevicesRequest.ProtoReflect.Descriptor instead.
 func (*StartTestDevicesRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{58}
+	return file_api_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *StartTestDevicesRequest) GetDeviceIds() []int32 {
@@ -3451,7 +3539,7 @@ type StartTestDevicesResponse struct {
 
 func (x *StartTestDevicesResponse) Reset() {
 	*x = StartTestDevicesResponse{}
-	mi := &file_api_proto_msgTypes[59]
+	mi := &file_api_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3463,7 +3551,7 @@ func (x *StartTestDevicesResponse) String() string {
 func (*StartTestDevicesResponse) ProtoMessage() {}
 
 func (x *StartTestDevicesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[59]
+	mi := &file_api_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3476,7 +3564,7 @@ func (x *StartTestDevicesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartTestDevicesResponse.ProtoReflect.Descriptor instead.
 func (*StartTestDevicesResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{59}
+	return file_api_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *StartTestDevicesResponse) GetSuccess() bool {
@@ -3502,7 +3590,7 @@ type StopTestDevicesRequest struct {
 
 func (x *StopTestDevicesRequest) Reset() {
 	*x = StopTestDevicesRequest{}
-	mi := &file_api_proto_msgTypes[60]
+	mi := &file_api_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3514,7 +3602,7 @@ func (x *StopTestDevicesRequest) String() string {
 func (*StopTestDevicesRequest) ProtoMessage() {}
 
 func (x *StopTestDevicesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[60]
+	mi := &file_api_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3527,7 +3615,7 @@ func (x *StopTestDevicesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopTestDevicesRequest.ProtoReflect.Descriptor instead.
 func (*StopTestDevicesRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{60}
+	return file_api_proto_rawDescGZIP(), []int{62}
 }
 
 func (x *StopTestDevicesRequest) GetDeviceIds() []int32 {
@@ -3547,7 +3635,7 @@ type StopTestDevicesResponse struct {
 
 func (x *StopTestDevicesResponse) Reset() {
 	*x = StopTestDevicesResponse{}
-	mi := &file_api_proto_msgTypes[61]
+	mi := &file_api_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3559,7 +3647,7 @@ func (x *StopTestDevicesResponse) String() string {
 func (*StopTestDevicesResponse) ProtoMessage() {}
 
 func (x *StopTestDevicesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[61]
+	mi := &file_api_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3572,7 +3660,7 @@ func (x *StopTestDevicesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopTestDevicesResponse.ProtoReflect.Descriptor instead.
 func (*StopTestDevicesResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{61}
+	return file_api_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *StopTestDevicesResponse) GetSuccess() bool {
@@ -3597,7 +3685,7 @@ type GetTestDevicesStatesRequest struct {
 
 func (x *GetTestDevicesStatesRequest) Reset() {
 	*x = GetTestDevicesStatesRequest{}
-	mi := &file_api_proto_msgTypes[62]
+	mi := &file_api_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3609,7 +3697,7 @@ func (x *GetTestDevicesStatesRequest) String() string {
 func (*GetTestDevicesStatesRequest) ProtoMessage() {}
 
 func (x *GetTestDevicesStatesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[62]
+	mi := &file_api_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3622,7 +3710,7 @@ func (x *GetTestDevicesStatesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTestDevicesStatesRequest.ProtoReflect.Descriptor instead.
 func (*GetTestDevicesStatesRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{62}
+	return file_api_proto_rawDescGZIP(), []int{64}
 }
 
 type GetTestDevicesStatesResponse struct {
@@ -3634,7 +3722,7 @@ type GetTestDevicesStatesResponse struct {
 
 func (x *GetTestDevicesStatesResponse) Reset() {
 	*x = GetTestDevicesStatesResponse{}
-	mi := &file_api_proto_msgTypes[63]
+	mi := &file_api_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3646,7 +3734,7 @@ func (x *GetTestDevicesStatesResponse) String() string {
 func (*GetTestDevicesStatesResponse) ProtoMessage() {}
 
 func (x *GetTestDevicesStatesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[63]
+	mi := &file_api_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3659,7 +3747,7 @@ func (x *GetTestDevicesStatesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTestDevicesStatesResponse.ProtoReflect.Descriptor instead.
 func (*GetTestDevicesStatesResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{63}
+	return file_api_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *GetTestDevicesStatesResponse) GetStates() map[string]string {
@@ -3677,7 +3765,7 @@ type ListTestDevicesRequest struct {
 
 func (x *ListTestDevicesRequest) Reset() {
 	*x = ListTestDevicesRequest{}
-	mi := &file_api_proto_msgTypes[64]
+	mi := &file_api_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3689,7 +3777,7 @@ func (x *ListTestDevicesRequest) String() string {
 func (*ListTestDevicesRequest) ProtoMessage() {}
 
 func (x *ListTestDevicesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[64]
+	mi := &file_api_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3702,7 +3790,7 @@ func (x *ListTestDevicesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTestDevicesRequest.ProtoReflect.Descriptor instead.
 func (*ListTestDevicesRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{64}
+	return file_api_proto_rawDescGZIP(), []int{66}
 }
 
 type ListTestDevicesResponse struct {
@@ -3714,7 +3802,7 @@ type ListTestDevicesResponse struct {
 
 func (x *ListTestDevicesResponse) Reset() {
 	*x = ListTestDevicesResponse{}
-	mi := &file_api_proto_msgTypes[65]
+	mi := &file_api_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3726,7 +3814,7 @@ func (x *ListTestDevicesResponse) String() string {
 func (*ListTestDevicesResponse) ProtoMessage() {}
 
 func (x *ListTestDevicesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[65]
+	mi := &file_api_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3739,7 +3827,7 @@ func (x *ListTestDevicesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTestDevicesResponse.ProtoReflect.Descriptor instead.
 func (*ListTestDevicesResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{65}
+	return file_api_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *ListTestDevicesResponse) GetDevices() []*TestDevice {
@@ -3758,7 +3846,7 @@ type GetTestDeviceStatisticsRequest struct {
 
 func (x *GetTestDeviceStatisticsRequest) Reset() {
 	*x = GetTestDeviceStatisticsRequest{}
-	mi := &file_api_proto_msgTypes[66]
+	mi := &file_api_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3770,7 +3858,7 @@ func (x *GetTestDeviceStatisticsRequest) String() string {
 func (*GetTestDeviceStatisticsRequest) ProtoMessage() {}
 
 func (x *GetTestDeviceStatisticsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[66]
+	mi := &file_api_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3783,7 +3871,7 @@ func (x *GetTestDeviceStatisticsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTestDeviceStatisticsRequest.ProtoReflect.Descriptor instead.
 func (*GetTestDeviceStatisticsRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{66}
+	return file_api_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *GetTestDeviceStatisticsRequest) GetDeviceId() int32 {
@@ -3802,7 +3890,7 @@ type GetTestDeviceStatisticsResponse struct {
 
 func (x *GetTestDeviceStatisticsResponse) Reset() {
 	*x = GetTestDeviceStatisticsResponse{}
-	mi := &file_api_proto_msgTypes[67]
+	mi := &file_api_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3814,7 +3902,7 @@ func (x *GetTestDeviceStatisticsResponse) String() string {
 func (*GetTestDeviceStatisticsResponse) ProtoMessage() {}
 
 func (x *GetTestDeviceStatisticsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[67]
+	mi := &file_api_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3827,7 +3915,7 @@ func (x *GetTestDeviceStatisticsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTestDeviceStatisticsResponse.ProtoReflect.Descriptor instead.
 func (*GetTestDeviceStatisticsResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{67}
+	return file_api_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *GetTestDeviceStatisticsResponse) GetStatistics() *TestDeviceStatistics {
@@ -3866,6 +3954,10 @@ const file_api_proto_rawDesc = "" +
 	"\x16RestartServicesRequest\"M\n" +
 	"\x17RestartServicesResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\x1f\n" +
+	"\x1dGetRunTransitionStatusRequest\"P\n" +
+	"\x1eGetRunTransitionStatusResponse\x12\x14\n" +
+	"\x05state\x18\x01 \x01(\tR\x05state\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\"\xa0\x02\n" +
 	"\x03GDC\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x12\n" +
@@ -4110,13 +4202,14 @@ const file_api_proto_rawDesc = "" +
 	"\x1fGetTestDeviceStatisticsResponse\x12@\n" +
 	"\n" +
 	"statistics\x18\x01 \x01(\v2 .apiService.TestDeviceStatisticsR\n" +
-	"statistics2\xb8\x14\n" +
+	"statistics2\xab\x15\n" +
 	"\aDuckAPI\x12G\n" +
 	"\bStartRun\x12\x1b.apiService.StartRunRequest\x1a\x1c.apiService.StartRunResponse\"\x00\x12D\n" +
 	"\aStopRun\x12\x1a.apiService.StopRunRequest\x1a\x1b.apiService.StopRunResponse\"\x00\x12S\n" +
 	"\fForceStopRun\x12\x1f.apiService.ForceStopRunRequest\x1a .apiService.ForceStopRunResponse\"\x00\x12_\n" +
 	"\x10GetProcessStates\x12#.apiService.GetProcessStatesRequest\x1a$.apiService.GetProcessStatesResponse\"\x00\x12\\\n" +
-	"\x0fRestartServices\x12\".apiService.RestartServicesRequest\x1a#.apiService.RestartServicesResponse\"\x00\x12J\n" +
+	"\x0fRestartServices\x12\".apiService.RestartServicesRequest\x1a#.apiService.RestartServicesResponse\"\x00\x12q\n" +
+	"\x16GetRunTransitionStatus\x12).apiService.GetRunTransitionStatusRequest\x1a*.apiService.GetRunTransitionStatusResponse\"\x00\x12J\n" +
 	"\tCreateGDC\x12\x1c.apiService.CreateGDCRequest\x1a\x1d.apiService.CreateGDCResponse\"\x00\x12D\n" +
 	"\aGetGDCs\x12\x1a.apiService.GetGDCsRequest\x1a\x1b.apiService.GetGDCsResponse\"\x00\x12A\n" +
 	"\x06GetGDC\x12\x19.apiService.GetGDCRequest\x1a\x1a.apiService.GetGDCResponse\"\x00\x12J\n" +
@@ -4155,7 +4248,7 @@ func file_api_proto_rawDescGZIP() []byte {
 	return file_api_proto_rawDescData
 }
 
-var file_api_proto_msgTypes = make([]protoimpl.MessageInfo, 69)
+var file_api_proto_msgTypes = make([]protoimpl.MessageInfo, 71)
 var file_api_proto_goTypes = []any{
 	(*SuccessResponse)(nil),                    // 0: apiService.SuccessResponse
 	(*StartRunRequest)(nil),                    // 1: apiService.StartRunRequest
@@ -4168,141 +4261,145 @@ var file_api_proto_goTypes = []any{
 	(*GetProcessStatesResponse)(nil),           // 8: apiService.GetProcessStatesResponse
 	(*RestartServicesRequest)(nil),             // 9: apiService.RestartServicesRequest
 	(*RestartServicesResponse)(nil),            // 10: apiService.RestartServicesResponse
-	(*GDC)(nil),                                // 11: apiService.GDC
-	(*CreateGDCRequest)(nil),                   // 12: apiService.CreateGDCRequest
-	(*CreateGDCResponse)(nil),                  // 13: apiService.CreateGDCResponse
-	(*GetGDCsRequest)(nil),                     // 14: apiService.GetGDCsRequest
-	(*GetGDCsResponse)(nil),                    // 15: apiService.GetGDCsResponse
-	(*GetGDCRequest)(nil),                      // 16: apiService.GetGDCRequest
-	(*GetGDCResponse)(nil),                     // 17: apiService.GetGDCResponse
-	(*UpdateGDCRequest)(nil),                   // 18: apiService.UpdateGDCRequest
-	(*UpdateGDCResponse)(nil),                  // 19: apiService.UpdateGDCResponse
-	(*DeleteGDCRequest)(nil),                   // 20: apiService.DeleteGDCRequest
-	(*DeleteGDCResponse)(nil),                  // 21: apiService.DeleteGDCResponse
-	(*Equipment)(nil),                          // 22: apiService.Equipment
-	(*LDC)(nil),                                // 23: apiService.LDC
-	(*CreateLDCRequest)(nil),                   // 24: apiService.CreateLDCRequest
-	(*CreateLDCResponse)(nil),                  // 25: apiService.CreateLDCResponse
-	(*GetLDCsRequest)(nil),                     // 26: apiService.GetLDCsRequest
-	(*GetLDCsResponse)(nil),                    // 27: apiService.GetLDCsResponse
-	(*GetLDCRequest)(nil),                      // 28: apiService.GetLDCRequest
-	(*GetLDCResponse)(nil),                     // 29: apiService.GetLDCResponse
-	(*UpdateLDCRequest)(nil),                   // 30: apiService.UpdateLDCRequest
-	(*UpdateLDCResponse)(nil),                  // 31: apiService.UpdateLDCResponse
-	(*DeleteLDCRequest)(nil),                   // 32: apiService.DeleteLDCRequest
-	(*DeleteLDCResponse)(nil),                  // 33: apiService.DeleteLDCResponse
-	(*CreateEquipmentRequest)(nil),             // 34: apiService.CreateEquipmentRequest
-	(*CreateEquipmentResponse)(nil),            // 35: apiService.CreateEquipmentResponse
-	(*GetEquipmentsRequest)(nil),               // 36: apiService.GetEquipmentsRequest
-	(*GetEquipmentsResponse)(nil),              // 37: apiService.GetEquipmentsResponse
-	(*GetEquipmentRequest)(nil),                // 38: apiService.GetEquipmentRequest
-	(*GetEquipmentResponse)(nil),               // 39: apiService.GetEquipmentResponse
-	(*UpdateEquipmentRequest)(nil),             // 40: apiService.UpdateEquipmentRequest
-	(*UpdateEquipmentResponse)(nil),            // 41: apiService.UpdateEquipmentResponse
-	(*DeleteEquipmentRequest)(nil),             // 42: apiService.DeleteEquipmentRequest
-	(*DeleteEquipmentResponse)(nil),            // 43: apiService.DeleteEquipmentResponse
-	(*DecoderConfiguration)(nil),               // 44: apiService.DecoderConfiguration
-	(*GetDecoderConfigurationRequest)(nil),     // 45: apiService.GetDecoderConfigurationRequest
-	(*GetDecoderConfigurationResponse)(nil),    // 46: apiService.GetDecoderConfigurationResponse
-	(*UpdateDecoderConfigurationRequest)(nil),  // 47: apiService.UpdateDecoderConfigurationRequest
-	(*UpdateDecoderConfigurationResponse)(nil), // 48: apiService.UpdateDecoderConfigurationResponse
-	(*GetRunNumberRequest)(nil),                // 49: apiService.GetRunNumberRequest
-	(*GetRunNumberResponse)(nil),               // 50: apiService.GetRunNumberResponse
-	(*DisabledWarning)(nil),                    // 51: apiService.DisabledWarning
-	(*CheckDisabledRequest)(nil),               // 52: apiService.CheckDisabledRequest
-	(*CheckDisabledResponse)(nil),              // 53: apiService.CheckDisabledResponse
-	(*GetTokenRequest)(nil),                    // 54: apiService.GetTokenRequest
-	(*GetTokenResponse)(nil),                   // 55: apiService.GetTokenResponse
-	(*TestDevice)(nil),                         // 56: apiService.TestDevice
-	(*TestDeviceStatistics)(nil),               // 57: apiService.TestDeviceStatistics
-	(*StartTestDevicesRequest)(nil),            // 58: apiService.StartTestDevicesRequest
-	(*StartTestDevicesResponse)(nil),           // 59: apiService.StartTestDevicesResponse
-	(*StopTestDevicesRequest)(nil),             // 60: apiService.StopTestDevicesRequest
-	(*StopTestDevicesResponse)(nil),            // 61: apiService.StopTestDevicesResponse
-	(*GetTestDevicesStatesRequest)(nil),        // 62: apiService.GetTestDevicesStatesRequest
-	(*GetTestDevicesStatesResponse)(nil),       // 63: apiService.GetTestDevicesStatesResponse
-	(*ListTestDevicesRequest)(nil),             // 64: apiService.ListTestDevicesRequest
-	(*ListTestDevicesResponse)(nil),            // 65: apiService.ListTestDevicesResponse
-	(*GetTestDeviceStatisticsRequest)(nil),     // 66: apiService.GetTestDeviceStatisticsRequest
-	(*GetTestDeviceStatisticsResponse)(nil),    // 67: apiService.GetTestDeviceStatisticsResponse
-	nil,                                        // 68: apiService.GetTestDevicesStatesResponse.StatesEntry
+	(*GetRunTransitionStatusRequest)(nil),      // 11: apiService.GetRunTransitionStatusRequest
+	(*GetRunTransitionStatusResponse)(nil),     // 12: apiService.GetRunTransitionStatusResponse
+	(*GDC)(nil),                                // 13: apiService.GDC
+	(*CreateGDCRequest)(nil),                   // 14: apiService.CreateGDCRequest
+	(*CreateGDCResponse)(nil),                  // 15: apiService.CreateGDCResponse
+	(*GetGDCsRequest)(nil),                     // 16: apiService.GetGDCsRequest
+	(*GetGDCsResponse)(nil),                    // 17: apiService.GetGDCsResponse
+	(*GetGDCRequest)(nil),                      // 18: apiService.GetGDCRequest
+	(*GetGDCResponse)(nil),                     // 19: apiService.GetGDCResponse
+	(*UpdateGDCRequest)(nil),                   // 20: apiService.UpdateGDCRequest
+	(*UpdateGDCResponse)(nil),                  // 21: apiService.UpdateGDCResponse
+	(*DeleteGDCRequest)(nil),                   // 22: apiService.DeleteGDCRequest
+	(*DeleteGDCResponse)(nil),                  // 23: apiService.DeleteGDCResponse
+	(*Equipment)(nil),                          // 24: apiService.Equipment
+	(*LDC)(nil),                                // 25: apiService.LDC
+	(*CreateLDCRequest)(nil),                   // 26: apiService.CreateLDCRequest
+	(*CreateLDCResponse)(nil),                  // 27: apiService.CreateLDCResponse
+	(*GetLDCsRequest)(nil),                     // 28: apiService.GetLDCsRequest
+	(*GetLDCsResponse)(nil),                    // 29: apiService.GetLDCsResponse
+	(*GetLDCRequest)(nil),                      // 30: apiService.GetLDCRequest
+	(*GetLDCResponse)(nil),                     // 31: apiService.GetLDCResponse
+	(*UpdateLDCRequest)(nil),                   // 32: apiService.UpdateLDCRequest
+	(*UpdateLDCResponse)(nil),                  // 33: apiService.UpdateLDCResponse
+	(*DeleteLDCRequest)(nil),                   // 34: apiService.DeleteLDCRequest
+	(*DeleteLDCResponse)(nil),                  // 35: apiService.DeleteLDCResponse
+	(*CreateEquipmentRequest)(nil),             // 36: apiService.CreateEquipmentRequest
+	(*CreateEquipmentResponse)(nil),            // 37: apiService.CreateEquipmentResponse
+	(*GetEquipmentsRequest)(nil),               // 38: apiService.GetEquipmentsRequest
+	(*GetEquipmentsResponse)(nil),              // 39: apiService.GetEquipmentsResponse
+	(*GetEquipmentRequest)(nil),                // 40: apiService.GetEquipmentRequest
+	(*GetEquipmentResponse)(nil),               // 41: apiService.GetEquipmentResponse
+	(*UpdateEquipmentRequest)(nil),             // 42: apiService.UpdateEquipmentRequest
+	(*UpdateEquipmentResponse)(nil),            // 43: apiService.UpdateEquipmentResponse
+	(*DeleteEquipmentRequest)(nil),             // 44: apiService.DeleteEquipmentRequest
+	(*DeleteEquipmentResponse)(nil),            // 45: apiService.DeleteEquipmentResponse
+	(*DecoderConfiguration)(nil),               // 46: apiService.DecoderConfiguration
+	(*GetDecoderConfigurationRequest)(nil),     // 47: apiService.GetDecoderConfigurationRequest
+	(*GetDecoderConfigurationResponse)(nil),    // 48: apiService.GetDecoderConfigurationResponse
+	(*UpdateDecoderConfigurationRequest)(nil),  // 49: apiService.UpdateDecoderConfigurationRequest
+	(*UpdateDecoderConfigurationResponse)(nil), // 50: apiService.UpdateDecoderConfigurationResponse
+	(*GetRunNumberRequest)(nil),                // 51: apiService.GetRunNumberRequest
+	(*GetRunNumberResponse)(nil),               // 52: apiService.GetRunNumberResponse
+	(*DisabledWarning)(nil),                    // 53: apiService.DisabledWarning
+	(*CheckDisabledRequest)(nil),               // 54: apiService.CheckDisabledRequest
+	(*CheckDisabledResponse)(nil),              // 55: apiService.CheckDisabledResponse
+	(*GetTokenRequest)(nil),                    // 56: apiService.GetTokenRequest
+	(*GetTokenResponse)(nil),                   // 57: apiService.GetTokenResponse
+	(*TestDevice)(nil),                         // 58: apiService.TestDevice
+	(*TestDeviceStatistics)(nil),               // 59: apiService.TestDeviceStatistics
+	(*StartTestDevicesRequest)(nil),            // 60: apiService.StartTestDevicesRequest
+	(*StartTestDevicesResponse)(nil),           // 61: apiService.StartTestDevicesResponse
+	(*StopTestDevicesRequest)(nil),             // 62: apiService.StopTestDevicesRequest
+	(*StopTestDevicesResponse)(nil),            // 63: apiService.StopTestDevicesResponse
+	(*GetTestDevicesStatesRequest)(nil),        // 64: apiService.GetTestDevicesStatesRequest
+	(*GetTestDevicesStatesResponse)(nil),       // 65: apiService.GetTestDevicesStatesResponse
+	(*ListTestDevicesRequest)(nil),             // 66: apiService.ListTestDevicesRequest
+	(*ListTestDevicesResponse)(nil),            // 67: apiService.ListTestDevicesResponse
+	(*GetTestDeviceStatisticsRequest)(nil),     // 68: apiService.GetTestDeviceStatisticsRequest
+	(*GetTestDeviceStatisticsResponse)(nil),    // 69: apiService.GetTestDeviceStatisticsResponse
+	nil,                                        // 70: apiService.GetTestDevicesStatesResponse.StatesEntry
 }
 var file_api_proto_depIdxs = []int32{
-	11, // 0: apiService.GetGDCsResponse.gdcs:type_name -> apiService.GDC
-	11, // 1: apiService.GetGDCResponse.gdc:type_name -> apiService.GDC
-	22, // 2: apiService.LDC.equipments:type_name -> apiService.Equipment
-	23, // 3: apiService.GetLDCsResponse.ldcs:type_name -> apiService.LDC
-	23, // 4: apiService.GetLDCResponse.ldc:type_name -> apiService.LDC
-	22, // 5: apiService.GetEquipmentsResponse.equipments:type_name -> apiService.Equipment
-	22, // 6: apiService.GetEquipmentResponse.equipment:type_name -> apiService.Equipment
-	44, // 7: apiService.GetDecoderConfigurationResponse.configuration:type_name -> apiService.DecoderConfiguration
-	44, // 8: apiService.UpdateDecoderConfigurationRequest.configuration:type_name -> apiService.DecoderConfiguration
-	51, // 9: apiService.CheckDisabledResponse.warnings:type_name -> apiService.DisabledWarning
-	68, // 10: apiService.GetTestDevicesStatesResponse.states:type_name -> apiService.GetTestDevicesStatesResponse.StatesEntry
-	56, // 11: apiService.ListTestDevicesResponse.devices:type_name -> apiService.TestDevice
-	57, // 12: apiService.GetTestDeviceStatisticsResponse.statistics:type_name -> apiService.TestDeviceStatistics
+	13, // 0: apiService.GetGDCsResponse.gdcs:type_name -> apiService.GDC
+	13, // 1: apiService.GetGDCResponse.gdc:type_name -> apiService.GDC
+	24, // 2: apiService.LDC.equipments:type_name -> apiService.Equipment
+	25, // 3: apiService.GetLDCsResponse.ldcs:type_name -> apiService.LDC
+	25, // 4: apiService.GetLDCResponse.ldc:type_name -> apiService.LDC
+	24, // 5: apiService.GetEquipmentsResponse.equipments:type_name -> apiService.Equipment
+	24, // 6: apiService.GetEquipmentResponse.equipment:type_name -> apiService.Equipment
+	46, // 7: apiService.GetDecoderConfigurationResponse.configuration:type_name -> apiService.DecoderConfiguration
+	46, // 8: apiService.UpdateDecoderConfigurationRequest.configuration:type_name -> apiService.DecoderConfiguration
+	53, // 9: apiService.CheckDisabledResponse.warnings:type_name -> apiService.DisabledWarning
+	70, // 10: apiService.GetTestDevicesStatesResponse.states:type_name -> apiService.GetTestDevicesStatesResponse.StatesEntry
+	58, // 11: apiService.ListTestDevicesResponse.devices:type_name -> apiService.TestDevice
+	59, // 12: apiService.GetTestDeviceStatisticsResponse.statistics:type_name -> apiService.TestDeviceStatistics
 	1,  // 13: apiService.DuckAPI.StartRun:input_type -> apiService.StartRunRequest
 	3,  // 14: apiService.DuckAPI.StopRun:input_type -> apiService.StopRunRequest
 	5,  // 15: apiService.DuckAPI.ForceStopRun:input_type -> apiService.ForceStopRunRequest
 	7,  // 16: apiService.DuckAPI.GetProcessStates:input_type -> apiService.GetProcessStatesRequest
 	9,  // 17: apiService.DuckAPI.RestartServices:input_type -> apiService.RestartServicesRequest
-	12, // 18: apiService.DuckAPI.CreateGDC:input_type -> apiService.CreateGDCRequest
-	14, // 19: apiService.DuckAPI.GetGDCs:input_type -> apiService.GetGDCsRequest
-	16, // 20: apiService.DuckAPI.GetGDC:input_type -> apiService.GetGDCRequest
-	18, // 21: apiService.DuckAPI.UpdateGDC:input_type -> apiService.UpdateGDCRequest
-	20, // 22: apiService.DuckAPI.DeleteGDC:input_type -> apiService.DeleteGDCRequest
-	24, // 23: apiService.DuckAPI.CreateLDC:input_type -> apiService.CreateLDCRequest
-	26, // 24: apiService.DuckAPI.GetLDCs:input_type -> apiService.GetLDCsRequest
-	28, // 25: apiService.DuckAPI.GetLDC:input_type -> apiService.GetLDCRequest
-	30, // 26: apiService.DuckAPI.UpdateLDC:input_type -> apiService.UpdateLDCRequest
-	32, // 27: apiService.DuckAPI.DeleteLDC:input_type -> apiService.DeleteLDCRequest
-	34, // 28: apiService.DuckAPI.CreateEquipment:input_type -> apiService.CreateEquipmentRequest
-	36, // 29: apiService.DuckAPI.GetEquipments:input_type -> apiService.GetEquipmentsRequest
-	38, // 30: apiService.DuckAPI.GetEquipment:input_type -> apiService.GetEquipmentRequest
-	40, // 31: apiService.DuckAPI.UpdateEquipment:input_type -> apiService.UpdateEquipmentRequest
-	42, // 32: apiService.DuckAPI.DeleteEquipment:input_type -> apiService.DeleteEquipmentRequest
-	45, // 33: apiService.DuckAPI.GetDecoderConfiguration:input_type -> apiService.GetDecoderConfigurationRequest
-	47, // 34: apiService.DuckAPI.UpdateDecoderConfiguration:input_type -> apiService.UpdateDecoderConfigurationRequest
-	49, // 35: apiService.DuckAPI.GetRunNumber:input_type -> apiService.GetRunNumberRequest
-	52, // 36: apiService.DuckAPI.CheckDisabled:input_type -> apiService.CheckDisabledRequest
-	54, // 37: apiService.DuckAPI.GetToken:input_type -> apiService.GetTokenRequest
-	58, // 38: apiService.DuckAPI.StartTestDevices:input_type -> apiService.StartTestDevicesRequest
-	60, // 39: apiService.DuckAPI.StopTestDevices:input_type -> apiService.StopTestDevicesRequest
-	62, // 40: apiService.DuckAPI.GetTestDevicesStates:input_type -> apiService.GetTestDevicesStatesRequest
-	64, // 41: apiService.DuckAPI.ListTestDevices:input_type -> apiService.ListTestDevicesRequest
-	66, // 42: apiService.DuckAPI.GetTestDeviceStatistics:input_type -> apiService.GetTestDeviceStatisticsRequest
-	2,  // 43: apiService.DuckAPI.StartRun:output_type -> apiService.StartRunResponse
-	4,  // 44: apiService.DuckAPI.StopRun:output_type -> apiService.StopRunResponse
-	6,  // 45: apiService.DuckAPI.ForceStopRun:output_type -> apiService.ForceStopRunResponse
-	8,  // 46: apiService.DuckAPI.GetProcessStates:output_type -> apiService.GetProcessStatesResponse
-	10, // 47: apiService.DuckAPI.RestartServices:output_type -> apiService.RestartServicesResponse
-	13, // 48: apiService.DuckAPI.CreateGDC:output_type -> apiService.CreateGDCResponse
-	15, // 49: apiService.DuckAPI.GetGDCs:output_type -> apiService.GetGDCsResponse
-	17, // 50: apiService.DuckAPI.GetGDC:output_type -> apiService.GetGDCResponse
-	19, // 51: apiService.DuckAPI.UpdateGDC:output_type -> apiService.UpdateGDCResponse
-	21, // 52: apiService.DuckAPI.DeleteGDC:output_type -> apiService.DeleteGDCResponse
-	25, // 53: apiService.DuckAPI.CreateLDC:output_type -> apiService.CreateLDCResponse
-	27, // 54: apiService.DuckAPI.GetLDCs:output_type -> apiService.GetLDCsResponse
-	29, // 55: apiService.DuckAPI.GetLDC:output_type -> apiService.GetLDCResponse
-	31, // 56: apiService.DuckAPI.UpdateLDC:output_type -> apiService.UpdateLDCResponse
-	33, // 57: apiService.DuckAPI.DeleteLDC:output_type -> apiService.DeleteLDCResponse
-	35, // 58: apiService.DuckAPI.CreateEquipment:output_type -> apiService.CreateEquipmentResponse
-	37, // 59: apiService.DuckAPI.GetEquipments:output_type -> apiService.GetEquipmentsResponse
-	39, // 60: apiService.DuckAPI.GetEquipment:output_type -> apiService.GetEquipmentResponse
-	41, // 61: apiService.DuckAPI.UpdateEquipment:output_type -> apiService.UpdateEquipmentResponse
-	43, // 62: apiService.DuckAPI.DeleteEquipment:output_type -> apiService.DeleteEquipmentResponse
-	46, // 63: apiService.DuckAPI.GetDecoderConfiguration:output_type -> apiService.GetDecoderConfigurationResponse
-	48, // 64: apiService.DuckAPI.UpdateDecoderConfiguration:output_type -> apiService.UpdateDecoderConfigurationResponse
-	50, // 65: apiService.DuckAPI.GetRunNumber:output_type -> apiService.GetRunNumberResponse
-	53, // 66: apiService.DuckAPI.CheckDisabled:output_type -> apiService.CheckDisabledResponse
-	55, // 67: apiService.DuckAPI.GetToken:output_type -> apiService.GetTokenResponse
-	59, // 68: apiService.DuckAPI.StartTestDevices:output_type -> apiService.StartTestDevicesResponse
-	61, // 69: apiService.DuckAPI.StopTestDevices:output_type -> apiService.StopTestDevicesResponse
-	63, // 70: apiService.DuckAPI.GetTestDevicesStates:output_type -> apiService.GetTestDevicesStatesResponse
-	65, // 71: apiService.DuckAPI.ListTestDevices:output_type -> apiService.ListTestDevicesResponse
-	67, // 72: apiService.DuckAPI.GetTestDeviceStatistics:output_type -> apiService.GetTestDeviceStatisticsResponse
-	43, // [43:73] is the sub-list for method output_type
-	13, // [13:43] is the sub-list for method input_type
+	11, // 18: apiService.DuckAPI.GetRunTransitionStatus:input_type -> apiService.GetRunTransitionStatusRequest
+	14, // 19: apiService.DuckAPI.CreateGDC:input_type -> apiService.CreateGDCRequest
+	16, // 20: apiService.DuckAPI.GetGDCs:input_type -> apiService.GetGDCsRequest
+	18, // 21: apiService.DuckAPI.GetGDC:input_type -> apiService.GetGDCRequest
+	20, // 22: apiService.DuckAPI.UpdateGDC:input_type -> apiService.UpdateGDCRequest
+	22, // 23: apiService.DuckAPI.DeleteGDC:input_type -> apiService.DeleteGDCRequest
+	26, // 24: apiService.DuckAPI.CreateLDC:input_type -> apiService.CreateLDCRequest
+	28, // 25: apiService.DuckAPI.GetLDCs:input_type -> apiService.GetLDCsRequest
+	30, // 26: apiService.DuckAPI.GetLDC:input_type -> apiService.GetLDCRequest
+	32, // 27: apiService.DuckAPI.UpdateLDC:input_type -> apiService.UpdateLDCRequest
+	34, // 28: apiService.DuckAPI.DeleteLDC:input_type -> apiService.DeleteLDCRequest
+	36, // 29: apiService.DuckAPI.CreateEquipment:input_type -> apiService.CreateEquipmentRequest
+	38, // 30: apiService.DuckAPI.GetEquipments:input_type -> apiService.GetEquipmentsRequest
+	40, // 31: apiService.DuckAPI.GetEquipment:input_type -> apiService.GetEquipmentRequest
+	42, // 32: apiService.DuckAPI.UpdateEquipment:input_type -> apiService.UpdateEquipmentRequest
+	44, // 33: apiService.DuckAPI.DeleteEquipment:input_type -> apiService.DeleteEquipmentRequest
+	47, // 34: apiService.DuckAPI.GetDecoderConfiguration:input_type -> apiService.GetDecoderConfigurationRequest
+	49, // 35: apiService.DuckAPI.UpdateDecoderConfiguration:input_type -> apiService.UpdateDecoderConfigurationRequest
+	51, // 36: apiService.DuckAPI.GetRunNumber:input_type -> apiService.GetRunNumberRequest
+	54, // 37: apiService.DuckAPI.CheckDisabled:input_type -> apiService.CheckDisabledRequest
+	56, // 38: apiService.DuckAPI.GetToken:input_type -> apiService.GetTokenRequest
+	60, // 39: apiService.DuckAPI.StartTestDevices:input_type -> apiService.StartTestDevicesRequest
+	62, // 40: apiService.DuckAPI.StopTestDevices:input_type -> apiService.StopTestDevicesRequest
+	64, // 41: apiService.DuckAPI.GetTestDevicesStates:input_type -> apiService.GetTestDevicesStatesRequest
+	66, // 42: apiService.DuckAPI.ListTestDevices:input_type -> apiService.ListTestDevicesRequest
+	68, // 43: apiService.DuckAPI.GetTestDeviceStatistics:input_type -> apiService.GetTestDeviceStatisticsRequest
+	2,  // 44: apiService.DuckAPI.StartRun:output_type -> apiService.StartRunResponse
+	4,  // 45: apiService.DuckAPI.StopRun:output_type -> apiService.StopRunResponse
+	6,  // 46: apiService.DuckAPI.ForceStopRun:output_type -> apiService.ForceStopRunResponse
+	8,  // 47: apiService.DuckAPI.GetProcessStates:output_type -> apiService.GetProcessStatesResponse
+	10, // 48: apiService.DuckAPI.RestartServices:output_type -> apiService.RestartServicesResponse
+	12, // 49: apiService.DuckAPI.GetRunTransitionStatus:output_type -> apiService.GetRunTransitionStatusResponse
+	15, // 50: apiService.DuckAPI.CreateGDC:output_type -> apiService.CreateGDCResponse
+	17, // 51: apiService.DuckAPI.GetGDCs:output_type -> apiService.GetGDCsResponse
+	19, // 52: apiService.DuckAPI.GetGDC:output_type -> apiService.GetGDCResponse
+	21, // 53: apiService.DuckAPI.UpdateGDC:output_type -> apiService.UpdateGDCResponse
+	23, // 54: apiService.DuckAPI.DeleteGDC:output_type -> apiService.DeleteGDCResponse
+	27, // 55: apiService.DuckAPI.CreateLDC:output_type -> apiService.CreateLDCResponse
+	29, // 56: apiService.DuckAPI.GetLDCs:output_type -> apiService.GetLDCsResponse
+	31, // 57: apiService.DuckAPI.GetLDC:output_type -> apiService.GetLDCResponse
+	33, // 58: apiService.DuckAPI.UpdateLDC:output_type -> apiService.UpdateLDCResponse
+	35, // 59: apiService.DuckAPI.DeleteLDC:output_type -> apiService.DeleteLDCResponse
+	37, // 60: apiService.DuckAPI.CreateEquipment:output_type -> apiService.CreateEquipmentResponse
+	39, // 61: apiService.DuckAPI.GetEquipments:output_type -> apiService.GetEquipmentsResponse
+	41, // 62: apiService.DuckAPI.GetEquipment:output_type -> apiService.GetEquipmentResponse
+	43, // 63: apiService.DuckAPI.UpdateEquipment:output_type -> apiService.UpdateEquipmentResponse
+	45, // 64: apiService.DuckAPI.DeleteEquipment:output_type -> apiService.DeleteEquipmentResponse
+	48, // 65: apiService.DuckAPI.GetDecoderConfiguration:output_type -> apiService.GetDecoderConfigurationResponse
+	50, // 66: apiService.DuckAPI.UpdateDecoderConfiguration:output_type -> apiService.UpdateDecoderConfigurationResponse
+	52, // 67: apiService.DuckAPI.GetRunNumber:output_type -> apiService.GetRunNumberResponse
+	55, // 68: apiService.DuckAPI.CheckDisabled:output_type -> apiService.CheckDisabledResponse
+	57, // 69: apiService.DuckAPI.GetToken:output_type -> apiService.GetTokenResponse
+	61, // 70: apiService.DuckAPI.StartTestDevices:output_type -> apiService.StartTestDevicesResponse
+	63, // 71: apiService.DuckAPI.StopTestDevices:output_type -> apiService.StopTestDevicesResponse
+	65, // 72: apiService.DuckAPI.GetTestDevicesStates:output_type -> apiService.GetTestDevicesStatesResponse
+	67, // 73: apiService.DuckAPI.ListTestDevices:output_type -> apiService.ListTestDevicesResponse
+	69, // 74: apiService.DuckAPI.GetTestDeviceStatistics:output_type -> apiService.GetTestDeviceStatisticsResponse
+	44, // [44:75] is the sub-list for method output_type
+	13, // [13:44] is the sub-list for method input_type
 	13, // [13:13] is the sub-list for extension type_name
 	13, // [13:13] is the sub-list for extension extendee
 	0,  // [0:13] is the sub-list for field type_name
@@ -4319,7 +4416,7 @@ func file_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_proto_rawDesc), len(file_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   69,
+			NumMessages:   71,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

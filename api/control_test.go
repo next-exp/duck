@@ -6,8 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"io/fs"
-	"sync"
-	"sync/atomic"
 	"testing"
 	"time"
 
@@ -598,78 +596,10 @@ func TestStopProcesses_Success(t *testing.T) {
 	mockQuerier.AssertCalled(t, "InsertNewRun", mock.Anything)
 }
 
-func TestStopProcesses_SerialExecution(t *testing.T) {
-	server, mockQuerier, mockRPC := createTestServer(t, false)
-
-	setupConfigMocks(mockQuerier)
-
-	// Track concurrent access to mutex-protected section
-	var concurrentCount int32
-	var maxConcurrent int32
-
-	// Use functional return to inject tracking logic for serialization verification
-	mockQuerier.On("GetLatestRunWithTimestamp", mock.Anything).Return(
-		func(ctx context.Context) (database.Run, error) {
-			// Increment counter on entry to mutex-protected section
-			current := atomic.AddInt32(&concurrentCount, 1)
-			// Update max if needed using CAS loop
-			for {
-				max := atomic.LoadInt32(&maxConcurrent)
-				if current <= max || atomic.CompareAndSwapInt32(&maxConcurrent, max, current) {
-					break
-				}
-			}
-			// Simulate work to allow overlap detection
-			time.Sleep(20 * time.Millisecond)
-			// Decrement on exit
-			atomic.AddInt32(&concurrentCount, -1)
-
-			return database.Run{
-				ID:    123,
-				Start: sql.NullTime{Time: time.Now(), Valid: true},
-				Stop:  sql.NullTime{Valid: false},
-			}, nil
-		},
-	)
-
-	mockRPC.StopServerFunc = func(ctx context.Context, ip string, port int) error {
-		time.Sleep(10 * time.Millisecond)
-		return nil
-	}
-	mockRPC.FetchRunStatisticsFunc = func(ctx context.Context, ip string, port int) (duck.RunStatistics, error) {
-		return duck.RunStatistics{Events: 100, Bytes: 500, Errors: 0}, nil
-	}
-
-	mockQuerier.On("UpdateRunStopTime", mock.Anything, matchRunStopTime(123)).Return(nil)
-	mockQuerier.On("InsertGDCEvents", mock.Anything, matchGDCEvents(123, 1, 100)).Return(nil)
-	mockQuerier.On("InsertGDCBytes", mock.Anything, matchGDCBytes(123, 1, 500)).Return(nil)
-	mockQuerier.On("InsertGDCErrorCount", mock.Anything, matchGDCErrorCount(123, 1, 0)).Return(nil)
-	mockQuerier.On("InsertLDCEvents", mock.Anything, matchLDCEvents(123, 1, 100)).Return(nil)
-	mockQuerier.On("InsertLDCBytes", mock.Anything, matchLDCBytes(123, 1, 500)).Return(nil)
-	mockQuerier.On("InsertLDCErrorCount", mock.Anything, matchLDCErrorCount(123, 1, 0)).Return(nil)
-	mockQuerier.On("InsertNewRun", mock.Anything).Return(nil)
-
-	// Launch 3 concurrent calls
-	var wg sync.WaitGroup
-	for i := 0; i < 3; i++ {
-		wg.Add(1)
-		go func() {
-			defer wg.Done()
-			stopProcesses(server)
-		}()
-	}
-	wg.Wait()
-
-	// Assert: Verify serialization - max concurrent should be 1
-	assert.Equal(t, int32(1), maxConcurrent,
-		"mutex-protected section should never have more than 1 concurrent execution")
-
-	// Assert: Exact call counts for 3 iterations
-	assert.Equal(t, 3, mockRPC.StopServerCalledCount(),
-		"expected 3 LDC stop calls (1 LDC × 3 iterations)")
-	assert.Equal(t, 6, mockRPC.FetchRunStatisticsCalledCount(),
-		"expected 6 stats calls (2 devices × 3 iterations)")
-}
+// Serialization of concurrent StopRun requests is now enforced by the RunTransition
+// state machine in the HTTP handler layer (see TestStopRun_AlreadyStopping in
+// apiHandlerControl_test.go). The stopProcesses function itself is only ever called
+// from one goroutine at a time.
 
 // ===== forceStopProcesses Tests =====
 

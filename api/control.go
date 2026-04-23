@@ -9,8 +9,6 @@ import (
 	duck "github.com/jmbenlloch/next_duck/pkg"
 )
 
-var stopProcessesMutex sync.Mutex
-
 // writeFileFn is injectable for testing
 var writeFileFn = os.WriteFile
 
@@ -77,9 +75,6 @@ func stopProcesses(s *DuckAPIServer) {
 
 	// Stop only LDCs. GDCs will stop if there are no remaining LDC connections
 	stopLDCs(enabledLDCs, s.rpcClient)
-
-	stopProcessesMutex.Lock()
-	defer stopProcessesMutex.Unlock() // Unlock the mutex when the function exits
 
 	runNumber, err := getRun(s.queries)
 	if err != nil {

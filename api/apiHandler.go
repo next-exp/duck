@@ -13,6 +13,7 @@ type DuckAPIServer struct {
 	configFilename   string
 	centrifugalToken string
 	devVersion       bool
+	runTransition    RunTransition
 }
 
 // NewDuckAPIServer creates a new DuckAPIServer instance
