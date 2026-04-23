@@ -819,13 +819,11 @@ func TestUpdateRunStatistics_EmptyDeviceLists(t *testing.T) {
 func TestUpdateRunStatistics_PartialFailure(t *testing.T) {
 	server, mockQuerier, mockRPC := createTestServer(t, false)
 
-	setupConfigMocks(mockQuerier)
+	setupConfigMocks(mockQuerier) // 1 GDC at 192.168.1.100, 1 LDC at 192.168.1.101
 
-	// First device succeeds, second fails
-	callCount := 0
+	// GDC succeeds, LDC fails — deterministic via IP to avoid call-order races
 	mockRPC.FetchRunStatisticsFunc = func(ctx context.Context, ip string, port int) (duck.RunStatistics, error) {
-		callCount++
-		if callCount == 1 {
+		if ip == "192.168.1.100" {
 			return duck.RunStatistics{Events: 100, Bytes: 500, Errors: 0}, nil
 		}
 		return duck.RunStatistics{}, errors.New("stats failed")

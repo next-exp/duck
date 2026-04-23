@@ -156,13 +156,17 @@ func updateRunStatistics(s *DuckAPIServer, run int) error {
 	enabledLDCs := duck.EnabledLDCs(configuration.LDCs)
 	enabledGDCs := duck.EnabledGDCs(configuration.GDCs)
 
-	for i := 0; i < len(enabledGDCs); i++ {
-		updateGDCStatistics(enabledGDCs[i], s.queries, run, s.rpcClient)
-	}
-
-	for i := 0; i < len(enabledLDCs); i++ {
-		updateLDCStatistics(enabledLDCs[i], s.queries, run, s.rpcClient)
-	}
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		defer wg.Done()
+		updateAllGDCStatistics(enabledGDCs, s.queries, run, s.rpcClient)
+	}()
+	go func() {
+		defer wg.Done()
+		updateAllLDCStatistics(enabledLDCs, s.queries, run, s.rpcClient)
+	}()
+	wg.Wait()
 	return nil
 }
 

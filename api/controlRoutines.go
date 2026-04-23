@@ -263,3 +263,31 @@ func getGDCStates(gdcs []duck.GDCConfiguration, rpcClient RPCClient) bool {
 	}
 	return success
 }
+
+func updateAllGDCStatistics(gdcs []duck.GDCConfiguration, queries database.Querier, run int, rpcClient RPCClient) {
+	nGDCs := len(gdcs)
+	doneChan := make(chan struct{}, nGDCs)
+	for i := 0; i < nGDCs; i++ {
+		go func(gdc duck.GDCConfiguration) {
+			defer func() { doneChan <- struct{}{} }()
+			updateGDCStatistics(gdc, queries, run, rpcClient)
+		}(gdcs[i])
+	}
+	for i := 0; i < nGDCs; i++ {
+		<-doneChan
+	}
+}
+
+func updateAllLDCStatistics(ldcs []duck.LDCConfiguration, queries database.Querier, run int, rpcClient RPCClient) {
+	nLDCs := len(ldcs)
+	doneChan := make(chan struct{}, nLDCs)
+	for i := 0; i < nLDCs; i++ {
+		go func(ldc duck.LDCConfiguration) {
+			defer func() { doneChan <- struct{}{} }()
+			updateLDCStatistics(ldc, queries, run, rpcClient)
+		}(ldcs[i])
+	}
+	for i := 0; i < nLDCs; i++ {
+		<-doneChan
+	}
+}

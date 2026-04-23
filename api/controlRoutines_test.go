@@ -337,6 +337,116 @@ func TestUpdateLDCStatistics_RPCError(t *testing.T) {
 	assert.Greater(t, mockRPC.FetchRunStatisticsCalledCount(), 0, "FetchRunStatistics should be called")
 }
 
+// ===== updateAllGDCStatistics Tests =====
+
+func TestUpdateAllGDCStatistics_EmptyList(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+	mockRPC := &MockRPCClient{}
+
+	logger = duck.NewDuckLogger("test", nil, 0)
+
+	updateAllGDCStatistics([]duck.GDCConfiguration{}, mockQuerier, 1, mockRPC)
+
+	assert.Equal(t, 0, mockRPC.FetchRunStatisticsCalledCount(), "FetchRunStatistics should not be called")
+}
+
+func TestUpdateAllGDCStatistics_SingleDevice(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+	mockRPC := &MockRPCClient{}
+
+	mockQuerier.On("InsertGDCEvents", mock.Anything, mock.Anything).Return(nil)
+	mockQuerier.On("InsertGDCBytes", mock.Anything, mock.Anything).Return(nil)
+	mockQuerier.On("InsertGDCErrorCount", mock.Anything, mock.Anything).Return(nil)
+
+	gdcs := []duck.GDCConfiguration{
+		{ID: 1, Name: "gdc1", IP: "192.168.1.100", GRPCPort: 6001},
+	}
+
+	logger = duck.NewDuckLogger("test", nil, 0)
+
+	updateAllGDCStatistics(gdcs, mockQuerier, 1, mockRPC)
+
+	assert.Equal(t, 1, mockRPC.FetchRunStatisticsCalledCount())
+	mockQuerier.AssertExpectations(t)
+}
+
+func TestUpdateAllGDCStatistics_MultipleDevices(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+	mockRPC := &MockRPCClient{}
+
+	mockQuerier.On("InsertGDCEvents", mock.Anything, mock.Anything).Return(nil)
+	mockQuerier.On("InsertGDCBytes", mock.Anything, mock.Anything).Return(nil)
+	mockQuerier.On("InsertGDCErrorCount", mock.Anything, mock.Anything).Return(nil)
+
+	gdcs := []duck.GDCConfiguration{
+		{ID: 1, Name: "gdc1", IP: "192.168.1.100", GRPCPort: 6001},
+		{ID: 2, Name: "gdc2", IP: "192.168.1.101", GRPCPort: 6002},
+		{ID: 3, Name: "gdc3", IP: "192.168.1.102", GRPCPort: 6003},
+	}
+
+	logger = duck.NewDuckLogger("test", nil, 0)
+
+	updateAllGDCStatistics(gdcs, mockQuerier, 1, mockRPC)
+
+	assert.Equal(t, 3, mockRPC.FetchRunStatisticsCalledCount())
+	mockQuerier.AssertExpectations(t)
+}
+
+// ===== updateAllLDCStatistics Tests =====
+
+func TestUpdateAllLDCStatistics_EmptyList(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+	mockRPC := &MockRPCClient{}
+
+	logger = duck.NewDuckLogger("test", nil, 0)
+
+	updateAllLDCStatistics([]duck.LDCConfiguration{}, mockQuerier, 1, mockRPC)
+
+	assert.Equal(t, 0, mockRPC.FetchRunStatisticsCalledCount(), "FetchRunStatistics should not be called")
+}
+
+func TestUpdateAllLDCStatistics_SingleDevice(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+	mockRPC := &MockRPCClient{}
+
+	mockQuerier.On("InsertLDCEvents", mock.Anything, mock.Anything).Return(nil)
+	mockQuerier.On("InsertLDCBytes", mock.Anything, mock.Anything).Return(nil)
+	mockQuerier.On("InsertLDCErrorCount", mock.Anything, mock.Anything).Return(nil)
+
+	ldcs := []duck.LDCConfiguration{
+		{ID: 1, Name: "ldc1", IP: "192.168.1.101", GRPCPort: 7001},
+	}
+
+	logger = duck.NewDuckLogger("test", nil, 0)
+
+	updateAllLDCStatistics(ldcs, mockQuerier, 1, mockRPC)
+
+	assert.Equal(t, 1, mockRPC.FetchRunStatisticsCalledCount())
+	mockQuerier.AssertExpectations(t)
+}
+
+func TestUpdateAllLDCStatistics_MultipleDevices(t *testing.T) {
+	mockQuerier := mocks.NewQuerier(t)
+	mockRPC := &MockRPCClient{}
+
+	mockQuerier.On("InsertLDCEvents", mock.Anything, mock.Anything).Return(nil)
+	mockQuerier.On("InsertLDCBytes", mock.Anything, mock.Anything).Return(nil)
+	mockQuerier.On("InsertLDCErrorCount", mock.Anything, mock.Anything).Return(nil)
+
+	ldcs := []duck.LDCConfiguration{
+		{ID: 1, Name: "ldc1", IP: "192.168.1.101", GRPCPort: 7001},
+		{ID: 2, Name: "ldc2", IP: "192.168.1.102", GRPCPort: 7002},
+		{ID: 3, Name: "ldc3", IP: "192.168.1.103", GRPCPort: 7003},
+	}
+
+	logger = duck.NewDuckLogger("test", nil, 0)
+
+	updateAllLDCStatistics(ldcs, mockQuerier, 1, mockRPC)
+
+	assert.Equal(t, 3, mockRPC.FetchRunStatisticsCalledCount())
+	mockQuerier.AssertExpectations(t)
+}
+
 // ===== pingDevices Tests =====
 
 func TestPingDevices_Success(t *testing.T) {
