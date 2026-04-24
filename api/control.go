@@ -125,10 +125,12 @@ func forceStopProcesses(s *DuckAPIServer) {
 		return
 	}
 
-	err = updateRunStopTime(s.queries, int(runNumber.ID))
-	if err != nil {
-		message := fmt.Errorf("could not store stop time for run %d: %w", runNumber.ID, err)
-		logger.Slog.Error(message.Error())
+	if runNumber.Start.Valid && !runNumber.Stop.Valid {
+		err = updateRunStopTime(s.queries, int(runNumber.ID))
+		if err != nil {
+			message := fmt.Errorf("could not store stop time for run %d: %w", runNumber.ID, err)
+			logger.Slog.Error(message.Error())
+		}
 	}
 
 	// Force stop is used when there is some error,
