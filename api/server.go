@@ -44,6 +44,18 @@ func loggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func shouldForceStopFromMessage(message *duck.Message, localHost string) bool {
+	if message == nil {
+		return false
+	}
+	if message.Type != duck.MessageError || !message.StopProcesses {
+		return false
+	}
+	// The API subscribes to the global error stream. Ignore its own error
+	// publications to avoid recursive force-stop loops from local control errors.
+	return message.Host != localHost
+}
+
 func main() {
 	configFilenameFlag := flag.String("config", "", "Configuration file path")
 	printMessages := flag.Bool("messages", false, "Print to stdout Centrifuge messages")
@@ -78,9 +90,22 @@ func main() {
 		if *printMessages {
 			log.Printf("Message: %s", message)
 		}
-		if message.Type == duck.MessageError {
-			if message.StopProcesses {
-				forceStopProcesses(apiServer)
+		if shouldForceStopFromMessage(message, "api") {
+			log.Printf(
+				"force-stop triggered by message host=%s type=%s stop_processes=%t value=%q run=%d",
+				message.Host,
+				message.Type,
+				message.StopProcesses,
+				message.Value,
+				message.RunNumber,
+			)
+			ok, _ := apiServer.runTransition.tryBeginStop()
+			if ok {
+				go func() {
+					defer recoverToError(&apiServer.runTransition)
+					forceStopProcesses(apiServer)
+					apiServer.runTransition.setDone()
+				}()
 			}
 		}
 	}

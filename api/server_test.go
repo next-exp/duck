@@ -8,6 +8,7 @@ import (
 	"strings"
 	"testing"
 
+	duck "github.com/jmbenlloch/next_duck/pkg"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -89,4 +90,30 @@ func TestLoggingMiddleware(t *testing.T) {
 	assert.True(t, strings.Contains(logOutput, "method=GET"))
 	assert.True(t, strings.Contains(logOutput, "uri=/test-uri"))
 	assert.True(t, strings.Contains(logOutput, "remote_ip=1.2.3.4:1234"))
+}
+
+func TestShouldForceStopFromMessage(t *testing.T) {
+	t.Run("ignores nil messages", func(t *testing.T) {
+		assert.False(t, shouldForceStopFromMessage(nil, "api"))
+	})
+
+	t.Run("ignores non error messages", func(t *testing.T) {
+		msg := &duck.Message{Type: duck.MessageInfo, StopProcesses: true, Host: "gdc1"}
+		assert.False(t, shouldForceStopFromMessage(msg, "api"))
+	})
+
+	t.Run("ignores non stopping errors", func(t *testing.T) {
+		msg := &duck.Message{Type: duck.MessageError, StopProcesses: false, Host: "gdc1"}
+		assert.False(t, shouldForceStopFromMessage(msg, "api"))
+	})
+
+	t.Run("ignores api self errors", func(t *testing.T) {
+		msg := &duck.Message{Type: duck.MessageError, StopProcesses: true, Host: "api"}
+		assert.False(t, shouldForceStopFromMessage(msg, "api"))
+	})
+
+	t.Run("forces stop on external errors", func(t *testing.T) {
+		msg := &duck.Message{Type: duck.MessageError, StopProcesses: true, Host: "gdc1next"}
+		assert.True(t, shouldForceStopFromMessage(msg, "api"))
+	})
 }

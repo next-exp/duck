@@ -181,7 +181,26 @@ func (a *TestAPI) StopRun(ctx context.Context) error {
 	}
 
 	a.t.Logf("API StopRun response: success=%v, message=%s", resp.Msg.Success, resp.Msg.Message)
-	return nil
+
+	return a.waitForTransitionIdle(ctx, 30*time.Second)
+}
+
+func (a *TestAPI) waitForTransitionIdle(ctx context.Context, timeout time.Duration) error {
+	deadline := time.Now().Add(timeout)
+	for time.Now().Before(deadline) {
+		pollCtx, cancel := context.WithTimeout(ctx, 500*time.Millisecond)
+		statusResp, err := a.rpcClient.GetRunTransitionStatus(pollCtx, connect.NewRequest(&pb.GetRunTransitionStatusRequest{}))
+		cancel()
+		if err != nil {
+			return fmt.Errorf("GetRunTransitionStatus failed: %w", err)
+		}
+		state := statusResp.Msg.State
+		if state == "idle" || state == "error" {
+			return nil
+		}
+		time.Sleep(100 * time.Millisecond)
+	}
+	return fmt.Errorf("transition did not complete within timeout")
 }
 
 func (a *TestAPI) ForceStopRun(ctx context.Context) error {
