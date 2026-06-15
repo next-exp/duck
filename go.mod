@@ -12,7 +12,7 @@ require (
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/magefile/mage v1.15.0
 	github.com/melbahja/goph v1.4.0
-	github.com/next-exp/decoder_go v0.0.0-20260417101512-9f627402454b
+	github.com/next-exp/decoder_go v0.0.0-20260615155411-e70c5c95d3f1
 	github.com/ory/dockertest/v3 v3.12.0
 	github.com/prometheus-community/pro-bing v0.3.0
 	github.com/prometheus/client_golang v1.20.5
