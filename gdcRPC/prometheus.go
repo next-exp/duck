@@ -190,8 +190,12 @@ func (m *MetricsRegistry) GetEvtErrorCounter() int64 {
 	return value
 }
 
-func startPrometheus(metrics *MetricsRegistry, port int, logger duck.DuckLogger) {
+func startPrometheus(metrics *MetricsRegistry, port int, goStats bool, logger duck.DuckLogger) {
 	r := prometheus.NewRegistry()
+	if goStats {
+		r.MustRegister(prometheus.NewGoCollector())
+		r.MustRegister(prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts{}))
+	}
 	err := metrics.Register(r)
 	if err != nil {
 		logger.Slog.Error("Failed to register metrics")

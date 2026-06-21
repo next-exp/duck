@@ -122,8 +122,12 @@ func (m *MetricsRegistry) GetPacketErrorCounter() int64 {
 	return value
 }
 
-func startPrometheus(metrics *MetricsRegistry, port int, logger duck.DuckLogger) {
+func startPrometheus(metrics *MetricsRegistry, port int, goStats bool, logger duck.DuckLogger) {
 	registry := prometheus.NewRegistry()
+	if goStats {
+		registry.MustRegister(prometheus.NewGoCollector())
+		registry.MustRegister(prometheus.NewProcessCollector(prometheus.ProcessCollectorOpts{}))
+	}
 	metrics.Register(registry)
 
 	http.Handle("/metrics", promhttp.HandlerFor(registry, promhttp.HandlerOpts{}))

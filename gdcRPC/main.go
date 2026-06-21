@@ -210,7 +210,7 @@ func main() {
 		log.Fatalf("Error listening on ConnectRPC port: %v", err)
 	}
 
-	startPrometheus(metrics, gdcConfiguration.PrometheusPort, logger)
+	startPrometheus(metrics, gdcConfiguration.PrometheusPort, configFile.GoStats, logger)
 
 	s := &server{
 		configFilename: *configFilename,

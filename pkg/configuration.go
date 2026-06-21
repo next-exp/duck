@@ -43,6 +43,7 @@ type ConfigurationFile struct {
 	Database    DatabaseConfiguration    `yaml:"database"`
 	Centrifugal CentrifugalConfiguration `yaml:"centrifugal"`
 	LogLevel    slog.Level               `yaml:"log_level"`
+	GoStats     bool                     `yaml:"go_stats"`
 }
 
 type DatabaseConfiguration struct {
