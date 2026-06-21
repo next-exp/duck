@@ -97,7 +97,9 @@ func decodeEvent(s *server, eventID int, eventData []byte, writerChs WriterChann
 	//message := fmt.Sprintf("decoder: read event %d", header.EventId[0])
 	//s.logger.Slog.Info(message)
 	if err != nil {
-		writerChs.fileCloser.EvtWithError <- eventID
+		if decoderConfig.WriteData {
+			writerChs.fileCloser.EvtWithError <- eventID
+		}
 		message := fmt.Errorf("error reading event header: %w", err)
 		s.logger.Slog.Error(message.Error())
 		return
@@ -105,7 +107,9 @@ func decodeEvent(s *server, eventID int, eventData []byte, writerChs WriterChann
 
 	defer func() {
 		if r := recover(); r != nil {
-			writerChs.fileCloser.EvtWithError <- eventID
+			if decoderConfig.WriteData {
+				writerChs.fileCloser.EvtWithError <- eventID
+			}
 			eventID := decoder.EventIdGetNbInRun(header.EventId)
 			errMessage := fmt.Errorf("decoder recovered from panic on event %d: %v", eventID, r)
 			s.logger.NonStoppingError(errMessage.Error())
@@ -119,14 +123,18 @@ func decodeEvent(s *server, eventID int, eventData []byte, writerChs WriterChann
 	//message = fmt.Sprintf("Decoded event %d: %d, %d", header.EventId[0], len(event.PmtWaveforms), len(event.SipmWaveforms))
 	//s.logger.Slog.Debug(message)
 	if err != nil {
-		writerChs.fileCloser.EvtWithError <- eventID
+		if decoderConfig.WriteData {
+			writerChs.fileCloser.EvtWithError <- eventID
+		}
 		message := fmt.Errorf("error reading GDC data: %w", err)
 		s.logger.Slog.Error(message.Error())
 		s.metrics.evtDecoderErrorCounter.Inc()
 		return
 	}
 	if event.Error {
-		writerChs.fileCloser.EvtWithError <- eventID
+		if decoderConfig.WriteData {
+			writerChs.fileCloser.EvtWithError <- eventID
+		}
 		message := fmt.Sprintf("discarding event %d, it has errors", event.EventID)
 		s.logger.NonStoppingError(message)
 		s.metrics.evtDecoderErrorCounter.Inc()
@@ -177,7 +185,9 @@ func decodeEvent(s *server, eventID int, eventData []byte, writerChs WriterChann
 			s.metrics.evtsWaitingForHdf5WriterCounter.With(prometheus.Labels{"trigger": Trg0.String()}).Set(float64(pendingJobs))
 		}
 	}
-	writerChs.fileCloser.EvtDecoded <- eventID
+	if decoderConfig.WriteData {
+		writerChs.fileCloser.EvtDecoded <- eventID
+	}
 
 	duration := time.Since(start)
 	//message = fmt.Sprint("decoder: finished event ", event.EventID, " in ", duration.Milliseconds(), "ms")
