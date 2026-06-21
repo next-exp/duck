@@ -11,7 +11,7 @@ import (
 )
 
 const getDecoderParams = `-- name: GetDecoderParams :one
-SELECT ext_trigger, trg_code_1, trg_code_2, read_pmts, read_sipms, read_trigger, split_trigger, no_db, discard, host, user, passwd, db_name, write_data, use_blosc, blosc_algorithm, compression_level, bit_shuffle FROM decoderParams LIMIT 1
+SELECT ext_trigger, trg_code_1, trg_code_2, read_pmts, read_sipms, read_trigger, read_fibers, split_trigger, no_db, discard, host, user, passwd, db_name, write_data, use_blosc, blosc_algorithm, compression_level, bit_shuffle FROM decoderParams LIMIT 1
 `
 
 func (q *Queries) GetDecoderParams(ctx context.Context) (Decoderparam, error) {
@@ -24,6 +24,7 @@ func (q *Queries) GetDecoderParams(ctx context.Context) (Decoderparam, error) {
 		&i.ReadPmts,
 		&i.ReadSipms,
 		&i.ReadTrigger,
+		&i.ReadFibers,
 		&i.SplitTrigger,
 		&i.NoDb,
 		&i.Discard,
@@ -417,10 +418,10 @@ func (q *Queries) TruncateDecoderParams(ctx context.Context) error {
 const updateDecoderParams = `-- name: UpdateDecoderParams :exec
 INSERT INTO decoderParams (
     ext_trigger, trg_code_1, trg_code_2, read_pmts, read_sipms,
-    read_trigger, split_trigger, no_db, discard, host,
+    read_trigger, read_fibers, split_trigger, no_db, discard, host,
     user, passwd, db_name, write_data, use_blosc,
     blosc_algorithm, compression_level, bit_shuffle
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 `
 
 type UpdateDecoderParamsParams struct {
@@ -430,6 +431,7 @@ type UpdateDecoderParamsParams struct {
 	ReadPmts         sql.NullBool `db:"read_pmts" json:"read_pmts"`
 	ReadSipms        sql.NullBool `db:"read_sipms" json:"read_sipms"`
 	ReadTrigger      sql.NullBool `db:"read_trigger" json:"read_trigger"`
+	ReadFibers       sql.NullBool `db:"read_fibers" json:"read_fibers"`
 	SplitTrigger     sql.NullBool `db:"split_trigger" json:"split_trigger"`
 	NoDb             sql.NullBool `db:"no_db" json:"no_db"`
 	Discard          sql.NullBool `db:"discard" json:"discard"`
@@ -452,6 +454,7 @@ func (q *Queries) UpdateDecoderParams(ctx context.Context, arg UpdateDecoderPara
 		arg.ReadPmts,
 		arg.ReadSipms,
 		arg.ReadTrigger,
+		arg.ReadFibers,
 		arg.SplitTrigger,
 		arg.NoDb,
 		arg.Discard,

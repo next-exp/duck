@@ -5,15 +5,15 @@ SELECT * FROM duckParams LIMIT 1;
 SELECT id FROM runs ORDER BY id DESC LIMIT 1;
 
 -- name: GetDecoderParams :one
-SELECT ext_trigger, trg_code_1, trg_code_2, read_pmts, read_sipms, read_trigger, split_trigger, no_db, discard, host, user, passwd, db_name, write_data, use_blosc, blosc_algorithm, compression_level, bit_shuffle FROM decoderParams LIMIT 1;
+SELECT ext_trigger, trg_code_1, trg_code_2, read_pmts, read_sipms, read_trigger, read_fibers, split_trigger, no_db, discard, host, user, passwd, db_name, write_data, use_blosc, blosc_algorithm, compression_level, bit_shuffle FROM decoderParams LIMIT 1;
 
 -- name: UpdateDecoderParams :exec
 INSERT INTO decoderParams (
     ext_trigger, trg_code_1, trg_code_2, read_pmts, read_sipms,
-    read_trigger, split_trigger, no_db, discard, host,
+    read_trigger, read_fibers, split_trigger, no_db, discard, host,
     user, passwd, db_name, write_data, use_blosc,
     blosc_algorithm, compression_level, bit_shuffle
-) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
 
 -- name: TruncateDecoderParams :exec
 TRUNCATE TABLE decoderParams;

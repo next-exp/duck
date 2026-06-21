@@ -13,6 +13,7 @@ type DecoderConfiguration struct {
 	ReadPMTs         bool   `json:"read_pmts" db:"read_pmts"`
 	ReadSiPMs        bool   `json:"read_sipms" db:"read_sipms"`
 	ReadTrigger      bool   `json:"read_trigger" db:"read_trigger"`
+	ReadFibers       bool   `json:"read_fibers" db:"read_fibers"`
 	SplitTrigger     bool   `json:"split_trigger" db:"split_trigger"`
 	NoDB             bool   `json:"no_db" db:"no_db"`
 	Discard          bool   `json:"discard" db:"discard"`
@@ -40,6 +41,7 @@ func getDecoderParameters(queries database.Querier) (DecoderConfiguration, error
 		ReadPMTs:         config.ReadPmts.Bool,
 		ReadSiPMs:        config.ReadSipms.Bool,
 		ReadTrigger:      config.ReadTrigger.Bool,
+		ReadFibers:       config.ReadFibers.Bool,
 		SplitTrigger:     config.SplitTrigger.Bool,
 		NoDB:             config.NoDb.Bool,
 		Discard:          config.Discard.Bool,

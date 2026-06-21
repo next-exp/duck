@@ -22,6 +22,7 @@ type Decoderparam struct {
 	ReadPmts         sql.NullBool `db:"read_pmts" json:"read_pmts"`
 	ReadSipms        sql.NullBool `db:"read_sipms" json:"read_sipms"`
 	ReadTrigger      sql.NullBool `db:"read_trigger" json:"read_trigger"`
+	ReadFibers       sql.NullBool `db:"read_fibers" json:"read_fibers"`
 	SplitTrigger     sql.NullBool `db:"split_trigger" json:"split_trigger"`
 	NoDb             sql.NullBool `db:"no_db" json:"no_db"`
 	Discard          sql.NullBool `db:"discard" json:"discard"`

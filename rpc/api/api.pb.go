@@ -2641,6 +2641,7 @@ type DecoderConfiguration struct {
 	BloscAlgorithm   string                 `protobuf:"bytes,16,opt,name=blosc_algorithm,json=bloscAlgorithm,proto3" json:"blosc_algorithm,omitempty"`
 	CompressionLevel int32                  `protobuf:"varint,17,opt,name=compression_level,json=compressionLevel,proto3" json:"compression_level,omitempty"`
 	BitShuffle       string                 `protobuf:"bytes,18,opt,name=bit_shuffle,json=bitShuffle,proto3" json:"bit_shuffle,omitempty"`
+	ReadFibers       bool                   `protobuf:"varint,19,opt,name=read_fibers,json=readFibers,proto3" json:"read_fibers,omitempty"`
 	unknownFields    protoimpl.UnknownFields
 	sizeCache        protoimpl.SizeCache
 }
@@ -2799,6 +2800,13 @@ func (x *DecoderConfiguration) GetBitShuffle() string {
 		return x.BitShuffle
 	}
 	return ""
+}
+
+func (x *DecoderConfiguration) GetReadFibers() bool {
+	if x != nil {
+		return x.ReadFibers
+	}
+	return false
 }
 
 type GetDecoderConfigurationRequest struct {
@@ -4101,7 +4109,7 @@ const file_api_proto_rawDesc = "" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\"M\n" +
 	"\x17DeleteEquipmentResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\xb6\x04\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xd7\x04\n" +
 	"\x14DecoderConfiguration\x12\x1f\n" +
 	"\vext_trigger\x18\x01 \x01(\x05R\n" +
 	"extTrigger\x12\x1c\n" +
@@ -4127,7 +4135,9 @@ const file_api_proto_rawDesc = "" +
 	"\x0fblosc_algorithm\x18\x10 \x01(\tR\x0ebloscAlgorithm\x12+\n" +
 	"\x11compression_level\x18\x11 \x01(\x05R\x10compressionLevel\x12\x1f\n" +
 	"\vbit_shuffle\x18\x12 \x01(\tR\n" +
-	"bitShuffle\" \n" +
+	"bitShuffle\x12\x1f\n" +
+	"\vread_fibers\x18\x13 \x01(\bR\n" +
+	"readFibers\" \n" +
 	"\x1eGetDecoderConfigurationRequest\"i\n" +
 	"\x1fGetDecoderConfigurationResponse\x12F\n" +
 	"\rconfiguration\x18\x01 \x01(\v2 .apiService.DecoderConfigurationR\rconfiguration\"k\n" +

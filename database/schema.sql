@@ -79,6 +79,7 @@ create table decoderParams (
      read_pmts boolean,
      read_sipms boolean,
      read_trigger boolean,
+     read_fibers boolean,
      split_trigger boolean,
      no_db boolean,
      discard boolean,

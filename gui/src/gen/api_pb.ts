@@ -2234,6 +2234,11 @@ export class DecoderConfiguration extends Message<DecoderConfiguration> {
    */
   bitShuffle = "";
 
+  /**
+   * @generated from field: bool read_fibers = 19;
+   */
+  readFibers = false;
+
   constructor(data?: PartialMessage<DecoderConfiguration>) {
     super();
     proto3.util.initPartial(data, this);
@@ -2260,6 +2265,7 @@ export class DecoderConfiguration extends Message<DecoderConfiguration> {
     { no: 16, name: "blosc_algorithm", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 17, name: "compression_level", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
     { no: 18, name: "bit_shuffle", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 19, name: "read_fibers", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
   ]);
 
   static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): DecoderConfiguration {

@@ -40,6 +40,7 @@ func parseDecoderConfiguration(s *server) (decoder.Configuration, error) {
 	configuration.ReadPMTs = decoderConfigDB.ReadPMTs
 	configuration.ReadSiPMs = decoderConfigDB.ReadSiPMs
 	configuration.ReadTrigger = decoderConfigDB.ReadTrigger
+	configuration.ReadFibers = decoderConfigDB.ReadFibers
 	configuration.SplitTrg = decoderConfigDB.SplitTrigger
 	configuration.NoDB = decoderConfigDB.NoDB
 	configuration.Discard = decoderConfigDB.Discard

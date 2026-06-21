@@ -315,6 +315,7 @@ message DecoderConfiguration {
   string blosc_algorithm = 16;
   int32 compression_level = 17;
   string bit_shuffle = 18;
+  bool read_fibers = 19;
 }
 
 message GetDecoderConfigurationRequest {}

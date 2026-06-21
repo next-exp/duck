@@ -46,6 +46,7 @@ const { values, errors, meta, handleSubmit, setValues, setFieldValue, defineInpu
     read_pmts: yup.boolean(),
     read_sipms: yup.boolean(),
     read_trigger: yup.boolean(),
+    read_fibers: yup.boolean(),
     split_trigger: yup.boolean(),
     no_db: yup.boolean(),
     discard: yup.boolean(),
@@ -67,6 +68,7 @@ const { value: trg_code_2 } = useField('trg_code_2');
 const { value: read_pmts } = useField('read_pmts');
 const { value: read_sipms } = useField('read_sipms');
 const { value: read_trigger } = useField('read_trigger');
+const { value: read_fibers } = useField('read_fibers');
 const { value: split_trigger } = useField('split_trigger');
 const { value: no_db } = useField('no_db');
 const { value: discard } = useField('discard');
@@ -91,6 +93,7 @@ export type DecoderForm = {
   read_pmts: boolean,
   read_sipms: boolean,
   read_trigger: boolean,
+  read_fibers: boolean,
   split_trigger: boolean,
   no_db: boolean,
   discard: boolean,
@@ -116,6 +119,7 @@ async function updateDecoderConfig(values: DecoderForm) {
         readPmts: values.read_pmts,
         readSipms: values.read_sipms,
         readTrigger: values.read_trigger,
+        readFibers: values.read_fibers,
         splitTrigger: values.split_trigger,
         noDb: values.no_db,
         discard: values.discard,
@@ -148,6 +152,7 @@ const onSubmit = handleSubmit(values => {
     read_pmts: values.read_pmts,
     read_sipms: values.read_sipms,
     read_trigger: values.read_trigger,
+    read_fibers: values.read_fibers,
     split_trigger: values.split_trigger,
     no_db: values.no_db,
     discard: values.discard,
@@ -171,6 +176,7 @@ function updateDecoderConfigGUI(newConfig: any) {
   read_pmts.value = newConfig.readPmts;
   read_sipms.value = newConfig.readSipms;
   read_trigger.value = newConfig.readTrigger;
+  read_fibers.value = newConfig.readFibers;
   split_trigger.value = newConfig.splitTrigger;
   no_db.value = newConfig.noDb;
   discard.value = newConfig.discard;
@@ -304,6 +310,15 @@ onMounted(() => {
                 <input type="checkbox" v-model="read_trigger" :id="`decoder-read-trigger`"
                   class="checkbox checkbox-md" />
                 <div v-if="showErrors" class="text-red-600">{{ errors['read_trigger'] }}</div>
+              </div>
+
+              <div class="form-control mx-2">
+                <label class="label" :for="`decoder-read-fibers`">
+                  <span class="label-text">Read Fibers</span>
+                </label>
+                <input type="checkbox" v-model="read_fibers" :id="`decoder-read-fibers`"
+                  class="checkbox checkbox-md" />
+                <div v-if="showErrors" class="text-red-600">{{ errors['read_fibers'] }}</div>
               </div>
             </div>
           </div>
