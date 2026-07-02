@@ -95,8 +95,8 @@ github.com/next-exp/decoder_go v0.0.0-20250630095822-e0927b5de3d1 h1:MIaJ+EAm42M
 github.com/next-exp/decoder_go v0.0.0-20250630095822-e0927b5de3d1/go.mod h1:gpgxSlR/7FKTSZ8uR8uK9krS2ofisB/dUYxq4mcv0c8=
 github.com/next-exp/decoder_go v0.0.0-20260417101512-9f627402454b h1:wqMAUKDXHhHL44cPjBQZGBJOa/I+Ga5GJQdZX1+NxrQ=
 github.com/next-exp/decoder_go v0.0.0-20260417101512-9f627402454b/go.mod h1:gpgxSlR/7FKTSZ8uR8uK9krS2ofisB/dUYxq4mcv0c8=
-github.com/next-exp/decoder_go v0.0.0-20260615155411-e70c5c95d3f1 h1:QY5ax8/eTrrODL1pZQHQRd1TT1+h+wPHgkkgKlkXJvw=
-github.com/next-exp/decoder_go v0.0.0-20260615155411-e70c5c95d3f1/go.mod h1:gpgxSlR/7FKTSZ8uR8uK9krS2ofisB/dUYxq4mcv0c8=
+github.com/next-exp/decoder_go v0.0.0-20260702132210-b6d9127dba90 h1:mOoZl38oGRVKFSkchHv1LMcckMwlLErL835kvTWXCW4=
+github.com/next-exp/decoder_go v0.0.0-20260702132210-b6d9127dba90/go.mod h1:gpgxSlR/7FKTSZ8uR8uK9krS2ofisB/dUYxq4mcv0c8=
 github.com/next-exp/hdf5-go v0.0.0-20250408164249-b468a9f82d4b h1:I60BDjJl8aa1n5w9dXu0e08+xu+v2IrS8itz5WNv5Do=
 github.com/next-exp/hdf5-go v0.0.0-20250408164249-b468a9f82d4b/go.mod h1:U7198fEiJLtOUOmYeCUPxGdVdSQu4bkle7Iz5Tw/R7c=
 github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
