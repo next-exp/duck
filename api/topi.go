@@ -71,7 +71,9 @@ func (s *DuckAPIServer) notifyTopi(operation string, run int32) {
 	if s.topiPublisher == nil {
 		return
 	}
+	hub := cloneSentryHub(context.Background())
 	go func() {
+		defer recoverBackgroundPanic(hub, map[string]string{"operation": "topi-" + operation})
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		p, err := s.queries.GetTopiParams(ctx)

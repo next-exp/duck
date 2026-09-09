@@ -1,13 +1,17 @@
 package main
 
 import (
+	"errors"
 	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"time"
 
+	"connectrpc.com/connect"
 	"github.com/centrifugal/centrifuge-go"
+	"github.com/getsentry/sentry-go"
+	sentryhttp "github.com/getsentry/sentry-go/http"
 	_ "github.com/go-sql-driver/mysql"
 	duck "github.com/jmbenlloch/next_duck/pkg"
 	pbconnect "github.com/jmbenlloch/next_duck/rpc/api/apiconnect"
@@ -62,16 +66,22 @@ func main() {
 	debug := flag.Bool("debug", false, "Change port to 1324 instead of 1323")
 	portFlag := flag.Int("port", 0, "Port to listen on (default: 1323, or 1324 if debug)")
 	flag.Parse()
+	sentryEnabled := initializeSentry()
+	if sentryEnabled {
+		defer sentry.Flush(sentryFlushTimeout)
+	}
 
 	configFilename = *configFilenameFlag
 	configuration, err := duck.ReadConfigurationFile(configFilename)
 	if err != nil {
+		captureFatalSentryError(err, "read-configuration")
 		panic(err)
 	}
 	// Use retry logic with 10 retries and 1 second initial delay
 	// Total max wait time: ~63 seconds (1+2+4+8+16+32)
 	db, err := duck.ParseDatabaseConfigurationWithRetry(configuration.Database, 10, 1*time.Second, nil, nil)
 	if err != nil {
+		captureFatalSentryError(err, "connect-database")
 		panic(err)
 	}
 
@@ -101,8 +111,9 @@ func main() {
 			)
 			ok, _ := apiServer.runTransition.tryBeginStop()
 			if ok {
+				hub := sentry.CurrentHub().Clone()
 				go func() {
-					defer recoverToError(&apiServer.runTransition)
+					defer recoverToErrorWithHub(&apiServer.runTransition, hub, "automatic-force-stop")
 					forceStopProcesses(apiServer)
 					apiServer.runTransition.setDone()
 				}()
@@ -114,11 +125,15 @@ func main() {
 		var errSub error
 		sub, errSub = duck.CreateNewSubscriptionWithFnReadout(configuration.Centrifugal, userCentrifugal, fn)
 		if errSub != nil {
+			captureFatalSentryError(errSub, "connect-centrifuge")
 			panic(errSub)
 		}
 	}
 	logger = duck.NewDuckLogger("api", sub, configuration.LogLevel)
-	path, handler := pbconnect.NewDuckAPIHandler(apiServer)
+	path, handler := pbconnect.NewDuckAPIHandler(
+		apiServer,
+		connect.WithInterceptors(sentryConnectInterceptor()),
+	)
 
 	// Create HTTP mux and mount ConnectRPC handler
 	mux := http.NewServeMux()
@@ -142,6 +157,11 @@ func main() {
 
 	// Apply middleware
 	handlerWithMiddleware := loggingMiddleware(corsMiddleware(mux))
+	sentryMiddleware := sentryhttp.New(sentryhttp.Options{
+		Repanic:         true,
+		WaitForDelivery: false,
+	})
+	instrumentedHandler := sentryMiddleware.Handle(handlerWithMiddleware)
 
 	// Start server with HTTP/2 support for ConnectRPC
 	port := 1323
@@ -156,9 +176,13 @@ func main() {
 	h2s := &http2.Server{}
 	server := &http.Server{
 		Addr:    fmt.Sprintf(":%d", port),
-		Handler: h2c.NewHandler(handlerWithMiddleware, h2s),
+		Handler: h2c.NewHandler(instrumentedHandler, h2s),
 	}
 
 	log.Printf("Starting server on :%d with ConnectRPC endpoints", port)
-	log.Fatal(server.ListenAndServe())
+	err = server.ListenAndServe()
+	if err != nil && !errors.Is(err, http.ErrServerClosed) {
+		captureFatalSentryError(err, "serve-http")
+		log.Fatal(err)
+	}
 }

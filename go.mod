@@ -8,6 +8,7 @@ require (
 	connectrpc.com/connect v1.19.1
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/centrifugal/centrifuge-go v0.10.3
+	github.com/getsentry/sentry-go v0.36.2
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/magefile/mage v1.15.0

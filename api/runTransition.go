@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/getsentry/sentry-go"
 )
 
 type RunTransitionState int
@@ -99,7 +101,24 @@ func stateString(s RunTransitionState) string {
 }
 
 func recoverToError(rt *RunTransition) {
-	if r := recover(); r != nil {
-		rt.setError(fmt.Sprintf("panic: %v", r))
+	if recovered := recover(); recovered != nil {
+		handleRunTransitionPanic(rt, nil, "run-transition", recovered)
 	}
+}
+
+func recoverToErrorWithHub(rt *RunTransition, hub *sentry.Hub, operation string) {
+	if recovered := recover(); recovered != nil {
+		handleRunTransitionPanic(rt, hub, operation, recovered)
+	}
+}
+
+func handleRunTransitionPanic(rt *RunTransition, hub *sentry.Hub, operation string, recovered any) {
+	if hub == nil {
+		hub = sentry.CurrentHub().Clone()
+	}
+	hub.WithScope(func(scope *sentry.Scope) {
+		scope.SetTag("operation", operation)
+		hub.Recover(recovered)
+	})
+	rt.setError(fmt.Sprintf("panic: %v", recovered))
 }

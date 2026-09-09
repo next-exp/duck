@@ -42,16 +42,20 @@ func restartServices(configFilename string) error {
 
 	for _, gdc := range enabledGDCs {
 		wg.Add(1)
+		hub := cloneSentryHub(nil)
 		go func(name, host string) {
 			defer wg.Done()
+			defer recoverBackgroundPanic(hub, map[string]string{"operation": "restart-gdc", "server": name})
 			restartService(name, GDCRole, host)
 		}(gdc.Name, gdc.Host)
 	}
 
 	for _, ldc := range enabledLDCs {
 		wg.Add(1)
+		hub := cloneSentryHub(nil)
 		go func(name, host string) {
 			defer wg.Done()
+			defer recoverBackgroundPanic(hub, map[string]string{"operation": "restart-ldc", "server": name})
 			restartService(name, LDCRole, host)
 		}(ldc.Name, ldc.Host)
 	}
