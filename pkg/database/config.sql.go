@@ -282,6 +282,30 @@ func (q *Queries) GetTestDeviceParams(ctx context.Context) ([]Testdeviceparam, e
 	return items, nil
 }
 
+const getTopiParams = `-- name: GetTopiParams :one
+SELECT id, enabled, daemon_url, api_token, rabbitmq_address, rabbitmq_port, rabbitmq_user, rabbitmq_password, rabbitmq_vhost, exchange_name, control_queue, selected_configuration FROM topiParams WHERE id = 1
+`
+
+func (q *Queries) GetTopiParams(ctx context.Context) (Topiparam, error) {
+	row := q.db.QueryRowContext(ctx, getTopiParams)
+	var i Topiparam
+	err := row.Scan(
+		&i.ID,
+		&i.Enabled,
+		&i.DaemonUrl,
+		&i.ApiToken,
+		&i.RabbitmqAddress,
+		&i.RabbitmqPort,
+		&i.RabbitmqUser,
+		&i.RabbitmqPassword,
+		&i.RabbitmqVhost,
+		&i.ExchangeName,
+		&i.ControlQueue,
+		&i.SelectedConfiguration,
+	)
+	return i, err
+}
+
 const insertGDCBytes = `-- name: InsertGDCBytes :exec
 INSERT INTO data (run, gdc_id, ldc_id, bytes) VALUES (?, ?, NULL, ?)
 `
@@ -521,5 +545,51 @@ type UpdateRunStopTimeParams struct {
 
 func (q *Queries) UpdateRunStopTime(ctx context.Context, arg UpdateRunStopTimeParams) error {
 	_, err := q.db.ExecContext(ctx, updateRunStopTime, arg.Stop, arg.ID)
+	return err
+}
+
+const upsertTopiParams = `-- name: UpsertTopiParams :exec
+INSERT INTO topiParams (
+  id, enabled, daemon_url, api_token, rabbitmq_address, rabbitmq_port,
+  rabbitmq_user, rabbitmq_password, rabbitmq_vhost, exchange_name,
+  control_queue, selected_configuration
+) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+ON DUPLICATE KEY UPDATE
+  enabled = VALUES(enabled), daemon_url = VALUES(daemon_url),
+  api_token = VALUES(api_token), rabbitmq_address = VALUES(rabbitmq_address),
+  rabbitmq_port = VALUES(rabbitmq_port), rabbitmq_user = VALUES(rabbitmq_user),
+  rabbitmq_password = VALUES(rabbitmq_password), rabbitmq_vhost = VALUES(rabbitmq_vhost),
+  exchange_name = VALUES(exchange_name), control_queue = VALUES(control_queue),
+  selected_configuration = VALUES(selected_configuration)
+`
+
+type UpsertTopiParamsParams struct {
+	Enabled               bool   `db:"enabled" json:"enabled"`
+	DaemonUrl             string `db:"daemon_url" json:"daemon_url"`
+	ApiToken              string `db:"api_token" json:"api_token"`
+	RabbitmqAddress       string `db:"rabbitmq_address" json:"rabbitmq_address"`
+	RabbitmqPort          int32  `db:"rabbitmq_port" json:"rabbitmq_port"`
+	RabbitmqUser          string `db:"rabbitmq_user" json:"rabbitmq_user"`
+	RabbitmqPassword      string `db:"rabbitmq_password" json:"rabbitmq_password"`
+	RabbitmqVhost         string `db:"rabbitmq_vhost" json:"rabbitmq_vhost"`
+	ExchangeName          string `db:"exchange_name" json:"exchange_name"`
+	ControlQueue          string `db:"control_queue" json:"control_queue"`
+	SelectedConfiguration string `db:"selected_configuration" json:"selected_configuration"`
+}
+
+func (q *Queries) UpsertTopiParams(ctx context.Context, arg UpsertTopiParamsParams) error {
+	_, err := q.db.ExecContext(ctx, upsertTopiParams,
+		arg.Enabled,
+		arg.DaemonUrl,
+		arg.ApiToken,
+		arg.RabbitmqAddress,
+		arg.RabbitmqPort,
+		arg.RabbitmqUser,
+		arg.RabbitmqPassword,
+		arg.RabbitmqVhost,
+		arg.ExchangeName,
+		arg.ControlQueue,
+		arg.SelectedConfiguration,
+	)
 	return err
 }

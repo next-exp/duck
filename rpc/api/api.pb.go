@@ -2985,6 +2985,480 @@ func (x *UpdateDecoderConfigurationResponse) GetMessage() string {
 	return ""
 }
 
+type TopiConfiguration struct {
+	state                 protoimpl.MessageState `protogen:"open.v1"`
+	Enabled               bool                   `protobuf:"varint,1,opt,name=enabled,proto3" json:"enabled,omitempty"`
+	DaemonUrl             string                 `protobuf:"bytes,2,opt,name=daemon_url,json=daemonUrl,proto3" json:"daemon_url,omitempty"`
+	RabbitmqAddress       string                 `protobuf:"bytes,3,opt,name=rabbitmq_address,json=rabbitmqAddress,proto3" json:"rabbitmq_address,omitempty"`
+	RabbitmqPort          int32                  `protobuf:"varint,4,opt,name=rabbitmq_port,json=rabbitmqPort,proto3" json:"rabbitmq_port,omitempty"`
+	RabbitmqUser          string                 `protobuf:"bytes,5,opt,name=rabbitmq_user,json=rabbitmqUser,proto3" json:"rabbitmq_user,omitempty"`
+	RabbitmqVhost         string                 `protobuf:"bytes,6,opt,name=rabbitmq_vhost,json=rabbitmqVhost,proto3" json:"rabbitmq_vhost,omitempty"`
+	ExchangeName          string                 `protobuf:"bytes,7,opt,name=exchange_name,json=exchangeName,proto3" json:"exchange_name,omitempty"`
+	ControlQueue          string                 `protobuf:"bytes,8,opt,name=control_queue,json=controlQueue,proto3" json:"control_queue,omitempty"`
+	SelectedConfiguration string                 `protobuf:"bytes,9,opt,name=selected_configuration,json=selectedConfiguration,proto3" json:"selected_configuration,omitempty"`
+	HasApiToken           bool                   `protobuf:"varint,10,opt,name=has_api_token,json=hasApiToken,proto3" json:"has_api_token,omitempty"`
+	HasRabbitmqPassword   bool                   `protobuf:"varint,11,opt,name=has_rabbitmq_password,json=hasRabbitmqPassword,proto3" json:"has_rabbitmq_password,omitempty"`
+	unknownFields         protoimpl.UnknownFields
+	sizeCache             protoimpl.SizeCache
+}
+
+func (x *TopiConfiguration) Reset() {
+	*x = TopiConfiguration{}
+	mi := &file_api_proto_msgTypes[51]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TopiConfiguration) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TopiConfiguration) ProtoMessage() {}
+
+func (x *TopiConfiguration) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[51]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TopiConfiguration.ProtoReflect.Descriptor instead.
+func (*TopiConfiguration) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{51}
+}
+
+func (x *TopiConfiguration) GetEnabled() bool {
+	if x != nil {
+		return x.Enabled
+	}
+	return false
+}
+
+func (x *TopiConfiguration) GetDaemonUrl() string {
+	if x != nil {
+		return x.DaemonUrl
+	}
+	return ""
+}
+
+func (x *TopiConfiguration) GetRabbitmqAddress() string {
+	if x != nil {
+		return x.RabbitmqAddress
+	}
+	return ""
+}
+
+func (x *TopiConfiguration) GetRabbitmqPort() int32 {
+	if x != nil {
+		return x.RabbitmqPort
+	}
+	return 0
+}
+
+func (x *TopiConfiguration) GetRabbitmqUser() string {
+	if x != nil {
+		return x.RabbitmqUser
+	}
+	return ""
+}
+
+func (x *TopiConfiguration) GetRabbitmqVhost() string {
+	if x != nil {
+		return x.RabbitmqVhost
+	}
+	return ""
+}
+
+func (x *TopiConfiguration) GetExchangeName() string {
+	if x != nil {
+		return x.ExchangeName
+	}
+	return ""
+}
+
+func (x *TopiConfiguration) GetControlQueue() string {
+	if x != nil {
+		return x.ControlQueue
+	}
+	return ""
+}
+
+func (x *TopiConfiguration) GetSelectedConfiguration() string {
+	if x != nil {
+		return x.SelectedConfiguration
+	}
+	return ""
+}
+
+func (x *TopiConfiguration) GetHasApiToken() bool {
+	if x != nil {
+		return x.HasApiToken
+	}
+	return false
+}
+
+func (x *TopiConfiguration) GetHasRabbitmqPassword() bool {
+	if x != nil {
+		return x.HasRabbitmqPassword
+	}
+	return false
+}
+
+type GetTopiConfigurationRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTopiConfigurationRequest) Reset() {
+	*x = GetTopiConfigurationRequest{}
+	mi := &file_api_proto_msgTypes[52]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTopiConfigurationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTopiConfigurationRequest) ProtoMessage() {}
+
+func (x *GetTopiConfigurationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[52]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTopiConfigurationRequest.ProtoReflect.Descriptor instead.
+func (*GetTopiConfigurationRequest) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{52}
+}
+
+type GetTopiConfigurationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Configuration *TopiConfiguration     `protobuf:"bytes,1,opt,name=configuration,proto3" json:"configuration,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetTopiConfigurationResponse) Reset() {
+	*x = GetTopiConfigurationResponse{}
+	mi := &file_api_proto_msgTypes[53]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetTopiConfigurationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetTopiConfigurationResponse) ProtoMessage() {}
+
+func (x *GetTopiConfigurationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[53]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetTopiConfigurationResponse.ProtoReflect.Descriptor instead.
+func (*GetTopiConfigurationResponse) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{53}
+}
+
+func (x *GetTopiConfigurationResponse) GetConfiguration() *TopiConfiguration {
+	if x != nil {
+		return x.Configuration
+	}
+	return nil
+}
+
+type UpdateTopiConfigurationRequest struct {
+	state            protoimpl.MessageState `protogen:"open.v1"`
+	Configuration    *TopiConfiguration     `protobuf:"bytes,1,opt,name=configuration,proto3" json:"configuration,omitempty"`
+	ApiToken         string                 `protobuf:"bytes,2,opt,name=api_token,json=apiToken,proto3" json:"api_token,omitempty"`
+	RabbitmqPassword string                 `protobuf:"bytes,3,opt,name=rabbitmq_password,json=rabbitmqPassword,proto3" json:"rabbitmq_password,omitempty"`
+	unknownFields    protoimpl.UnknownFields
+	sizeCache        protoimpl.SizeCache
+}
+
+func (x *UpdateTopiConfigurationRequest) Reset() {
+	*x = UpdateTopiConfigurationRequest{}
+	mi := &file_api_proto_msgTypes[54]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateTopiConfigurationRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateTopiConfigurationRequest) ProtoMessage() {}
+
+func (x *UpdateTopiConfigurationRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[54]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateTopiConfigurationRequest.ProtoReflect.Descriptor instead.
+func (*UpdateTopiConfigurationRequest) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{54}
+}
+
+func (x *UpdateTopiConfigurationRequest) GetConfiguration() *TopiConfiguration {
+	if x != nil {
+		return x.Configuration
+	}
+	return nil
+}
+
+func (x *UpdateTopiConfigurationRequest) GetApiToken() string {
+	if x != nil {
+		return x.ApiToken
+	}
+	return ""
+}
+
+func (x *UpdateTopiConfigurationRequest) GetRabbitmqPassword() string {
+	if x != nil {
+		return x.RabbitmqPassword
+	}
+	return ""
+}
+
+type UpdateTopiConfigurationResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Success       bool                   `protobuf:"varint,1,opt,name=success,proto3" json:"success,omitempty"`
+	Message       string                 `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *UpdateTopiConfigurationResponse) Reset() {
+	*x = UpdateTopiConfigurationResponse{}
+	mi := &file_api_proto_msgTypes[55]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *UpdateTopiConfigurationResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UpdateTopiConfigurationResponse) ProtoMessage() {}
+
+func (x *UpdateTopiConfigurationResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[55]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UpdateTopiConfigurationResponse.ProtoReflect.Descriptor instead.
+func (*UpdateTopiConfigurationResponse) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{55}
+}
+
+func (x *UpdateTopiConfigurationResponse) GetSuccess() bool {
+	if x != nil {
+		return x.Success
+	}
+	return false
+}
+
+func (x *UpdateTopiConfigurationResponse) GetMessage() string {
+	if x != nil {
+		return x.Message
+	}
+	return ""
+}
+
+type TopiAvailableConfiguration struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	ParseError    string                 `protobuf:"bytes,2,opt,name=parse_error,json=parseError,proto3" json:"parse_error,omitempty"`
+	IsDefault     bool                   `protobuf:"varint,3,opt,name=is_default,json=isDefault,proto3" json:"is_default,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *TopiAvailableConfiguration) Reset() {
+	*x = TopiAvailableConfiguration{}
+	mi := &file_api_proto_msgTypes[56]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *TopiAvailableConfiguration) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*TopiAvailableConfiguration) ProtoMessage() {}
+
+func (x *TopiAvailableConfiguration) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[56]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use TopiAvailableConfiguration.ProtoReflect.Descriptor instead.
+func (*TopiAvailableConfiguration) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{56}
+}
+
+func (x *TopiAvailableConfiguration) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *TopiAvailableConfiguration) GetParseError() string {
+	if x != nil {
+		return x.ParseError
+	}
+	return ""
+}
+
+func (x *TopiAvailableConfiguration) GetIsDefault() bool {
+	if x != nil {
+		return x.IsDefault
+	}
+	return false
+}
+
+type ListTopiConfigurationsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// Optional transient values let a new connection be tested before saving it.
+	// A blank token uses the stored token.
+	DaemonUrl     string `protobuf:"bytes,1,opt,name=daemon_url,json=daemonUrl,proto3" json:"daemon_url,omitempty"`
+	ApiToken      string `protobuf:"bytes,2,opt,name=api_token,json=apiToken,proto3" json:"api_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListTopiConfigurationsRequest) Reset() {
+	*x = ListTopiConfigurationsRequest{}
+	mi := &file_api_proto_msgTypes[57]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTopiConfigurationsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTopiConfigurationsRequest) ProtoMessage() {}
+
+func (x *ListTopiConfigurationsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[57]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTopiConfigurationsRequest.ProtoReflect.Descriptor instead.
+func (*ListTopiConfigurationsRequest) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{57}
+}
+
+func (x *ListTopiConfigurationsRequest) GetDaemonUrl() string {
+	if x != nil {
+		return x.DaemonUrl
+	}
+	return ""
+}
+
+func (x *ListTopiConfigurationsRequest) GetApiToken() string {
+	if x != nil {
+		return x.ApiToken
+	}
+	return ""
+}
+
+type ListTopiConfigurationsResponse struct {
+	state          protoimpl.MessageState        `protogen:"open.v1"`
+	Configurations []*TopiAvailableConfiguration `protobuf:"bytes,1,rep,name=configurations,proto3" json:"configurations,omitempty"`
+	unknownFields  protoimpl.UnknownFields
+	sizeCache      protoimpl.SizeCache
+}
+
+func (x *ListTopiConfigurationsResponse) Reset() {
+	*x = ListTopiConfigurationsResponse{}
+	mi := &file_api_proto_msgTypes[58]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListTopiConfigurationsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListTopiConfigurationsResponse) ProtoMessage() {}
+
+func (x *ListTopiConfigurationsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[58]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListTopiConfigurationsResponse.ProtoReflect.Descriptor instead.
+func (*ListTopiConfigurationsResponse) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{58}
+}
+
+func (x *ListTopiConfigurationsResponse) GetConfigurations() []*TopiAvailableConfiguration {
+	if x != nil {
+		return x.Configurations
+	}
+	return nil
+}
+
 type GetRunNumberRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -2993,7 +3467,7 @@ type GetRunNumberRequest struct {
 
 func (x *GetRunNumberRequest) Reset() {
 	*x = GetRunNumberRequest{}
-	mi := &file_api_proto_msgTypes[51]
+	mi := &file_api_proto_msgTypes[59]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3005,7 +3479,7 @@ func (x *GetRunNumberRequest) String() string {
 func (*GetRunNumberRequest) ProtoMessage() {}
 
 func (x *GetRunNumberRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[51]
+	mi := &file_api_proto_msgTypes[59]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3018,7 +3492,7 @@ func (x *GetRunNumberRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRunNumberRequest.ProtoReflect.Descriptor instead.
 func (*GetRunNumberRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{51}
+	return file_api_proto_rawDescGZIP(), []int{59}
 }
 
 type GetRunNumberResponse struct {
@@ -3030,7 +3504,7 @@ type GetRunNumberResponse struct {
 
 func (x *GetRunNumberResponse) Reset() {
 	*x = GetRunNumberResponse{}
-	mi := &file_api_proto_msgTypes[52]
+	mi := &file_api_proto_msgTypes[60]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3042,7 +3516,7 @@ func (x *GetRunNumberResponse) String() string {
 func (*GetRunNumberResponse) ProtoMessage() {}
 
 func (x *GetRunNumberResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[52]
+	mi := &file_api_proto_msgTypes[60]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3055,7 +3529,7 @@ func (x *GetRunNumberResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetRunNumberResponse.ProtoReflect.Descriptor instead.
 func (*GetRunNumberResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{52}
+	return file_api_proto_rawDescGZIP(), []int{60}
 }
 
 func (x *GetRunNumberResponse) GetRunNumber() int32 {
@@ -3077,7 +3551,7 @@ type DisabledWarning struct {
 
 func (x *DisabledWarning) Reset() {
 	*x = DisabledWarning{}
-	mi := &file_api_proto_msgTypes[53]
+	mi := &file_api_proto_msgTypes[61]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3089,7 +3563,7 @@ func (x *DisabledWarning) String() string {
 func (*DisabledWarning) ProtoMessage() {}
 
 func (x *DisabledWarning) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[53]
+	mi := &file_api_proto_msgTypes[61]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3102,7 +3576,7 @@ func (x *DisabledWarning) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use DisabledWarning.ProtoReflect.Descriptor instead.
 func (*DisabledWarning) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{53}
+	return file_api_proto_rawDescGZIP(), []int{61}
 }
 
 func (x *DisabledWarning) GetGdcs() []string {
@@ -3141,7 +3615,7 @@ type CheckDisabledRequest struct {
 
 func (x *CheckDisabledRequest) Reset() {
 	*x = CheckDisabledRequest{}
-	mi := &file_api_proto_msgTypes[54]
+	mi := &file_api_proto_msgTypes[62]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3153,7 +3627,7 @@ func (x *CheckDisabledRequest) String() string {
 func (*CheckDisabledRequest) ProtoMessage() {}
 
 func (x *CheckDisabledRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[54]
+	mi := &file_api_proto_msgTypes[62]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3166,7 +3640,7 @@ func (x *CheckDisabledRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckDisabledRequest.ProtoReflect.Descriptor instead.
 func (*CheckDisabledRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{54}
+	return file_api_proto_rawDescGZIP(), []int{62}
 }
 
 type CheckDisabledResponse struct {
@@ -3178,7 +3652,7 @@ type CheckDisabledResponse struct {
 
 func (x *CheckDisabledResponse) Reset() {
 	*x = CheckDisabledResponse{}
-	mi := &file_api_proto_msgTypes[55]
+	mi := &file_api_proto_msgTypes[63]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3190,7 +3664,7 @@ func (x *CheckDisabledResponse) String() string {
 func (*CheckDisabledResponse) ProtoMessage() {}
 
 func (x *CheckDisabledResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[55]
+	mi := &file_api_proto_msgTypes[63]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3203,7 +3677,7 @@ func (x *CheckDisabledResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use CheckDisabledResponse.ProtoReflect.Descriptor instead.
 func (*CheckDisabledResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{55}
+	return file_api_proto_rawDescGZIP(), []int{63}
 }
 
 func (x *CheckDisabledResponse) GetWarnings() *DisabledWarning {
@@ -3221,7 +3695,7 @@ type GetTokenRequest struct {
 
 func (x *GetTokenRequest) Reset() {
 	*x = GetTokenRequest{}
-	mi := &file_api_proto_msgTypes[56]
+	mi := &file_api_proto_msgTypes[64]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3233,7 +3707,7 @@ func (x *GetTokenRequest) String() string {
 func (*GetTokenRequest) ProtoMessage() {}
 
 func (x *GetTokenRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[56]
+	mi := &file_api_proto_msgTypes[64]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3246,7 +3720,7 @@ func (x *GetTokenRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTokenRequest.ProtoReflect.Descriptor instead.
 func (*GetTokenRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{56}
+	return file_api_proto_rawDescGZIP(), []int{64}
 }
 
 type GetTokenResponse struct {
@@ -3258,7 +3732,7 @@ type GetTokenResponse struct {
 
 func (x *GetTokenResponse) Reset() {
 	*x = GetTokenResponse{}
-	mi := &file_api_proto_msgTypes[57]
+	mi := &file_api_proto_msgTypes[65]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3270,7 +3744,7 @@ func (x *GetTokenResponse) String() string {
 func (*GetTokenResponse) ProtoMessage() {}
 
 func (x *GetTokenResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[57]
+	mi := &file_api_proto_msgTypes[65]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3283,7 +3757,7 @@ func (x *GetTokenResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTokenResponse.ProtoReflect.Descriptor instead.
 func (*GetTokenResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{57}
+	return file_api_proto_rawDescGZIP(), []int{65}
 }
 
 func (x *GetTokenResponse) GetToken() string {
@@ -3313,7 +3787,7 @@ type TestDevice struct {
 
 func (x *TestDevice) Reset() {
 	*x = TestDevice{}
-	mi := &file_api_proto_msgTypes[58]
+	mi := &file_api_proto_msgTypes[66]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3325,7 +3799,7 @@ func (x *TestDevice) String() string {
 func (*TestDevice) ProtoMessage() {}
 
 func (x *TestDevice) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[58]
+	mi := &file_api_proto_msgTypes[66]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3338,7 +3812,7 @@ func (x *TestDevice) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestDevice.ProtoReflect.Descriptor instead.
 func (*TestDevice) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{58}
+	return file_api_proto_rawDescGZIP(), []int{66}
 }
 
 func (x *TestDevice) GetEquipmentId() int32 {
@@ -3437,7 +3911,7 @@ type TestDeviceStatistics struct {
 
 func (x *TestDeviceStatistics) Reset() {
 	*x = TestDeviceStatistics{}
-	mi := &file_api_proto_msgTypes[59]
+	mi := &file_api_proto_msgTypes[67]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3449,7 +3923,7 @@ func (x *TestDeviceStatistics) String() string {
 func (*TestDeviceStatistics) ProtoMessage() {}
 
 func (x *TestDeviceStatistics) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[59]
+	mi := &file_api_proto_msgTypes[67]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3462,7 +3936,7 @@ func (x *TestDeviceStatistics) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TestDeviceStatistics.ProtoReflect.Descriptor instead.
 func (*TestDeviceStatistics) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{59}
+	return file_api_proto_rawDescGZIP(), []int{67}
 }
 
 func (x *TestDeviceStatistics) GetDeviceId() int32 {
@@ -3502,7 +3976,7 @@ type StartTestDevicesRequest struct {
 
 func (x *StartTestDevicesRequest) Reset() {
 	*x = StartTestDevicesRequest{}
-	mi := &file_api_proto_msgTypes[60]
+	mi := &file_api_proto_msgTypes[68]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3514,7 +3988,7 @@ func (x *StartTestDevicesRequest) String() string {
 func (*StartTestDevicesRequest) ProtoMessage() {}
 
 func (x *StartTestDevicesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[60]
+	mi := &file_api_proto_msgTypes[68]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3527,7 +4001,7 @@ func (x *StartTestDevicesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartTestDevicesRequest.ProtoReflect.Descriptor instead.
 func (*StartTestDevicesRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{60}
+	return file_api_proto_rawDescGZIP(), []int{68}
 }
 
 func (x *StartTestDevicesRequest) GetDeviceIds() []int32 {
@@ -3547,7 +4021,7 @@ type StartTestDevicesResponse struct {
 
 func (x *StartTestDevicesResponse) Reset() {
 	*x = StartTestDevicesResponse{}
-	mi := &file_api_proto_msgTypes[61]
+	mi := &file_api_proto_msgTypes[69]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3559,7 +4033,7 @@ func (x *StartTestDevicesResponse) String() string {
 func (*StartTestDevicesResponse) ProtoMessage() {}
 
 func (x *StartTestDevicesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[61]
+	mi := &file_api_proto_msgTypes[69]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3572,7 +4046,7 @@ func (x *StartTestDevicesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StartTestDevicesResponse.ProtoReflect.Descriptor instead.
 func (*StartTestDevicesResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{61}
+	return file_api_proto_rawDescGZIP(), []int{69}
 }
 
 func (x *StartTestDevicesResponse) GetSuccess() bool {
@@ -3598,7 +4072,7 @@ type StopTestDevicesRequest struct {
 
 func (x *StopTestDevicesRequest) Reset() {
 	*x = StopTestDevicesRequest{}
-	mi := &file_api_proto_msgTypes[62]
+	mi := &file_api_proto_msgTypes[70]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3610,7 +4084,7 @@ func (x *StopTestDevicesRequest) String() string {
 func (*StopTestDevicesRequest) ProtoMessage() {}
 
 func (x *StopTestDevicesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[62]
+	mi := &file_api_proto_msgTypes[70]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3623,7 +4097,7 @@ func (x *StopTestDevicesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopTestDevicesRequest.ProtoReflect.Descriptor instead.
 func (*StopTestDevicesRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{62}
+	return file_api_proto_rawDescGZIP(), []int{70}
 }
 
 func (x *StopTestDevicesRequest) GetDeviceIds() []int32 {
@@ -3643,7 +4117,7 @@ type StopTestDevicesResponse struct {
 
 func (x *StopTestDevicesResponse) Reset() {
 	*x = StopTestDevicesResponse{}
-	mi := &file_api_proto_msgTypes[63]
+	mi := &file_api_proto_msgTypes[71]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3655,7 +4129,7 @@ func (x *StopTestDevicesResponse) String() string {
 func (*StopTestDevicesResponse) ProtoMessage() {}
 
 func (x *StopTestDevicesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[63]
+	mi := &file_api_proto_msgTypes[71]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3668,7 +4142,7 @@ func (x *StopTestDevicesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use StopTestDevicesResponse.ProtoReflect.Descriptor instead.
 func (*StopTestDevicesResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{63}
+	return file_api_proto_rawDescGZIP(), []int{71}
 }
 
 func (x *StopTestDevicesResponse) GetSuccess() bool {
@@ -3693,7 +4167,7 @@ type GetTestDevicesStatesRequest struct {
 
 func (x *GetTestDevicesStatesRequest) Reset() {
 	*x = GetTestDevicesStatesRequest{}
-	mi := &file_api_proto_msgTypes[64]
+	mi := &file_api_proto_msgTypes[72]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3705,7 +4179,7 @@ func (x *GetTestDevicesStatesRequest) String() string {
 func (*GetTestDevicesStatesRequest) ProtoMessage() {}
 
 func (x *GetTestDevicesStatesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[64]
+	mi := &file_api_proto_msgTypes[72]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3718,7 +4192,7 @@ func (x *GetTestDevicesStatesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTestDevicesStatesRequest.ProtoReflect.Descriptor instead.
 func (*GetTestDevicesStatesRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{64}
+	return file_api_proto_rawDescGZIP(), []int{72}
 }
 
 type GetTestDevicesStatesResponse struct {
@@ -3730,7 +4204,7 @@ type GetTestDevicesStatesResponse struct {
 
 func (x *GetTestDevicesStatesResponse) Reset() {
 	*x = GetTestDevicesStatesResponse{}
-	mi := &file_api_proto_msgTypes[65]
+	mi := &file_api_proto_msgTypes[73]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3742,7 +4216,7 @@ func (x *GetTestDevicesStatesResponse) String() string {
 func (*GetTestDevicesStatesResponse) ProtoMessage() {}
 
 func (x *GetTestDevicesStatesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[65]
+	mi := &file_api_proto_msgTypes[73]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3755,7 +4229,7 @@ func (x *GetTestDevicesStatesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTestDevicesStatesResponse.ProtoReflect.Descriptor instead.
 func (*GetTestDevicesStatesResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{65}
+	return file_api_proto_rawDescGZIP(), []int{73}
 }
 
 func (x *GetTestDevicesStatesResponse) GetStates() map[string]string {
@@ -3773,7 +4247,7 @@ type ListTestDevicesRequest struct {
 
 func (x *ListTestDevicesRequest) Reset() {
 	*x = ListTestDevicesRequest{}
-	mi := &file_api_proto_msgTypes[66]
+	mi := &file_api_proto_msgTypes[74]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3785,7 +4259,7 @@ func (x *ListTestDevicesRequest) String() string {
 func (*ListTestDevicesRequest) ProtoMessage() {}
 
 func (x *ListTestDevicesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[66]
+	mi := &file_api_proto_msgTypes[74]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3798,7 +4272,7 @@ func (x *ListTestDevicesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTestDevicesRequest.ProtoReflect.Descriptor instead.
 func (*ListTestDevicesRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{66}
+	return file_api_proto_rawDescGZIP(), []int{74}
 }
 
 type ListTestDevicesResponse struct {
@@ -3810,7 +4284,7 @@ type ListTestDevicesResponse struct {
 
 func (x *ListTestDevicesResponse) Reset() {
 	*x = ListTestDevicesResponse{}
-	mi := &file_api_proto_msgTypes[67]
+	mi := &file_api_proto_msgTypes[75]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3822,7 +4296,7 @@ func (x *ListTestDevicesResponse) String() string {
 func (*ListTestDevicesResponse) ProtoMessage() {}
 
 func (x *ListTestDevicesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[67]
+	mi := &file_api_proto_msgTypes[75]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3835,7 +4309,7 @@ func (x *ListTestDevicesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use ListTestDevicesResponse.ProtoReflect.Descriptor instead.
 func (*ListTestDevicesResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{67}
+	return file_api_proto_rawDescGZIP(), []int{75}
 }
 
 func (x *ListTestDevicesResponse) GetDevices() []*TestDevice {
@@ -3854,7 +4328,7 @@ type GetTestDeviceStatisticsRequest struct {
 
 func (x *GetTestDeviceStatisticsRequest) Reset() {
 	*x = GetTestDeviceStatisticsRequest{}
-	mi := &file_api_proto_msgTypes[68]
+	mi := &file_api_proto_msgTypes[76]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3866,7 +4340,7 @@ func (x *GetTestDeviceStatisticsRequest) String() string {
 func (*GetTestDeviceStatisticsRequest) ProtoMessage() {}
 
 func (x *GetTestDeviceStatisticsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[68]
+	mi := &file_api_proto_msgTypes[76]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3879,7 +4353,7 @@ func (x *GetTestDeviceStatisticsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTestDeviceStatisticsRequest.ProtoReflect.Descriptor instead.
 func (*GetTestDeviceStatisticsRequest) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{68}
+	return file_api_proto_rawDescGZIP(), []int{76}
 }
 
 func (x *GetTestDeviceStatisticsRequest) GetDeviceId() int32 {
@@ -3898,7 +4372,7 @@ type GetTestDeviceStatisticsResponse struct {
 
 func (x *GetTestDeviceStatisticsResponse) Reset() {
 	*x = GetTestDeviceStatisticsResponse{}
-	mi := &file_api_proto_msgTypes[69]
+	mi := &file_api_proto_msgTypes[77]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -3910,7 +4384,7 @@ func (x *GetTestDeviceStatisticsResponse) String() string {
 func (*GetTestDeviceStatisticsResponse) ProtoMessage() {}
 
 func (x *GetTestDeviceStatisticsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_api_proto_msgTypes[69]
+	mi := &file_api_proto_msgTypes[77]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -3923,7 +4397,7 @@ func (x *GetTestDeviceStatisticsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetTestDeviceStatisticsResponse.ProtoReflect.Descriptor instead.
 func (*GetTestDeviceStatisticsResponse) Descriptor() ([]byte, []int) {
-	return file_api_proto_rawDescGZIP(), []int{69}
+	return file_api_proto_rawDescGZIP(), []int{77}
 }
 
 func (x *GetTestDeviceStatisticsResponse) GetStatistics() *TestDeviceStatistics {
@@ -4145,7 +4619,43 @@ const file_api_proto_rawDesc = "" +
 	"\rconfiguration\x18\x01 \x01(\v2 .apiService.DecoderConfigurationR\rconfiguration\"X\n" +
 	"\"UpdateDecoderConfigurationResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
-	"\amessage\x18\x02 \x01(\tR\amessage\"\x15\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"\xc1\x03\n" +
+	"\x11TopiConfiguration\x12\x18\n" +
+	"\aenabled\x18\x01 \x01(\bR\aenabled\x12\x1d\n" +
+	"\n" +
+	"daemon_url\x18\x02 \x01(\tR\tdaemonUrl\x12)\n" +
+	"\x10rabbitmq_address\x18\x03 \x01(\tR\x0frabbitmqAddress\x12#\n" +
+	"\rrabbitmq_port\x18\x04 \x01(\x05R\frabbitmqPort\x12#\n" +
+	"\rrabbitmq_user\x18\x05 \x01(\tR\frabbitmqUser\x12%\n" +
+	"\x0erabbitmq_vhost\x18\x06 \x01(\tR\rrabbitmqVhost\x12#\n" +
+	"\rexchange_name\x18\a \x01(\tR\fexchangeName\x12#\n" +
+	"\rcontrol_queue\x18\b \x01(\tR\fcontrolQueue\x125\n" +
+	"\x16selected_configuration\x18\t \x01(\tR\x15selectedConfiguration\x12\"\n" +
+	"\rhas_api_token\x18\n" +
+	" \x01(\bR\vhasApiToken\x122\n" +
+	"\x15has_rabbitmq_password\x18\v \x01(\bR\x13hasRabbitmqPassword\"\x1d\n" +
+	"\x1bGetTopiConfigurationRequest\"c\n" +
+	"\x1cGetTopiConfigurationResponse\x12C\n" +
+	"\rconfiguration\x18\x01 \x01(\v2\x1d.apiService.TopiConfigurationR\rconfiguration\"\xaf\x01\n" +
+	"\x1eUpdateTopiConfigurationRequest\x12C\n" +
+	"\rconfiguration\x18\x01 \x01(\v2\x1d.apiService.TopiConfigurationR\rconfiguration\x12\x1b\n" +
+	"\tapi_token\x18\x02 \x01(\tR\bapiToken\x12+\n" +
+	"\x11rabbitmq_password\x18\x03 \x01(\tR\x10rabbitmqPassword\"U\n" +
+	"\x1fUpdateTopiConfigurationResponse\x12\x18\n" +
+	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
+	"\amessage\x18\x02 \x01(\tR\amessage\"p\n" +
+	"\x1aTopiAvailableConfiguration\x12\x12\n" +
+	"\x04name\x18\x01 \x01(\tR\x04name\x12\x1f\n" +
+	"\vparse_error\x18\x02 \x01(\tR\n" +
+	"parseError\x12\x1d\n" +
+	"\n" +
+	"is_default\x18\x03 \x01(\bR\tisDefault\"[\n" +
+	"\x1dListTopiConfigurationsRequest\x12\x1d\n" +
+	"\n" +
+	"daemon_url\x18\x01 \x01(\tR\tdaemonUrl\x12\x1b\n" +
+	"\tapi_token\x18\x02 \x01(\tR\bapiToken\"p\n" +
+	"\x1eListTopiConfigurationsResponse\x12N\n" +
+	"\x0econfigurations\x18\x01 \x03(\v2&.apiService.TopiAvailableConfigurationR\x0econfigurations\"\x15\n" +
 	"\x13GetRunNumberRequest\"5\n" +
 	"\x14GetRunNumberResponse\x12\x1d\n" +
 	"\n" +
@@ -4212,7 +4722,7 @@ const file_api_proto_rawDesc = "" +
 	"\x1fGetTestDeviceStatisticsResponse\x12@\n" +
 	"\n" +
 	"statistics\x18\x01 \x01(\v2 .apiService.TestDeviceStatisticsR\n" +
-	"statistics2\xab\x15\n" +
+	"statistics2\x81\x18\n" +
 	"\aDuckAPI\x12G\n" +
 	"\bStartRun\x12\x1b.apiService.StartRunRequest\x1a\x1c.apiService.StartRunResponse\"\x00\x12D\n" +
 	"\aStopRun\x12\x1a.apiService.StopRunRequest\x1a\x1b.apiService.StopRunResponse\"\x00\x12S\n" +
@@ -4236,7 +4746,10 @@ const file_api_proto_rawDesc = "" +
 	"\x0fUpdateEquipment\x12\".apiService.UpdateEquipmentRequest\x1a#.apiService.UpdateEquipmentResponse\"\x00\x12\\\n" +
 	"\x0fDeleteEquipment\x12\".apiService.DeleteEquipmentRequest\x1a#.apiService.DeleteEquipmentResponse\"\x00\x12t\n" +
 	"\x17GetDecoderConfiguration\x12*.apiService.GetDecoderConfigurationRequest\x1a+.apiService.GetDecoderConfigurationResponse\"\x00\x12}\n" +
-	"\x1aUpdateDecoderConfiguration\x12-.apiService.UpdateDecoderConfigurationRequest\x1a..apiService.UpdateDecoderConfigurationResponse\"\x00\x12S\n" +
+	"\x1aUpdateDecoderConfiguration\x12-.apiService.UpdateDecoderConfigurationRequest\x1a..apiService.UpdateDecoderConfigurationResponse\"\x00\x12k\n" +
+	"\x14GetTopiConfiguration\x12'.apiService.GetTopiConfigurationRequest\x1a(.apiService.GetTopiConfigurationResponse\"\x00\x12t\n" +
+	"\x17UpdateTopiConfiguration\x12*.apiService.UpdateTopiConfigurationRequest\x1a+.apiService.UpdateTopiConfigurationResponse\"\x00\x12q\n" +
+	"\x16ListTopiConfigurations\x12).apiService.ListTopiConfigurationsRequest\x1a*.apiService.ListTopiConfigurationsResponse\"\x00\x12S\n" +
 	"\fGetRunNumber\x12\x1f.apiService.GetRunNumberRequest\x1a .apiService.GetRunNumberResponse\"\x00\x12V\n" +
 	"\rCheckDisabled\x12 .apiService.CheckDisabledRequest\x1a!.apiService.CheckDisabledResponse\"\x00\x12G\n" +
 	"\bGetToken\x12\x1b.apiService.GetTokenRequest\x1a\x1c.apiService.GetTokenResponse\"\x00\x12_\n" +
@@ -4258,7 +4771,7 @@ func file_api_proto_rawDescGZIP() []byte {
 	return file_api_proto_rawDescData
 }
 
-var file_api_proto_msgTypes = make([]protoimpl.MessageInfo, 71)
+var file_api_proto_msgTypes = make([]protoimpl.MessageInfo, 79)
 var file_api_proto_goTypes = []any{
 	(*SuccessResponse)(nil),                    // 0: apiService.SuccessResponse
 	(*StartRunRequest)(nil),                    // 1: apiService.StartRunRequest
@@ -4311,26 +4824,34 @@ var file_api_proto_goTypes = []any{
 	(*GetDecoderConfigurationResponse)(nil),    // 48: apiService.GetDecoderConfigurationResponse
 	(*UpdateDecoderConfigurationRequest)(nil),  // 49: apiService.UpdateDecoderConfigurationRequest
 	(*UpdateDecoderConfigurationResponse)(nil), // 50: apiService.UpdateDecoderConfigurationResponse
-	(*GetRunNumberRequest)(nil),                // 51: apiService.GetRunNumberRequest
-	(*GetRunNumberResponse)(nil),               // 52: apiService.GetRunNumberResponse
-	(*DisabledWarning)(nil),                    // 53: apiService.DisabledWarning
-	(*CheckDisabledRequest)(nil),               // 54: apiService.CheckDisabledRequest
-	(*CheckDisabledResponse)(nil),              // 55: apiService.CheckDisabledResponse
-	(*GetTokenRequest)(nil),                    // 56: apiService.GetTokenRequest
-	(*GetTokenResponse)(nil),                   // 57: apiService.GetTokenResponse
-	(*TestDevice)(nil),                         // 58: apiService.TestDevice
-	(*TestDeviceStatistics)(nil),               // 59: apiService.TestDeviceStatistics
-	(*StartTestDevicesRequest)(nil),            // 60: apiService.StartTestDevicesRequest
-	(*StartTestDevicesResponse)(nil),           // 61: apiService.StartTestDevicesResponse
-	(*StopTestDevicesRequest)(nil),             // 62: apiService.StopTestDevicesRequest
-	(*StopTestDevicesResponse)(nil),            // 63: apiService.StopTestDevicesResponse
-	(*GetTestDevicesStatesRequest)(nil),        // 64: apiService.GetTestDevicesStatesRequest
-	(*GetTestDevicesStatesResponse)(nil),       // 65: apiService.GetTestDevicesStatesResponse
-	(*ListTestDevicesRequest)(nil),             // 66: apiService.ListTestDevicesRequest
-	(*ListTestDevicesResponse)(nil),            // 67: apiService.ListTestDevicesResponse
-	(*GetTestDeviceStatisticsRequest)(nil),     // 68: apiService.GetTestDeviceStatisticsRequest
-	(*GetTestDeviceStatisticsResponse)(nil),    // 69: apiService.GetTestDeviceStatisticsResponse
-	nil,                                        // 70: apiService.GetTestDevicesStatesResponse.StatesEntry
+	(*TopiConfiguration)(nil),                  // 51: apiService.TopiConfiguration
+	(*GetTopiConfigurationRequest)(nil),        // 52: apiService.GetTopiConfigurationRequest
+	(*GetTopiConfigurationResponse)(nil),       // 53: apiService.GetTopiConfigurationResponse
+	(*UpdateTopiConfigurationRequest)(nil),     // 54: apiService.UpdateTopiConfigurationRequest
+	(*UpdateTopiConfigurationResponse)(nil),    // 55: apiService.UpdateTopiConfigurationResponse
+	(*TopiAvailableConfiguration)(nil),         // 56: apiService.TopiAvailableConfiguration
+	(*ListTopiConfigurationsRequest)(nil),      // 57: apiService.ListTopiConfigurationsRequest
+	(*ListTopiConfigurationsResponse)(nil),     // 58: apiService.ListTopiConfigurationsResponse
+	(*GetRunNumberRequest)(nil),                // 59: apiService.GetRunNumberRequest
+	(*GetRunNumberResponse)(nil),               // 60: apiService.GetRunNumberResponse
+	(*DisabledWarning)(nil),                    // 61: apiService.DisabledWarning
+	(*CheckDisabledRequest)(nil),               // 62: apiService.CheckDisabledRequest
+	(*CheckDisabledResponse)(nil),              // 63: apiService.CheckDisabledResponse
+	(*GetTokenRequest)(nil),                    // 64: apiService.GetTokenRequest
+	(*GetTokenResponse)(nil),                   // 65: apiService.GetTokenResponse
+	(*TestDevice)(nil),                         // 66: apiService.TestDevice
+	(*TestDeviceStatistics)(nil),               // 67: apiService.TestDeviceStatistics
+	(*StartTestDevicesRequest)(nil),            // 68: apiService.StartTestDevicesRequest
+	(*StartTestDevicesResponse)(nil),           // 69: apiService.StartTestDevicesResponse
+	(*StopTestDevicesRequest)(nil),             // 70: apiService.StopTestDevicesRequest
+	(*StopTestDevicesResponse)(nil),            // 71: apiService.StopTestDevicesResponse
+	(*GetTestDevicesStatesRequest)(nil),        // 72: apiService.GetTestDevicesStatesRequest
+	(*GetTestDevicesStatesResponse)(nil),       // 73: apiService.GetTestDevicesStatesResponse
+	(*ListTestDevicesRequest)(nil),             // 74: apiService.ListTestDevicesRequest
+	(*ListTestDevicesResponse)(nil),            // 75: apiService.ListTestDevicesResponse
+	(*GetTestDeviceStatisticsRequest)(nil),     // 76: apiService.GetTestDeviceStatisticsRequest
+	(*GetTestDeviceStatisticsResponse)(nil),    // 77: apiService.GetTestDeviceStatisticsResponse
+	nil,                                        // 78: apiService.GetTestDevicesStatesResponse.StatesEntry
 }
 var file_api_proto_depIdxs = []int32{
 	13, // 0: apiService.GetGDCsResponse.gdcs:type_name -> apiService.GDC
@@ -4342,77 +4863,86 @@ var file_api_proto_depIdxs = []int32{
 	24, // 6: apiService.GetEquipmentResponse.equipment:type_name -> apiService.Equipment
 	46, // 7: apiService.GetDecoderConfigurationResponse.configuration:type_name -> apiService.DecoderConfiguration
 	46, // 8: apiService.UpdateDecoderConfigurationRequest.configuration:type_name -> apiService.DecoderConfiguration
-	53, // 9: apiService.CheckDisabledResponse.warnings:type_name -> apiService.DisabledWarning
-	70, // 10: apiService.GetTestDevicesStatesResponse.states:type_name -> apiService.GetTestDevicesStatesResponse.StatesEntry
-	58, // 11: apiService.ListTestDevicesResponse.devices:type_name -> apiService.TestDevice
-	59, // 12: apiService.GetTestDeviceStatisticsResponse.statistics:type_name -> apiService.TestDeviceStatistics
-	1,  // 13: apiService.DuckAPI.StartRun:input_type -> apiService.StartRunRequest
-	3,  // 14: apiService.DuckAPI.StopRun:input_type -> apiService.StopRunRequest
-	5,  // 15: apiService.DuckAPI.ForceStopRun:input_type -> apiService.ForceStopRunRequest
-	7,  // 16: apiService.DuckAPI.GetProcessStates:input_type -> apiService.GetProcessStatesRequest
-	9,  // 17: apiService.DuckAPI.RestartServices:input_type -> apiService.RestartServicesRequest
-	11, // 18: apiService.DuckAPI.GetRunTransitionStatus:input_type -> apiService.GetRunTransitionStatusRequest
-	14, // 19: apiService.DuckAPI.CreateGDC:input_type -> apiService.CreateGDCRequest
-	16, // 20: apiService.DuckAPI.GetGDCs:input_type -> apiService.GetGDCsRequest
-	18, // 21: apiService.DuckAPI.GetGDC:input_type -> apiService.GetGDCRequest
-	20, // 22: apiService.DuckAPI.UpdateGDC:input_type -> apiService.UpdateGDCRequest
-	22, // 23: apiService.DuckAPI.DeleteGDC:input_type -> apiService.DeleteGDCRequest
-	26, // 24: apiService.DuckAPI.CreateLDC:input_type -> apiService.CreateLDCRequest
-	28, // 25: apiService.DuckAPI.GetLDCs:input_type -> apiService.GetLDCsRequest
-	30, // 26: apiService.DuckAPI.GetLDC:input_type -> apiService.GetLDCRequest
-	32, // 27: apiService.DuckAPI.UpdateLDC:input_type -> apiService.UpdateLDCRequest
-	34, // 28: apiService.DuckAPI.DeleteLDC:input_type -> apiService.DeleteLDCRequest
-	36, // 29: apiService.DuckAPI.CreateEquipment:input_type -> apiService.CreateEquipmentRequest
-	38, // 30: apiService.DuckAPI.GetEquipments:input_type -> apiService.GetEquipmentsRequest
-	40, // 31: apiService.DuckAPI.GetEquipment:input_type -> apiService.GetEquipmentRequest
-	42, // 32: apiService.DuckAPI.UpdateEquipment:input_type -> apiService.UpdateEquipmentRequest
-	44, // 33: apiService.DuckAPI.DeleteEquipment:input_type -> apiService.DeleteEquipmentRequest
-	47, // 34: apiService.DuckAPI.GetDecoderConfiguration:input_type -> apiService.GetDecoderConfigurationRequest
-	49, // 35: apiService.DuckAPI.UpdateDecoderConfiguration:input_type -> apiService.UpdateDecoderConfigurationRequest
-	51, // 36: apiService.DuckAPI.GetRunNumber:input_type -> apiService.GetRunNumberRequest
-	54, // 37: apiService.DuckAPI.CheckDisabled:input_type -> apiService.CheckDisabledRequest
-	56, // 38: apiService.DuckAPI.GetToken:input_type -> apiService.GetTokenRequest
-	60, // 39: apiService.DuckAPI.StartTestDevices:input_type -> apiService.StartTestDevicesRequest
-	62, // 40: apiService.DuckAPI.StopTestDevices:input_type -> apiService.StopTestDevicesRequest
-	64, // 41: apiService.DuckAPI.GetTestDevicesStates:input_type -> apiService.GetTestDevicesStatesRequest
-	66, // 42: apiService.DuckAPI.ListTestDevices:input_type -> apiService.ListTestDevicesRequest
-	68, // 43: apiService.DuckAPI.GetTestDeviceStatistics:input_type -> apiService.GetTestDeviceStatisticsRequest
-	2,  // 44: apiService.DuckAPI.StartRun:output_type -> apiService.StartRunResponse
-	4,  // 45: apiService.DuckAPI.StopRun:output_type -> apiService.StopRunResponse
-	6,  // 46: apiService.DuckAPI.ForceStopRun:output_type -> apiService.ForceStopRunResponse
-	8,  // 47: apiService.DuckAPI.GetProcessStates:output_type -> apiService.GetProcessStatesResponse
-	10, // 48: apiService.DuckAPI.RestartServices:output_type -> apiService.RestartServicesResponse
-	12, // 49: apiService.DuckAPI.GetRunTransitionStatus:output_type -> apiService.GetRunTransitionStatusResponse
-	15, // 50: apiService.DuckAPI.CreateGDC:output_type -> apiService.CreateGDCResponse
-	17, // 51: apiService.DuckAPI.GetGDCs:output_type -> apiService.GetGDCsResponse
-	19, // 52: apiService.DuckAPI.GetGDC:output_type -> apiService.GetGDCResponse
-	21, // 53: apiService.DuckAPI.UpdateGDC:output_type -> apiService.UpdateGDCResponse
-	23, // 54: apiService.DuckAPI.DeleteGDC:output_type -> apiService.DeleteGDCResponse
-	27, // 55: apiService.DuckAPI.CreateLDC:output_type -> apiService.CreateLDCResponse
-	29, // 56: apiService.DuckAPI.GetLDCs:output_type -> apiService.GetLDCsResponse
-	31, // 57: apiService.DuckAPI.GetLDC:output_type -> apiService.GetLDCResponse
-	33, // 58: apiService.DuckAPI.UpdateLDC:output_type -> apiService.UpdateLDCResponse
-	35, // 59: apiService.DuckAPI.DeleteLDC:output_type -> apiService.DeleteLDCResponse
-	37, // 60: apiService.DuckAPI.CreateEquipment:output_type -> apiService.CreateEquipmentResponse
-	39, // 61: apiService.DuckAPI.GetEquipments:output_type -> apiService.GetEquipmentsResponse
-	41, // 62: apiService.DuckAPI.GetEquipment:output_type -> apiService.GetEquipmentResponse
-	43, // 63: apiService.DuckAPI.UpdateEquipment:output_type -> apiService.UpdateEquipmentResponse
-	45, // 64: apiService.DuckAPI.DeleteEquipment:output_type -> apiService.DeleteEquipmentResponse
-	48, // 65: apiService.DuckAPI.GetDecoderConfiguration:output_type -> apiService.GetDecoderConfigurationResponse
-	50, // 66: apiService.DuckAPI.UpdateDecoderConfiguration:output_type -> apiService.UpdateDecoderConfigurationResponse
-	52, // 67: apiService.DuckAPI.GetRunNumber:output_type -> apiService.GetRunNumberResponse
-	55, // 68: apiService.DuckAPI.CheckDisabled:output_type -> apiService.CheckDisabledResponse
-	57, // 69: apiService.DuckAPI.GetToken:output_type -> apiService.GetTokenResponse
-	61, // 70: apiService.DuckAPI.StartTestDevices:output_type -> apiService.StartTestDevicesResponse
-	63, // 71: apiService.DuckAPI.StopTestDevices:output_type -> apiService.StopTestDevicesResponse
-	65, // 72: apiService.DuckAPI.GetTestDevicesStates:output_type -> apiService.GetTestDevicesStatesResponse
-	67, // 73: apiService.DuckAPI.ListTestDevices:output_type -> apiService.ListTestDevicesResponse
-	69, // 74: apiService.DuckAPI.GetTestDeviceStatistics:output_type -> apiService.GetTestDeviceStatisticsResponse
-	44, // [44:75] is the sub-list for method output_type
-	13, // [13:44] is the sub-list for method input_type
-	13, // [13:13] is the sub-list for extension type_name
-	13, // [13:13] is the sub-list for extension extendee
-	0,  // [0:13] is the sub-list for field type_name
+	51, // 9: apiService.GetTopiConfigurationResponse.configuration:type_name -> apiService.TopiConfiguration
+	51, // 10: apiService.UpdateTopiConfigurationRequest.configuration:type_name -> apiService.TopiConfiguration
+	56, // 11: apiService.ListTopiConfigurationsResponse.configurations:type_name -> apiService.TopiAvailableConfiguration
+	61, // 12: apiService.CheckDisabledResponse.warnings:type_name -> apiService.DisabledWarning
+	78, // 13: apiService.GetTestDevicesStatesResponse.states:type_name -> apiService.GetTestDevicesStatesResponse.StatesEntry
+	66, // 14: apiService.ListTestDevicesResponse.devices:type_name -> apiService.TestDevice
+	67, // 15: apiService.GetTestDeviceStatisticsResponse.statistics:type_name -> apiService.TestDeviceStatistics
+	1,  // 16: apiService.DuckAPI.StartRun:input_type -> apiService.StartRunRequest
+	3,  // 17: apiService.DuckAPI.StopRun:input_type -> apiService.StopRunRequest
+	5,  // 18: apiService.DuckAPI.ForceStopRun:input_type -> apiService.ForceStopRunRequest
+	7,  // 19: apiService.DuckAPI.GetProcessStates:input_type -> apiService.GetProcessStatesRequest
+	9,  // 20: apiService.DuckAPI.RestartServices:input_type -> apiService.RestartServicesRequest
+	11, // 21: apiService.DuckAPI.GetRunTransitionStatus:input_type -> apiService.GetRunTransitionStatusRequest
+	14, // 22: apiService.DuckAPI.CreateGDC:input_type -> apiService.CreateGDCRequest
+	16, // 23: apiService.DuckAPI.GetGDCs:input_type -> apiService.GetGDCsRequest
+	18, // 24: apiService.DuckAPI.GetGDC:input_type -> apiService.GetGDCRequest
+	20, // 25: apiService.DuckAPI.UpdateGDC:input_type -> apiService.UpdateGDCRequest
+	22, // 26: apiService.DuckAPI.DeleteGDC:input_type -> apiService.DeleteGDCRequest
+	26, // 27: apiService.DuckAPI.CreateLDC:input_type -> apiService.CreateLDCRequest
+	28, // 28: apiService.DuckAPI.GetLDCs:input_type -> apiService.GetLDCsRequest
+	30, // 29: apiService.DuckAPI.GetLDC:input_type -> apiService.GetLDCRequest
+	32, // 30: apiService.DuckAPI.UpdateLDC:input_type -> apiService.UpdateLDCRequest
+	34, // 31: apiService.DuckAPI.DeleteLDC:input_type -> apiService.DeleteLDCRequest
+	36, // 32: apiService.DuckAPI.CreateEquipment:input_type -> apiService.CreateEquipmentRequest
+	38, // 33: apiService.DuckAPI.GetEquipments:input_type -> apiService.GetEquipmentsRequest
+	40, // 34: apiService.DuckAPI.GetEquipment:input_type -> apiService.GetEquipmentRequest
+	42, // 35: apiService.DuckAPI.UpdateEquipment:input_type -> apiService.UpdateEquipmentRequest
+	44, // 36: apiService.DuckAPI.DeleteEquipment:input_type -> apiService.DeleteEquipmentRequest
+	47, // 37: apiService.DuckAPI.GetDecoderConfiguration:input_type -> apiService.GetDecoderConfigurationRequest
+	49, // 38: apiService.DuckAPI.UpdateDecoderConfiguration:input_type -> apiService.UpdateDecoderConfigurationRequest
+	52, // 39: apiService.DuckAPI.GetTopiConfiguration:input_type -> apiService.GetTopiConfigurationRequest
+	54, // 40: apiService.DuckAPI.UpdateTopiConfiguration:input_type -> apiService.UpdateTopiConfigurationRequest
+	57, // 41: apiService.DuckAPI.ListTopiConfigurations:input_type -> apiService.ListTopiConfigurationsRequest
+	59, // 42: apiService.DuckAPI.GetRunNumber:input_type -> apiService.GetRunNumberRequest
+	62, // 43: apiService.DuckAPI.CheckDisabled:input_type -> apiService.CheckDisabledRequest
+	64, // 44: apiService.DuckAPI.GetToken:input_type -> apiService.GetTokenRequest
+	68, // 45: apiService.DuckAPI.StartTestDevices:input_type -> apiService.StartTestDevicesRequest
+	70, // 46: apiService.DuckAPI.StopTestDevices:input_type -> apiService.StopTestDevicesRequest
+	72, // 47: apiService.DuckAPI.GetTestDevicesStates:input_type -> apiService.GetTestDevicesStatesRequest
+	74, // 48: apiService.DuckAPI.ListTestDevices:input_type -> apiService.ListTestDevicesRequest
+	76, // 49: apiService.DuckAPI.GetTestDeviceStatistics:input_type -> apiService.GetTestDeviceStatisticsRequest
+	2,  // 50: apiService.DuckAPI.StartRun:output_type -> apiService.StartRunResponse
+	4,  // 51: apiService.DuckAPI.StopRun:output_type -> apiService.StopRunResponse
+	6,  // 52: apiService.DuckAPI.ForceStopRun:output_type -> apiService.ForceStopRunResponse
+	8,  // 53: apiService.DuckAPI.GetProcessStates:output_type -> apiService.GetProcessStatesResponse
+	10, // 54: apiService.DuckAPI.RestartServices:output_type -> apiService.RestartServicesResponse
+	12, // 55: apiService.DuckAPI.GetRunTransitionStatus:output_type -> apiService.GetRunTransitionStatusResponse
+	15, // 56: apiService.DuckAPI.CreateGDC:output_type -> apiService.CreateGDCResponse
+	17, // 57: apiService.DuckAPI.GetGDCs:output_type -> apiService.GetGDCsResponse
+	19, // 58: apiService.DuckAPI.GetGDC:output_type -> apiService.GetGDCResponse
+	21, // 59: apiService.DuckAPI.UpdateGDC:output_type -> apiService.UpdateGDCResponse
+	23, // 60: apiService.DuckAPI.DeleteGDC:output_type -> apiService.DeleteGDCResponse
+	27, // 61: apiService.DuckAPI.CreateLDC:output_type -> apiService.CreateLDCResponse
+	29, // 62: apiService.DuckAPI.GetLDCs:output_type -> apiService.GetLDCsResponse
+	31, // 63: apiService.DuckAPI.GetLDC:output_type -> apiService.GetLDCResponse
+	33, // 64: apiService.DuckAPI.UpdateLDC:output_type -> apiService.UpdateLDCResponse
+	35, // 65: apiService.DuckAPI.DeleteLDC:output_type -> apiService.DeleteLDCResponse
+	37, // 66: apiService.DuckAPI.CreateEquipment:output_type -> apiService.CreateEquipmentResponse
+	39, // 67: apiService.DuckAPI.GetEquipments:output_type -> apiService.GetEquipmentsResponse
+	41, // 68: apiService.DuckAPI.GetEquipment:output_type -> apiService.GetEquipmentResponse
+	43, // 69: apiService.DuckAPI.UpdateEquipment:output_type -> apiService.UpdateEquipmentResponse
+	45, // 70: apiService.DuckAPI.DeleteEquipment:output_type -> apiService.DeleteEquipmentResponse
+	48, // 71: apiService.DuckAPI.GetDecoderConfiguration:output_type -> apiService.GetDecoderConfigurationResponse
+	50, // 72: apiService.DuckAPI.UpdateDecoderConfiguration:output_type -> apiService.UpdateDecoderConfigurationResponse
+	53, // 73: apiService.DuckAPI.GetTopiConfiguration:output_type -> apiService.GetTopiConfigurationResponse
+	55, // 74: apiService.DuckAPI.UpdateTopiConfiguration:output_type -> apiService.UpdateTopiConfigurationResponse
+	58, // 75: apiService.DuckAPI.ListTopiConfigurations:output_type -> apiService.ListTopiConfigurationsResponse
+	60, // 76: apiService.DuckAPI.GetRunNumber:output_type -> apiService.GetRunNumberResponse
+	63, // 77: apiService.DuckAPI.CheckDisabled:output_type -> apiService.CheckDisabledResponse
+	65, // 78: apiService.DuckAPI.GetToken:output_type -> apiService.GetTokenResponse
+	69, // 79: apiService.DuckAPI.StartTestDevices:output_type -> apiService.StartTestDevicesResponse
+	71, // 80: apiService.DuckAPI.StopTestDevices:output_type -> apiService.StopTestDevicesResponse
+	73, // 81: apiService.DuckAPI.GetTestDevicesStates:output_type -> apiService.GetTestDevicesStatesResponse
+	75, // 82: apiService.DuckAPI.ListTestDevices:output_type -> apiService.ListTestDevicesResponse
+	77, // 83: apiService.DuckAPI.GetTestDeviceStatistics:output_type -> apiService.GetTestDeviceStatisticsResponse
+	50, // [50:84] is the sub-list for method output_type
+	16, // [16:50] is the sub-list for method input_type
+	16, // [16:16] is the sub-list for extension type_name
+	16, // [16:16] is the sub-list for extension extendee
+	0,  // [0:16] is the sub-list for field type_name
 }
 
 func init() { file_api_proto_init() }
@@ -4426,7 +4956,7 @@ func file_api_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_proto_rawDesc), len(file_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   71,
+			NumMessages:   79,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

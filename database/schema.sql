@@ -119,3 +119,18 @@ create table simulatorParams (
      packetSize int not null default 500
 );
 ALTER TABLE simulatorParams ADD FOREIGN KEY (equipmentID) REFERENCES equipments(id);
+
+create table topiParams (
+     id int primary key not null,
+     enabled boolean not null default false,
+     daemon_url VARCHAR(512) not null default '',
+     api_token TEXT not null,
+     rabbitmq_address VARCHAR(255) not null default '',
+     rabbitmq_port int not null default 5672,
+     rabbitmq_user VARCHAR(255) not null default '',
+     rabbitmq_password TEXT not null,
+     rabbitmq_vhost VARCHAR(255) not null default '/',
+     exchange_name VARCHAR(255) not null default 'production',
+     control_queue VARCHAR(255) not null default 'topi_daemon_control',
+     selected_configuration VARCHAR(255) not null default ''
+);

@@ -83,6 +83,15 @@ const (
 	// DuckAPIUpdateDecoderConfigurationProcedure is the fully-qualified name of the DuckAPI's
 	// UpdateDecoderConfiguration RPC.
 	DuckAPIUpdateDecoderConfigurationProcedure = "/apiService.DuckAPI/UpdateDecoderConfiguration"
+	// DuckAPIGetTopiConfigurationProcedure is the fully-qualified name of the DuckAPI's
+	// GetTopiConfiguration RPC.
+	DuckAPIGetTopiConfigurationProcedure = "/apiService.DuckAPI/GetTopiConfiguration"
+	// DuckAPIUpdateTopiConfigurationProcedure is the fully-qualified name of the DuckAPI's
+	// UpdateTopiConfiguration RPC.
+	DuckAPIUpdateTopiConfigurationProcedure = "/apiService.DuckAPI/UpdateTopiConfiguration"
+	// DuckAPIListTopiConfigurationsProcedure is the fully-qualified name of the DuckAPI's
+	// ListTopiConfigurations RPC.
+	DuckAPIListTopiConfigurationsProcedure = "/apiService.DuckAPI/ListTopiConfigurations"
 	// DuckAPIGetRunNumberProcedure is the fully-qualified name of the DuckAPI's GetRunNumber RPC.
 	DuckAPIGetRunNumberProcedure = "/apiService.DuckAPI/GetRunNumber"
 	// DuckAPICheckDisabledProcedure is the fully-qualified name of the DuckAPI's CheckDisabled RPC.
@@ -134,6 +143,10 @@ type DuckAPIClient interface {
 	// Decoder Configuration
 	GetDecoderConfiguration(context.Context, *connect.Request[api.GetDecoderConfigurationRequest]) (*connect.Response[api.GetDecoderConfigurationResponse], error)
 	UpdateDecoderConfiguration(context.Context, *connect.Request[api.UpdateDecoderConfigurationRequest]) (*connect.Response[api.UpdateDecoderConfigurationResponse], error)
+	// TOPI Integration
+	GetTopiConfiguration(context.Context, *connect.Request[api.GetTopiConfigurationRequest]) (*connect.Response[api.GetTopiConfigurationResponse], error)
+	UpdateTopiConfiguration(context.Context, *connect.Request[api.UpdateTopiConfigurationRequest]) (*connect.Response[api.UpdateTopiConfigurationResponse], error)
+	ListTopiConfigurations(context.Context, *connect.Request[api.ListTopiConfigurationsRequest]) (*connect.Response[api.ListTopiConfigurationsResponse], error)
 	// Run Information
 	GetRunNumber(context.Context, *connect.Request[api.GetRunNumberRequest]) (*connect.Response[api.GetRunNumberResponse], error)
 	CheckDisabled(context.Context, *connect.Request[api.CheckDisabledRequest]) (*connect.Response[api.CheckDisabledResponse], error)
@@ -296,6 +309,24 @@ func NewDuckAPIClient(httpClient connect.HTTPClient, baseURL string, opts ...con
 			connect.WithSchema(duckAPIMethods.ByName("UpdateDecoderConfiguration")),
 			connect.WithClientOptions(opts...),
 		),
+		getTopiConfiguration: connect.NewClient[api.GetTopiConfigurationRequest, api.GetTopiConfigurationResponse](
+			httpClient,
+			baseURL+DuckAPIGetTopiConfigurationProcedure,
+			connect.WithSchema(duckAPIMethods.ByName("GetTopiConfiguration")),
+			connect.WithClientOptions(opts...),
+		),
+		updateTopiConfiguration: connect.NewClient[api.UpdateTopiConfigurationRequest, api.UpdateTopiConfigurationResponse](
+			httpClient,
+			baseURL+DuckAPIUpdateTopiConfigurationProcedure,
+			connect.WithSchema(duckAPIMethods.ByName("UpdateTopiConfiguration")),
+			connect.WithClientOptions(opts...),
+		),
+		listTopiConfigurations: connect.NewClient[api.ListTopiConfigurationsRequest, api.ListTopiConfigurationsResponse](
+			httpClient,
+			baseURL+DuckAPIListTopiConfigurationsProcedure,
+			connect.WithSchema(duckAPIMethods.ByName("ListTopiConfigurations")),
+			connect.WithClientOptions(opts...),
+		),
 		getRunNumber: connect.NewClient[api.GetRunNumberRequest, api.GetRunNumberResponse](
 			httpClient,
 			baseURL+DuckAPIGetRunNumberProcedure,
@@ -372,6 +403,9 @@ type duckAPIClient struct {
 	deleteEquipment            *connect.Client[api.DeleteEquipmentRequest, api.DeleteEquipmentResponse]
 	getDecoderConfiguration    *connect.Client[api.GetDecoderConfigurationRequest, api.GetDecoderConfigurationResponse]
 	updateDecoderConfiguration *connect.Client[api.UpdateDecoderConfigurationRequest, api.UpdateDecoderConfigurationResponse]
+	getTopiConfiguration       *connect.Client[api.GetTopiConfigurationRequest, api.GetTopiConfigurationResponse]
+	updateTopiConfiguration    *connect.Client[api.UpdateTopiConfigurationRequest, api.UpdateTopiConfigurationResponse]
+	listTopiConfigurations     *connect.Client[api.ListTopiConfigurationsRequest, api.ListTopiConfigurationsResponse]
 	getRunNumber               *connect.Client[api.GetRunNumberRequest, api.GetRunNumberResponse]
 	checkDisabled              *connect.Client[api.CheckDisabledRequest, api.CheckDisabledResponse]
 	getToken                   *connect.Client[api.GetTokenRequest, api.GetTokenResponse]
@@ -497,6 +531,21 @@ func (c *duckAPIClient) UpdateDecoderConfiguration(ctx context.Context, req *con
 	return c.updateDecoderConfiguration.CallUnary(ctx, req)
 }
 
+// GetTopiConfiguration calls apiService.DuckAPI.GetTopiConfiguration.
+func (c *duckAPIClient) GetTopiConfiguration(ctx context.Context, req *connect.Request[api.GetTopiConfigurationRequest]) (*connect.Response[api.GetTopiConfigurationResponse], error) {
+	return c.getTopiConfiguration.CallUnary(ctx, req)
+}
+
+// UpdateTopiConfiguration calls apiService.DuckAPI.UpdateTopiConfiguration.
+func (c *duckAPIClient) UpdateTopiConfiguration(ctx context.Context, req *connect.Request[api.UpdateTopiConfigurationRequest]) (*connect.Response[api.UpdateTopiConfigurationResponse], error) {
+	return c.updateTopiConfiguration.CallUnary(ctx, req)
+}
+
+// ListTopiConfigurations calls apiService.DuckAPI.ListTopiConfigurations.
+func (c *duckAPIClient) ListTopiConfigurations(ctx context.Context, req *connect.Request[api.ListTopiConfigurationsRequest]) (*connect.Response[api.ListTopiConfigurationsResponse], error) {
+	return c.listTopiConfigurations.CallUnary(ctx, req)
+}
+
 // GetRunNumber calls apiService.DuckAPI.GetRunNumber.
 func (c *duckAPIClient) GetRunNumber(ctx context.Context, req *connect.Request[api.GetRunNumberRequest]) (*connect.Response[api.GetRunNumberResponse], error) {
 	return c.getRunNumber.CallUnary(ctx, req)
@@ -567,6 +616,10 @@ type DuckAPIHandler interface {
 	// Decoder Configuration
 	GetDecoderConfiguration(context.Context, *connect.Request[api.GetDecoderConfigurationRequest]) (*connect.Response[api.GetDecoderConfigurationResponse], error)
 	UpdateDecoderConfiguration(context.Context, *connect.Request[api.UpdateDecoderConfigurationRequest]) (*connect.Response[api.UpdateDecoderConfigurationResponse], error)
+	// TOPI Integration
+	GetTopiConfiguration(context.Context, *connect.Request[api.GetTopiConfigurationRequest]) (*connect.Response[api.GetTopiConfigurationResponse], error)
+	UpdateTopiConfiguration(context.Context, *connect.Request[api.UpdateTopiConfigurationRequest]) (*connect.Response[api.UpdateTopiConfigurationResponse], error)
+	ListTopiConfigurations(context.Context, *connect.Request[api.ListTopiConfigurationsRequest]) (*connect.Response[api.ListTopiConfigurationsResponse], error)
 	// Run Information
 	GetRunNumber(context.Context, *connect.Request[api.GetRunNumberRequest]) (*connect.Response[api.GetRunNumberResponse], error)
 	CheckDisabled(context.Context, *connect.Request[api.CheckDisabledRequest]) (*connect.Response[api.CheckDisabledResponse], error)
@@ -725,6 +778,24 @@ func NewDuckAPIHandler(svc DuckAPIHandler, opts ...connect.HandlerOption) (strin
 		connect.WithSchema(duckAPIMethods.ByName("UpdateDecoderConfiguration")),
 		connect.WithHandlerOptions(opts...),
 	)
+	duckAPIGetTopiConfigurationHandler := connect.NewUnaryHandler(
+		DuckAPIGetTopiConfigurationProcedure,
+		svc.GetTopiConfiguration,
+		connect.WithSchema(duckAPIMethods.ByName("GetTopiConfiguration")),
+		connect.WithHandlerOptions(opts...),
+	)
+	duckAPIUpdateTopiConfigurationHandler := connect.NewUnaryHandler(
+		DuckAPIUpdateTopiConfigurationProcedure,
+		svc.UpdateTopiConfiguration,
+		connect.WithSchema(duckAPIMethods.ByName("UpdateTopiConfiguration")),
+		connect.WithHandlerOptions(opts...),
+	)
+	duckAPIListTopiConfigurationsHandler := connect.NewUnaryHandler(
+		DuckAPIListTopiConfigurationsProcedure,
+		svc.ListTopiConfigurations,
+		connect.WithSchema(duckAPIMethods.ByName("ListTopiConfigurations")),
+		connect.WithHandlerOptions(opts...),
+	)
 	duckAPIGetRunNumberHandler := connect.NewUnaryHandler(
 		DuckAPIGetRunNumberProcedure,
 		svc.GetRunNumber,
@@ -821,6 +892,12 @@ func NewDuckAPIHandler(svc DuckAPIHandler, opts ...connect.HandlerOption) (strin
 			duckAPIGetDecoderConfigurationHandler.ServeHTTP(w, r)
 		case DuckAPIUpdateDecoderConfigurationProcedure:
 			duckAPIUpdateDecoderConfigurationHandler.ServeHTTP(w, r)
+		case DuckAPIGetTopiConfigurationProcedure:
+			duckAPIGetTopiConfigurationHandler.ServeHTTP(w, r)
+		case DuckAPIUpdateTopiConfigurationProcedure:
+			duckAPIUpdateTopiConfigurationHandler.ServeHTTP(w, r)
+		case DuckAPIListTopiConfigurationsProcedure:
+			duckAPIListTopiConfigurationsHandler.ServeHTTP(w, r)
 		case DuckAPIGetRunNumberProcedure:
 			duckAPIGetRunNumberHandler.ServeHTTP(w, r)
 		case DuckAPICheckDisabledProcedure:
@@ -936,6 +1013,18 @@ func (UnimplementedDuckAPIHandler) GetDecoderConfiguration(context.Context, *con
 
 func (UnimplementedDuckAPIHandler) UpdateDecoderConfiguration(context.Context, *connect.Request[api.UpdateDecoderConfigurationRequest]) (*connect.Response[api.UpdateDecoderConfigurationResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("apiService.DuckAPI.UpdateDecoderConfiguration is not implemented"))
+}
+
+func (UnimplementedDuckAPIHandler) GetTopiConfiguration(context.Context, *connect.Request[api.GetTopiConfigurationRequest]) (*connect.Response[api.GetTopiConfigurationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("apiService.DuckAPI.GetTopiConfiguration is not implemented"))
+}
+
+func (UnimplementedDuckAPIHandler) UpdateTopiConfiguration(context.Context, *connect.Request[api.UpdateTopiConfigurationRequest]) (*connect.Response[api.UpdateTopiConfigurationResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("apiService.DuckAPI.UpdateTopiConfiguration is not implemented"))
+}
+
+func (UnimplementedDuckAPIHandler) ListTopiConfigurations(context.Context, *connect.Request[api.ListTopiConfigurationsRequest]) (*connect.Response[api.ListTopiConfigurationsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("apiService.DuckAPI.ListTopiConfigurations is not implemented"))
 }
 
 func (UnimplementedDuckAPIHandler) GetRunNumber(context.Context, *connect.Request[api.GetRunNumberRequest]) (*connect.Response[api.GetRunNumberResponse], error) {

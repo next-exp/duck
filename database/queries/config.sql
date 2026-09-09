@@ -73,3 +73,20 @@ INSERT INTO rates (run, last_update, bytes, events, avgTriggerRate, avgByteRate)
 
 -- name: UpdateRate :exec
 UPDATE rates SET last_update = ?, bytes = ?, events = ?, avgTriggerRate = ?, avgByteRate = ? WHERE run = ?;
+
+-- name: GetTopiParams :one
+SELECT * FROM topiParams WHERE id = 1;
+
+-- name: UpsertTopiParams :exec
+INSERT INTO topiParams (
+  id, enabled, daemon_url, api_token, rabbitmq_address, rabbitmq_port,
+  rabbitmq_user, rabbitmq_password, rabbitmq_vhost, exchange_name,
+  control_queue, selected_configuration
+) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+ON DUPLICATE KEY UPDATE
+  enabled = VALUES(enabled), daemon_url = VALUES(daemon_url),
+  api_token = VALUES(api_token), rabbitmq_address = VALUES(rabbitmq_address),
+  rabbitmq_port = VALUES(rabbitmq_port), rabbitmq_user = VALUES(rabbitmq_user),
+  rabbitmq_password = VALUES(rabbitmq_password), rabbitmq_vhost = VALUES(rabbitmq_vhost),
+  exchange_name = VALUES(exchange_name), control_queue = VALUES(control_queue),
+  selected_configuration = VALUES(selected_configuration);

@@ -52,6 +52,7 @@ func startProcesses(s *DuckAPIServer) {
 		message := fmt.Errorf("could not store start time for run %d: %w", runNumber.ID, err)
 		logger.Slog.Error(message.Error())
 	}
+	s.notifyTopi("start", runNumber.ID)
 
 	// Update /tmp/date_runnumber.txt for Raul Java
 	if !s.devVersion {
@@ -85,6 +86,7 @@ func stopProcesses(s *DuckAPIServer) {
 
 	// The has to be previously started and it should not have a stop time yet
 	if runNumber.Start.Valid && !runNumber.Stop.Valid {
+		s.notifyTopi("stop", runNumber.ID)
 		err = updateRunStopTime(s.queries, int(runNumber.ID))
 		if err != nil {
 			message := fmt.Errorf("could not store stop time for run %d: %w", runNumber.ID, err)
@@ -126,6 +128,7 @@ func forceStopProcesses(s *DuckAPIServer) {
 	}
 
 	if runNumber.Start.Valid && !runNumber.Stop.Valid {
+		s.notifyTopi("stop", runNumber.ID)
 		err = updateRunStopTime(s.queries, int(runNumber.ID))
 		if err != nil {
 			message := fmt.Errorf("could not store stop time for run %d: %w", runNumber.ID, err)

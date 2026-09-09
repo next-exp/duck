@@ -34,6 +34,7 @@ type Querier interface {
 	GetRateByRun(ctx context.Context, run int32) (int32, error)
 	GetSimulatorParams(ctx context.Context, equipmentid int32) (Simulatorparam, error)
 	GetTestDeviceParams(ctx context.Context) ([]Testdeviceparam, error)
+	GetTopiParams(ctx context.Context) (Topiparam, error)
 	InsertGDCBytes(ctx context.Context, arg InsertGDCBytesParams) error
 	InsertGDCErrorCount(ctx context.Context, arg InsertGDCErrorCountParams) error
 	InsertGDCEvents(ctx context.Context, arg InsertGDCEventsParams) error
@@ -55,6 +56,7 @@ type Querier interface {
 	UpdateRunStartTime(ctx context.Context, arg UpdateRunStartTimeParams) error
 	UpdateRunStopTime(ctx context.Context, arg UpdateRunStopTimeParams) error
 	UpdateSimulatorParams(ctx context.Context, arg UpdateSimulatorParamsParams) error
+	UpsertTopiParams(ctx context.Context, arg UpsertTopiParamsParams) error
 }
 
 var _ Querier = (*Queries)(nil)

@@ -2434,6 +2434,395 @@ export class UpdateDecoderConfigurationResponse extends Message<UpdateDecoderCon
 }
 
 /**
+ * @generated from message apiService.TopiConfiguration
+ */
+export class TopiConfiguration extends Message<TopiConfiguration> {
+  /**
+   * @generated from field: bool enabled = 1;
+   */
+  enabled = false;
+
+  /**
+   * @generated from field: string daemon_url = 2;
+   */
+  daemonUrl = "";
+
+  /**
+   * @generated from field: string rabbitmq_address = 3;
+   */
+  rabbitmqAddress = "";
+
+  /**
+   * @generated from field: int32 rabbitmq_port = 4;
+   */
+  rabbitmqPort = 0;
+
+  /**
+   * @generated from field: string rabbitmq_user = 5;
+   */
+  rabbitmqUser = "";
+
+  /**
+   * @generated from field: string rabbitmq_vhost = 6;
+   */
+  rabbitmqVhost = "";
+
+  /**
+   * @generated from field: string exchange_name = 7;
+   */
+  exchangeName = "";
+
+  /**
+   * @generated from field: string control_queue = 8;
+   */
+  controlQueue = "";
+
+  /**
+   * @generated from field: string selected_configuration = 9;
+   */
+  selectedConfiguration = "";
+
+  /**
+   * @generated from field: bool has_api_token = 10;
+   */
+  hasApiToken = false;
+
+  /**
+   * @generated from field: bool has_rabbitmq_password = 11;
+   */
+  hasRabbitmqPassword = false;
+
+  constructor(data?: PartialMessage<TopiConfiguration>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.TopiConfiguration";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "enabled", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 2, name: "daemon_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "rabbitmq_address", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "rabbitmq_port", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 5, name: "rabbitmq_user", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 6, name: "rabbitmq_vhost", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 7, name: "exchange_name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 8, name: "control_queue", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 9, name: "selected_configuration", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 10, name: "has_api_token", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 11, name: "has_rabbitmq_password", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): TopiConfiguration {
+    return new TopiConfiguration().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): TopiConfiguration {
+    return new TopiConfiguration().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): TopiConfiguration {
+    return new TopiConfiguration().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: TopiConfiguration | PlainMessage<TopiConfiguration> | undefined, b: TopiConfiguration | PlainMessage<TopiConfiguration> | undefined): boolean {
+    return proto3.util.equals(TopiConfiguration, a, b);
+  }
+}
+
+/**
+ * @generated from message apiService.GetTopiConfigurationRequest
+ */
+export class GetTopiConfigurationRequest extends Message<GetTopiConfigurationRequest> {
+  constructor(data?: PartialMessage<GetTopiConfigurationRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.GetTopiConfigurationRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetTopiConfigurationRequest {
+    return new GetTopiConfigurationRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetTopiConfigurationRequest {
+    return new GetTopiConfigurationRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetTopiConfigurationRequest {
+    return new GetTopiConfigurationRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetTopiConfigurationRequest | PlainMessage<GetTopiConfigurationRequest> | undefined, b: GetTopiConfigurationRequest | PlainMessage<GetTopiConfigurationRequest> | undefined): boolean {
+    return proto3.util.equals(GetTopiConfigurationRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message apiService.GetTopiConfigurationResponse
+ */
+export class GetTopiConfigurationResponse extends Message<GetTopiConfigurationResponse> {
+  /**
+   * @generated from field: apiService.TopiConfiguration configuration = 1;
+   */
+  configuration?: TopiConfiguration;
+
+  constructor(data?: PartialMessage<GetTopiConfigurationResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.GetTopiConfigurationResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "configuration", kind: "message", T: TopiConfiguration },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetTopiConfigurationResponse {
+    return new GetTopiConfigurationResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetTopiConfigurationResponse {
+    return new GetTopiConfigurationResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetTopiConfigurationResponse {
+    return new GetTopiConfigurationResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetTopiConfigurationResponse | PlainMessage<GetTopiConfigurationResponse> | undefined, b: GetTopiConfigurationResponse | PlainMessage<GetTopiConfigurationResponse> | undefined): boolean {
+    return proto3.util.equals(GetTopiConfigurationResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message apiService.UpdateTopiConfigurationRequest
+ */
+export class UpdateTopiConfigurationRequest extends Message<UpdateTopiConfigurationRequest> {
+  /**
+   * @generated from field: apiService.TopiConfiguration configuration = 1;
+   */
+  configuration?: TopiConfiguration;
+
+  /**
+   * @generated from field: string api_token = 2;
+   */
+  apiToken = "";
+
+  /**
+   * @generated from field: string rabbitmq_password = 3;
+   */
+  rabbitmqPassword = "";
+
+  constructor(data?: PartialMessage<UpdateTopiConfigurationRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.UpdateTopiConfigurationRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "configuration", kind: "message", T: TopiConfiguration },
+    { no: 2, name: "api_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "rabbitmq_password", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateTopiConfigurationRequest {
+    return new UpdateTopiConfigurationRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateTopiConfigurationRequest {
+    return new UpdateTopiConfigurationRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateTopiConfigurationRequest {
+    return new UpdateTopiConfigurationRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateTopiConfigurationRequest | PlainMessage<UpdateTopiConfigurationRequest> | undefined, b: UpdateTopiConfigurationRequest | PlainMessage<UpdateTopiConfigurationRequest> | undefined): boolean {
+    return proto3.util.equals(UpdateTopiConfigurationRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message apiService.UpdateTopiConfigurationResponse
+ */
+export class UpdateTopiConfigurationResponse extends Message<UpdateTopiConfigurationResponse> {
+  /**
+   * @generated from field: bool success = 1;
+   */
+  success = false;
+
+  /**
+   * @generated from field: string message = 2;
+   */
+  message = "";
+
+  constructor(data?: PartialMessage<UpdateTopiConfigurationResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.UpdateTopiConfigurationResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "success", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 2, name: "message", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): UpdateTopiConfigurationResponse {
+    return new UpdateTopiConfigurationResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): UpdateTopiConfigurationResponse {
+    return new UpdateTopiConfigurationResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): UpdateTopiConfigurationResponse {
+    return new UpdateTopiConfigurationResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: UpdateTopiConfigurationResponse | PlainMessage<UpdateTopiConfigurationResponse> | undefined, b: UpdateTopiConfigurationResponse | PlainMessage<UpdateTopiConfigurationResponse> | undefined): boolean {
+    return proto3.util.equals(UpdateTopiConfigurationResponse, a, b);
+  }
+}
+
+/**
+ * @generated from message apiService.TopiAvailableConfiguration
+ */
+export class TopiAvailableConfiguration extends Message<TopiAvailableConfiguration> {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name = "";
+
+  /**
+   * @generated from field: string parse_error = 2;
+   */
+  parseError = "";
+
+  /**
+   * @generated from field: bool is_default = 3;
+   */
+  isDefault = false;
+
+  constructor(data?: PartialMessage<TopiAvailableConfiguration>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.TopiAvailableConfiguration";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "parse_error", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "is_default", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): TopiAvailableConfiguration {
+    return new TopiAvailableConfiguration().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): TopiAvailableConfiguration {
+    return new TopiAvailableConfiguration().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): TopiAvailableConfiguration {
+    return new TopiAvailableConfiguration().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: TopiAvailableConfiguration | PlainMessage<TopiAvailableConfiguration> | undefined, b: TopiAvailableConfiguration | PlainMessage<TopiAvailableConfiguration> | undefined): boolean {
+    return proto3.util.equals(TopiAvailableConfiguration, a, b);
+  }
+}
+
+/**
+ * @generated from message apiService.ListTopiConfigurationsRequest
+ */
+export class ListTopiConfigurationsRequest extends Message<ListTopiConfigurationsRequest> {
+  /**
+   * Optional transient values let a new connection be tested before saving it.
+   * A blank token uses the stored token.
+   *
+   * @generated from field: string daemon_url = 1;
+   */
+  daemonUrl = "";
+
+  /**
+   * @generated from field: string api_token = 2;
+   */
+  apiToken = "";
+
+  constructor(data?: PartialMessage<ListTopiConfigurationsRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.ListTopiConfigurationsRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "daemon_url", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "api_token", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListTopiConfigurationsRequest {
+    return new ListTopiConfigurationsRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListTopiConfigurationsRequest {
+    return new ListTopiConfigurationsRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListTopiConfigurationsRequest {
+    return new ListTopiConfigurationsRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListTopiConfigurationsRequest | PlainMessage<ListTopiConfigurationsRequest> | undefined, b: ListTopiConfigurationsRequest | PlainMessage<ListTopiConfigurationsRequest> | undefined): boolean {
+    return proto3.util.equals(ListTopiConfigurationsRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message apiService.ListTopiConfigurationsResponse
+ */
+export class ListTopiConfigurationsResponse extends Message<ListTopiConfigurationsResponse> {
+  /**
+   * @generated from field: repeated apiService.TopiAvailableConfiguration configurations = 1;
+   */
+  configurations: TopiAvailableConfiguration[] = [];
+
+  constructor(data?: PartialMessage<ListTopiConfigurationsResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.ListTopiConfigurationsResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "configurations", kind: "message", T: TopiAvailableConfiguration, repeated: true },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): ListTopiConfigurationsResponse {
+    return new ListTopiConfigurationsResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): ListTopiConfigurationsResponse {
+    return new ListTopiConfigurationsResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): ListTopiConfigurationsResponse {
+    return new ListTopiConfigurationsResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: ListTopiConfigurationsResponse | PlainMessage<ListTopiConfigurationsResponse> | undefined, b: ListTopiConfigurationsResponse | PlainMessage<ListTopiConfigurationsResponse> | undefined): boolean {
+    return proto3.util.equals(ListTopiConfigurationsResponse, a, b);
+  }
+}
+
+/**
  * @generated from message apiService.GetRunNumberRequest
  */
 export class GetRunNumberRequest extends Message<GetRunNumberRequest> {

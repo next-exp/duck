@@ -3,7 +3,7 @@
 /* eslint-disable */
 // @ts-nocheck
 
-import { CheckDisabledRequest, CheckDisabledResponse, CreateEquipmentRequest, CreateEquipmentResponse, CreateGDCRequest, CreateGDCResponse, CreateLDCRequest, CreateLDCResponse, DeleteEquipmentRequest, DeleteEquipmentResponse, DeleteGDCRequest, DeleteGDCResponse, DeleteLDCRequest, DeleteLDCResponse, ForceStopRunRequest, ForceStopRunResponse, GetDecoderConfigurationRequest, GetDecoderConfigurationResponse, GetEquipmentRequest, GetEquipmentResponse, GetEquipmentsRequest, GetEquipmentsResponse, GetGDCRequest, GetGDCResponse, GetGDCsRequest, GetGDCsResponse, GetLDCRequest, GetLDCResponse, GetLDCsRequest, GetLDCsResponse, GetProcessStatesRequest, GetProcessStatesResponse, GetRunNumberRequest, GetRunNumberResponse, GetRunTransitionStatusRequest, GetRunTransitionStatusResponse, GetTestDevicesStatesRequest, GetTestDevicesStatesResponse, GetTestDeviceStatisticsRequest, GetTestDeviceStatisticsResponse, GetTokenRequest, GetTokenResponse, ListTestDevicesRequest, ListTestDevicesResponse, RestartServicesRequest, RestartServicesResponse, StartRunRequest, StartRunResponse, StartTestDevicesRequest, StartTestDevicesResponse, StopRunRequest, StopRunResponse, StopTestDevicesRequest, StopTestDevicesResponse, UpdateDecoderConfigurationRequest, UpdateDecoderConfigurationResponse, UpdateEquipmentRequest, UpdateEquipmentResponse, UpdateGDCRequest, UpdateGDCResponse, UpdateLDCRequest, UpdateLDCResponse } from "./api_pb.js";
+import { CheckDisabledRequest, CheckDisabledResponse, CreateEquipmentRequest, CreateEquipmentResponse, CreateGDCRequest, CreateGDCResponse, CreateLDCRequest, CreateLDCResponse, DeleteEquipmentRequest, DeleteEquipmentResponse, DeleteGDCRequest, DeleteGDCResponse, DeleteLDCRequest, DeleteLDCResponse, ForceStopRunRequest, ForceStopRunResponse, GetDecoderConfigurationRequest, GetDecoderConfigurationResponse, GetEquipmentRequest, GetEquipmentResponse, GetEquipmentsRequest, GetEquipmentsResponse, GetGDCRequest, GetGDCResponse, GetGDCsRequest, GetGDCsResponse, GetLDCRequest, GetLDCResponse, GetLDCsRequest, GetLDCsResponse, GetProcessStatesRequest, GetProcessStatesResponse, GetRunNumberRequest, GetRunNumberResponse, GetRunTransitionStatusRequest, GetRunTransitionStatusResponse, GetTestDevicesStatesRequest, GetTestDevicesStatesResponse, GetTestDeviceStatisticsRequest, GetTestDeviceStatisticsResponse, GetTokenRequest, GetTokenResponse, GetTopiConfigurationRequest, GetTopiConfigurationResponse, ListTestDevicesRequest, ListTestDevicesResponse, ListTopiConfigurationsRequest, ListTopiConfigurationsResponse, RestartServicesRequest, RestartServicesResponse, StartRunRequest, StartRunResponse, StartTestDevicesRequest, StartTestDevicesResponse, StopRunRequest, StopRunResponse, StopTestDevicesRequest, StopTestDevicesResponse, UpdateDecoderConfigurationRequest, UpdateDecoderConfigurationResponse, UpdateEquipmentRequest, UpdateEquipmentResponse, UpdateGDCRequest, UpdateGDCResponse, UpdateLDCRequest, UpdateLDCResponse, UpdateTopiConfigurationRequest, UpdateTopiConfigurationResponse } from "./api_pb.js";
 import { MethodKind } from "@bufbuild/protobuf";
 
 /**
@@ -229,6 +229,35 @@ export const DuckAPI = {
       name: "UpdateDecoderConfiguration",
       I: UpdateDecoderConfigurationRequest,
       O: UpdateDecoderConfigurationResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * TOPI Integration
+     *
+     * @generated from rpc apiService.DuckAPI.GetTopiConfiguration
+     */
+    getTopiConfiguration: {
+      name: "GetTopiConfiguration",
+      I: GetTopiConfigurationRequest,
+      O: GetTopiConfigurationResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc apiService.DuckAPI.UpdateTopiConfiguration
+     */
+    updateTopiConfiguration: {
+      name: "UpdateTopiConfiguration",
+      I: UpdateTopiConfigurationRequest,
+      O: UpdateTopiConfigurationResponse,
+      kind: MethodKind.Unary,
+    },
+    /**
+     * @generated from rpc apiService.DuckAPI.ListTopiConfigurations
+     */
+    listTopiConfigurations: {
+      name: "ListTopiConfigurations",
+      I: ListTopiConfigurationsRequest,
+      O: ListTopiConfigurationsResponse,
       kind: MethodKind.Unary,
     },
     /**
