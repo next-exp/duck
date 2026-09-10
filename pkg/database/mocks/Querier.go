@@ -610,6 +610,34 @@ func (_m *Querier) GetTestDeviceParams(ctx context.Context) ([]database.Testdevi
 	return r0, r1
 }
 
+// GetTopiParams provides a mock function with given fields: ctx
+func (_m *Querier) GetTopiParams(ctx context.Context) (database.Topiparam, error) {
+	ret := _m.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetTopiParams")
+	}
+
+	var r0 database.Topiparam
+	var r1 error
+	if rf, ok := ret.Get(0).(func(context.Context) (database.Topiparam, error)); ok {
+		return rf(ctx)
+	}
+	if rf, ok := ret.Get(0).(func(context.Context) database.Topiparam); ok {
+		r0 = rf(ctx)
+	} else {
+		r0 = ret.Get(0).(database.Topiparam)
+	}
+
+	if rf, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = rf(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // InsertGDCBytes provides a mock function with given fields: ctx, arg
 func (_m *Querier) InsertGDCBytes(ctx context.Context, arg database.InsertGDCBytesParams) error {
 	ret := _m.Called(ctx, arg)
@@ -1028,6 +1056,24 @@ func (_m *Querier) UpdateSimulatorParams(ctx context.Context, arg database.Updat
 
 	var r0 error
 	if rf, ok := ret.Get(0).(func(context.Context, database.UpdateSimulatorParamsParams) error); ok {
+		r0 = rf(ctx, arg)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
+// UpsertTopiParams provides a mock function with given fields: ctx, arg
+func (_m *Querier) UpsertTopiParams(ctx context.Context, arg database.UpsertTopiParamsParams) error {
+	ret := _m.Called(ctx, arg)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpsertTopiParams")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, database.UpsertTopiParamsParams) error); ok {
 		r0 = rf(ctx, arg)
 	} else {
 		r0 = ret.Error(0)

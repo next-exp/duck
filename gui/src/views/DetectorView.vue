@@ -4,6 +4,7 @@ import GDCs from '@/components/GDCs.vue';
 import LDCs from '@/components/LDCs.vue';
 import Equipments from '@/components/Equipments.vue';
 import Decoder from '@/components/Decoder.vue';
+import Topi from '@/components/Topi.vue';
 </script>
 
 <template>
@@ -24,6 +25,9 @@ import Decoder from '@/components/Decoder.vue';
             <Tab v-slot="{ selected }" class="tab tab-lg ui-selected:tab-active">
               <span class="text-xl" :class="{ 'font-bold': selected }">Decoder</span>
             </Tab>
+            <Tab v-slot="{ selected }" class="tab tab-lg ui-selected:tab-active">
+              <span class="text-xl" :class="{ 'font-bold': selected }">TOPI</span>
+            </Tab>
           </TabList>
         </div>
         <TabPanels>
@@ -38,6 +42,9 @@ import Decoder from '@/components/Decoder.vue';
           </TabPanel>
           <TabPanel>
             <Decoder/>
+          </TabPanel>
+          <TabPanel>
+            <Topi />
           </TabPanel>
         </TabPanels>
       </TabGroup>

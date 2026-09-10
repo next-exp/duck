@@ -133,3 +133,18 @@ type Testdeviceparam struct {
 	ErrorInjectionRate float64 `db:"error_injection_rate" json:"error_injection_rate"`
 	MaxEvents          int32   `db:"max_events" json:"max_events"`
 }
+
+type Topiparam struct {
+	ID                    int32  `db:"id" json:"id"`
+	Enabled               bool   `db:"enabled" json:"enabled"`
+	DaemonUrl             string `db:"daemon_url" json:"daemon_url"`
+	ApiToken              string `db:"api_token" json:"api_token"`
+	RabbitmqAddress       string `db:"rabbitmq_address" json:"rabbitmq_address"`
+	RabbitmqPort          int32  `db:"rabbitmq_port" json:"rabbitmq_port"`
+	RabbitmqUser          string `db:"rabbitmq_user" json:"rabbitmq_user"`
+	RabbitmqPassword      string `db:"rabbitmq_password" json:"rabbitmq_password"`
+	RabbitmqVhost         string `db:"rabbitmq_vhost" json:"rabbitmq_vhost"`
+	ExchangeName          string `db:"exchange_name" json:"exchange_name"`
+	ControlQueue          string `db:"control_queue" json:"control_queue"`
+	SelectedConfiguration string `db:"selected_configuration" json:"selected_configuration"`
+}

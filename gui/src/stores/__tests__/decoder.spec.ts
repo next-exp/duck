@@ -22,6 +22,7 @@ describe('Decoder Store Tests', () => {
         readPmts: false,
         readSipms: false,
         readTrigger: false,
+        readFibers: false,
         splitTrigger: false,
         noDb: false,
         discard: false,

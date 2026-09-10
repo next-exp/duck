@@ -2,6 +2,8 @@ package main
 
 import (
 	"database/sql"
+	"net/http"
+	"time"
 
 	"github.com/jmbenlloch/next_duck/pkg/database"
 )
@@ -14,6 +16,8 @@ type DuckAPIServer struct {
 	centrifugalToken string
 	devVersion       bool
 	runTransition    RunTransition
+	topiHTTPClient   *http.Client
+	topiPublisher    topiPublisher
 }
 
 // NewDuckAPIServer creates a new DuckAPIServer instance
@@ -25,6 +29,8 @@ func NewDuckAPIServer(db *sql.DB, configFilename string, centrifugalToken string
 		configFilename:   configFilename,
 		centrifugalToken: centrifugalToken,
 		devVersion:       devVersion,
+		topiHTTPClient:   &http.Client{Timeout: 5 * time.Second},
+		topiPublisher:    amqpTopiPublisher{},
 	}
 }
 

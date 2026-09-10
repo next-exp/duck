@@ -71,7 +71,12 @@ func BuildLDCServer() error {
 
 func BuildAPIServer() error {
 	fmt.Println("Building API executable...")
-	cmd := exec.Command("go", "build", "-buildvcs=false", "-o", "./bin/duckAPI", "./api")
+	args := []string{"build", "-buildvcs=false"}
+	if release := os.Getenv("DUCK_RELEASE"); release != "" {
+		args = append(args, "-ldflags", "-X main.release="+release)
+	}
+	args = append(args, "-o", "./bin/duckAPI", "./api")
+	cmd := exec.Command("go", args...)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()

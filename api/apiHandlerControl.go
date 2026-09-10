@@ -17,8 +17,9 @@ func (s *DuckAPIServer) StartRun(ctx context.Context, req *connect.Request[pb.St
 			Message: conflictMsg,
 		}), nil
 	}
+	hub := cloneSentryHub(ctx)
 	go func() {
-		defer recoverToError(&s.runTransition)
+		defer recoverToErrorWithHub(&s.runTransition, hub, "start")
 		startProcesses(s)
 		s.runTransition.setDone()
 	}()
@@ -36,8 +37,9 @@ func (s *DuckAPIServer) StopRun(ctx context.Context, req *connect.Request[pb.Sto
 			Message: conflictMsg,
 		}), nil
 	}
+	hub := cloneSentryHub(ctx)
 	go func() {
-		defer recoverToError(&s.runTransition)
+		defer recoverToErrorWithHub(&s.runTransition, hub, "stop")
 		stopProcesses(s)
 		s.runTransition.setDone()
 	}()

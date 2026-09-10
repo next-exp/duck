@@ -37,6 +37,11 @@ service DuckAPI {
   rpc GetDecoderConfiguration(GetDecoderConfigurationRequest) returns (GetDecoderConfigurationResponse) {}
   rpc UpdateDecoderConfiguration(UpdateDecoderConfigurationRequest) returns (UpdateDecoderConfigurationResponse) {}
 
+  // TOPI Integration
+  rpc GetTopiConfiguration(GetTopiConfigurationRequest) returns (GetTopiConfigurationResponse) {}
+  rpc UpdateTopiConfiguration(UpdateTopiConfigurationRequest) returns (UpdateTopiConfigurationResponse) {}
+  rpc ListTopiConfigurations(ListTopiConfigurationsRequest) returns (ListTopiConfigurationsResponse) {}
+
   // Run Information
   rpc GetRunNumber(GetRunNumberRequest) returns (GetRunNumberResponse) {}
   rpc CheckDisabled(CheckDisabledRequest) returns (CheckDisabledResponse) {}
@@ -329,6 +334,50 @@ message UpdateDecoderConfigurationRequest {
 message UpdateDecoderConfigurationResponse {
   bool success = 1;
   string message = 2;
+}
+
+// ===== TOPI Integration Messages =====
+
+message TopiConfiguration {
+  bool enabled = 1;
+  string daemon_url = 2;
+  string rabbitmq_address = 3;
+  int32 rabbitmq_port = 4;
+  string rabbitmq_user = 5;
+  string rabbitmq_vhost = 6;
+  string exchange_name = 7;
+  string control_queue = 8;
+  string selected_configuration = 9;
+  bool has_api_token = 10;
+  bool has_rabbitmq_password = 11;
+}
+
+message GetTopiConfigurationRequest {}
+message GetTopiConfigurationResponse { TopiConfiguration configuration = 1; }
+
+message UpdateTopiConfigurationRequest {
+  TopiConfiguration configuration = 1;
+  string api_token = 2;
+  string rabbitmq_password = 3;
+}
+message UpdateTopiConfigurationResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message TopiAvailableConfiguration {
+  string name = 1;
+  string parse_error = 2;
+  bool is_default = 3;
+}
+message ListTopiConfigurationsRequest {
+  // Optional transient values let a new connection be tested before saving it.
+  // A blank token uses the stored token.
+  string daemon_url = 1;
+  string api_token = 2;
+}
+message ListTopiConfigurationsResponse {
+  repeated TopiAvailableConfiguration configurations = 1;
 }
 
 // ===== Run Information Messages =====

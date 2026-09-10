@@ -8,6 +8,7 @@ require (
 	connectrpc.com/connect v1.19.1
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/centrifugal/centrifuge-go v0.10.3
+	github.com/getsentry/sentry-go v0.36.2
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/magefile/mage v1.15.0
@@ -17,6 +18,7 @@ require (
 	github.com/prometheus-community/pro-bing v0.3.0
 	github.com/prometheus/client_golang v1.20.5
 	github.com/prometheus/client_model v0.6.1
+	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/stretchr/testify v1.11.1
 	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8
 	golang.org/x/net v0.26.0
