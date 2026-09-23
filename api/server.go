@@ -15,6 +15,8 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	duck "github.com/jmbenlloch/next_duck/pkg"
 	pbconnect "github.com/jmbenlloch/next_duck/rpc/api/apiconnect"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
@@ -154,6 +156,9 @@ func main() {
 		w.WriteHeader(http.StatusOK)
 		w.Write([]byte("OK"))
 	})
+	metricsRegistry := prometheus.NewRegistry()
+	metricsRegistry.MustRegister(newAPIMetrics(apiServer.queries, &apiServer.runTransition))
+	mux.Handle("/metrics", promhttp.HandlerFor(metricsRegistry, promhttp.HandlerOpts{}))
 
 	// Apply middleware
 	handlerWithMiddleware := loggingMiddleware(corsMiddleware(mux))
