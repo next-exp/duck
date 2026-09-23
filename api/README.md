@@ -60,6 +60,23 @@ The API server is the primary interface between the web GUI and the DAQ componen
 
 ## API Handlers
 
+### Prometheus metrics
+
+The API serves `GET /metrics` on its HTTP port (1323 by default). Scrape the API
+directly; the `/daq/` frontend proxy path is not required. Metrics include:
+
+| Metric | Meaning |
+|--------|---------|
+| `duck_api_run_active` | 1 when the latest database run has a start time and no stop time; otherwise 0 |
+| `duck_api_run_number` | Latest database run number |
+| `duck_api_run_state_read_success` | 1 when the database lookup succeeded; 0 when it failed |
+| `duck_api_run_transition_state{state="idle|starting|stopping|error"}` | One-hot state of the API's start/stop operation |
+
+On a database lookup failure, `duck_api_run_active` and `duck_api_run_number`
+are omitted from that scrape. An active run means run control recorded it as
+started; use GDC/LDC event metrics to confirm that data is flowing. For alerts,
+check `duck_api_run_state_read_success == 1` and `up == 1` alongside run status.
+
 ### Run Control (`apiHandlerControl.go`)
 
 | Method | Description |
