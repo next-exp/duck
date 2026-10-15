@@ -97,6 +97,8 @@ github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq
 github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
 github.com/next-exp/decoder_go v0.0.0-20260702132210-b6d9127dba90 h1:mOoZl38oGRVKFSkchHv1LMcckMwlLErL835kvTWXCW4=
 github.com/next-exp/decoder_go v0.0.0-20260702132210-b6d9127dba90/go.mod h1:gpgxSlR/7FKTSZ8uR8uK9krS2ofisB/dUYxq4mcv0c8=
+github.com/next-exp/decoder_go v0.0.0-20260709173006-60fb7e73e067 h1:9hShy9CZySzFtaB3IF2q/nGoN7m1DV/lH6RJC7YW04s=
+github.com/next-exp/decoder_go v0.0.0-20260709173006-60fb7e73e067/go.mod h1:gpgxSlR/7FKTSZ8uR8uK9krS2ofisB/dUYxq4mcv0c8=
 github.com/next-exp/hdf5-go v0.0.0-20250408164249-b468a9f82d4b h1:I60BDjJl8aa1n5w9dXu0e08+xu+v2IrS8itz5WNv5Do=
 github.com/next-exp/hdf5-go v0.0.0-20250408164249-b468a9f82d4b/go.mod h1:U7198fEiJLtOUOmYeCUPxGdVdSQu4bkle7Iz5Tw/R7c=
 github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
