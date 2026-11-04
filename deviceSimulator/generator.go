@@ -2,22 +2,25 @@ package main
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"log"
+	"math"
 	"math/rand/v2"
 	"sync"
+	"syscall"
 	"time"
 )
 
 // Generator handles the generation of random test events
 type Generator struct {
-	config   GeneratorConfig
-	sender   *UDPSender
-	limiter  *RateLimiter
-	state    SourceState
-	stateMu  sync.RWMutex
-	stopCh   chan struct{}
-	doneCh   chan struct{}
+	config  GeneratorConfig
+	sender  *UDPSender
+	limiter *RateLimiter
+	state   SourceState
+	stateMu sync.RWMutex
+	stopCh  chan struct{}
+	doneCh  chan struct{}
 
 	// Metrics
 	eventsSent     uint64
@@ -28,6 +31,9 @@ type Generator struct {
 
 // NewGenerator creates a new generator with the given configuration
 func NewGenerator(config GeneratorConfig) (*Generator, error) {
+	if config.RateProfile != "" && config.RateProfile != "constant" && config.RateProfile != "fluctuating" {
+		return nil, fmt.Errorf("unsupported rate profile %q", config.RateProfile)
+	}
 	// Validate configuration
 	if config.PacketsPerEvent <= 0 {
 		config.PacketsPerEvent = 10 // Default
@@ -79,14 +85,15 @@ func (g *Generator) Start() error {
 // Stop stops the event generation
 func (g *Generator) Stop() error {
 	g.stateMu.Lock()
-	defer g.stateMu.Unlock()
 
 	if g.state == SourceStateStopped {
+		g.stateMu.Unlock()
 		return fmt.Errorf("generator is not running")
 	}
 
 	close(g.stopCh)
 	g.state = SourceStateStopped
+	g.stateMu.Unlock()
 
 	// Wait for generator to finish
 	<-g.doneCh
@@ -142,10 +149,16 @@ func (g *Generator) GetStatus() string {
 
 // generateLoop is the main generation loop
 func (g *Generator) generateLoop() {
-	defer close(g.doneCh)
+	defer func() {
+		g.stateMu.Lock()
+		g.state = SourceStateStopped
+		g.stateMu.Unlock()
+		close(g.doneCh)
+	}()
 
 	g.startTime = time.Now()
 	g.currentEventID = 1
+	nextRateChange := g.startTime
 
 	for {
 		// Check for stop signal
@@ -155,6 +168,12 @@ func (g *Generator) generateLoop() {
 		default:
 		}
 
+		if g.config.RateProfile == "fluctuating" && !time.Now().Before(nextRateChange) {
+			target := fluctuatingRate(g.config.RateHz, time.Since(g.startTime), 2*rand.Float64()-1)
+			g.limiter = NewRateLimiter(target)
+			nextRateChange = time.Now().Add(2 * time.Second)
+			log.Printf("Generator rate target: %.1f Hz", target)
+		}
 		// Rate limiting
 		g.limiter.Wait()
 
@@ -164,6 +183,17 @@ func (g *Generator) generateLoop() {
 		// Send event
 		err := g.sendEvent(int(g.currentEventID), injectError)
 		if err != nil {
+			if errors.Is(err, syscall.ECONNREFUSED) {
+				// A stopped DAQ closes its UDP listener. Keep the generator alive so
+				// reception resumes automatically when the next run opens that socket.
+				log.Printf("DAQ receiver unavailable; retrying event %d: %v", g.currentEventID, err)
+				select {
+				case <-g.stopCh:
+					return
+				case <-time.After(500 * time.Millisecond):
+				}
+				continue
+			}
 			log.Printf("Error sending event %d: %v", g.currentEventID, err)
 			return
 		}
@@ -233,4 +263,15 @@ func (g *Generator) sendEvent(eventID int, injectError bool) error {
 	}
 
 	return nil
+}
+
+// fluctuatingRate combines short random steps, slower drift, and brief bursts.
+// noise is in [-1,1]; bounded targets keep this useful for a lightweight demo.
+func fluctuatingRate(base float64, elapsed time.Duration, noise float64) float64 {
+	seconds := elapsed.Seconds()
+	multiplier := 0.9 + 0.45*math.Sin(2*math.Pi*seconds/37) + 0.3*math.Sin(2*math.Pi*seconds/113) + 0.65*noise
+	if math.Mod(seconds, 29) < 3 {
+		multiplier += 0.6
+	}
+	return base * math.Max(0.15, math.Min(2.5, multiplier))
 }

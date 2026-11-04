@@ -92,6 +92,8 @@ const (
 	// DuckAPIListTopiConfigurationsProcedure is the fully-qualified name of the DuckAPI's
 	// ListTopiConfigurations RPC.
 	DuckAPIListTopiConfigurationsProcedure = "/apiService.DuckAPI/ListTopiConfigurations"
+	// DuckAPIGetRateHistoryProcedure is the fully-qualified name of the DuckAPI's GetRateHistory RPC.
+	DuckAPIGetRateHistoryProcedure = "/apiService.DuckAPI/GetRateHistory"
 	// DuckAPIGetRunNumberProcedure is the fully-qualified name of the DuckAPI's GetRunNumber RPC.
 	DuckAPIGetRunNumberProcedure = "/apiService.DuckAPI/GetRunNumber"
 	// DuckAPICheckDisabledProcedure is the fully-qualified name of the DuckAPI's CheckDisabled RPC.
@@ -147,6 +149,8 @@ type DuckAPIClient interface {
 	GetTopiConfiguration(context.Context, *connect.Request[api.GetTopiConfigurationRequest]) (*connect.Response[api.GetTopiConfigurationResponse], error)
 	UpdateTopiConfiguration(context.Context, *connect.Request[api.UpdateTopiConfigurationRequest]) (*connect.Response[api.UpdateTopiConfigurationResponse], error)
 	ListTopiConfigurations(context.Context, *connect.Request[api.ListTopiConfigurationsRequest]) (*connect.Response[api.ListTopiConfigurationsResponse], error)
+	// Counter-based, bounded historical detector rates.
+	GetRateHistory(context.Context, *connect.Request[api.GetRateHistoryRequest]) (*connect.Response[api.GetRateHistoryResponse], error)
 	// Run Information
 	GetRunNumber(context.Context, *connect.Request[api.GetRunNumberRequest]) (*connect.Response[api.GetRunNumberResponse], error)
 	CheckDisabled(context.Context, *connect.Request[api.CheckDisabledRequest]) (*connect.Response[api.CheckDisabledResponse], error)
@@ -327,6 +331,12 @@ func NewDuckAPIClient(httpClient connect.HTTPClient, baseURL string, opts ...con
 			connect.WithSchema(duckAPIMethods.ByName("ListTopiConfigurations")),
 			connect.WithClientOptions(opts...),
 		),
+		getRateHistory: connect.NewClient[api.GetRateHistoryRequest, api.GetRateHistoryResponse](
+			httpClient,
+			baseURL+DuckAPIGetRateHistoryProcedure,
+			connect.WithSchema(duckAPIMethods.ByName("GetRateHistory")),
+			connect.WithClientOptions(opts...),
+		),
 		getRunNumber: connect.NewClient[api.GetRunNumberRequest, api.GetRunNumberResponse](
 			httpClient,
 			baseURL+DuckAPIGetRunNumberProcedure,
@@ -406,6 +416,7 @@ type duckAPIClient struct {
 	getTopiConfiguration       *connect.Client[api.GetTopiConfigurationRequest, api.GetTopiConfigurationResponse]
 	updateTopiConfiguration    *connect.Client[api.UpdateTopiConfigurationRequest, api.UpdateTopiConfigurationResponse]
 	listTopiConfigurations     *connect.Client[api.ListTopiConfigurationsRequest, api.ListTopiConfigurationsResponse]
+	getRateHistory             *connect.Client[api.GetRateHistoryRequest, api.GetRateHistoryResponse]
 	getRunNumber               *connect.Client[api.GetRunNumberRequest, api.GetRunNumberResponse]
 	checkDisabled              *connect.Client[api.CheckDisabledRequest, api.CheckDisabledResponse]
 	getToken                   *connect.Client[api.GetTokenRequest, api.GetTokenResponse]
@@ -546,6 +557,11 @@ func (c *duckAPIClient) ListTopiConfigurations(ctx context.Context, req *connect
 	return c.listTopiConfigurations.CallUnary(ctx, req)
 }
 
+// GetRateHistory calls apiService.DuckAPI.GetRateHistory.
+func (c *duckAPIClient) GetRateHistory(ctx context.Context, req *connect.Request[api.GetRateHistoryRequest]) (*connect.Response[api.GetRateHistoryResponse], error) {
+	return c.getRateHistory.CallUnary(ctx, req)
+}
+
 // GetRunNumber calls apiService.DuckAPI.GetRunNumber.
 func (c *duckAPIClient) GetRunNumber(ctx context.Context, req *connect.Request[api.GetRunNumberRequest]) (*connect.Response[api.GetRunNumberResponse], error) {
 	return c.getRunNumber.CallUnary(ctx, req)
@@ -620,6 +636,8 @@ type DuckAPIHandler interface {
 	GetTopiConfiguration(context.Context, *connect.Request[api.GetTopiConfigurationRequest]) (*connect.Response[api.GetTopiConfigurationResponse], error)
 	UpdateTopiConfiguration(context.Context, *connect.Request[api.UpdateTopiConfigurationRequest]) (*connect.Response[api.UpdateTopiConfigurationResponse], error)
 	ListTopiConfigurations(context.Context, *connect.Request[api.ListTopiConfigurationsRequest]) (*connect.Response[api.ListTopiConfigurationsResponse], error)
+	// Counter-based, bounded historical detector rates.
+	GetRateHistory(context.Context, *connect.Request[api.GetRateHistoryRequest]) (*connect.Response[api.GetRateHistoryResponse], error)
 	// Run Information
 	GetRunNumber(context.Context, *connect.Request[api.GetRunNumberRequest]) (*connect.Response[api.GetRunNumberResponse], error)
 	CheckDisabled(context.Context, *connect.Request[api.CheckDisabledRequest]) (*connect.Response[api.CheckDisabledResponse], error)
@@ -796,6 +814,12 @@ func NewDuckAPIHandler(svc DuckAPIHandler, opts ...connect.HandlerOption) (strin
 		connect.WithSchema(duckAPIMethods.ByName("ListTopiConfigurations")),
 		connect.WithHandlerOptions(opts...),
 	)
+	duckAPIGetRateHistoryHandler := connect.NewUnaryHandler(
+		DuckAPIGetRateHistoryProcedure,
+		svc.GetRateHistory,
+		connect.WithSchema(duckAPIMethods.ByName("GetRateHistory")),
+		connect.WithHandlerOptions(opts...),
+	)
 	duckAPIGetRunNumberHandler := connect.NewUnaryHandler(
 		DuckAPIGetRunNumberProcedure,
 		svc.GetRunNumber,
@@ -898,6 +922,8 @@ func NewDuckAPIHandler(svc DuckAPIHandler, opts ...connect.HandlerOption) (strin
 			duckAPIUpdateTopiConfigurationHandler.ServeHTTP(w, r)
 		case DuckAPIListTopiConfigurationsProcedure:
 			duckAPIListTopiConfigurationsHandler.ServeHTTP(w, r)
+		case DuckAPIGetRateHistoryProcedure:
+			duckAPIGetRateHistoryHandler.ServeHTTP(w, r)
 		case DuckAPIGetRunNumberProcedure:
 			duckAPIGetRunNumberHandler.ServeHTTP(w, r)
 		case DuckAPICheckDisabledProcedure:
@@ -1025,6 +1051,10 @@ func (UnimplementedDuckAPIHandler) UpdateTopiConfiguration(context.Context, *con
 
 func (UnimplementedDuckAPIHandler) ListTopiConfigurations(context.Context, *connect.Request[api.ListTopiConfigurationsRequest]) (*connect.Response[api.ListTopiConfigurationsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("apiService.DuckAPI.ListTopiConfigurations is not implemented"))
+}
+
+func (UnimplementedDuckAPIHandler) GetRateHistory(context.Context, *connect.Request[api.GetRateHistoryRequest]) (*connect.Response[api.GetRateHistoryResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("apiService.DuckAPI.GetRateHistory is not implemented"))
 }
 
 func (UnimplementedDuckAPIHandler) GetRunNumber(context.Context, *connect.Request[api.GetRunNumberRequest]) (*connect.Response[api.GetRunNumberResponse], error) {

@@ -2,6 +2,8 @@ syntax = "proto3";
 option go_package = "github.com/jmbenlloch/next_duck/rpc/api";
 package apiService;
 
+import "google/protobuf/timestamp.proto";
+
 // Web API Service for Duck Data Acquisition System
 service DuckAPI {
   // Run Control Operations
@@ -41,6 +43,9 @@ service DuckAPI {
   rpc GetTopiConfiguration(GetTopiConfigurationRequest) returns (GetTopiConfigurationResponse) {}
   rpc UpdateTopiConfiguration(UpdateTopiConfigurationRequest) returns (UpdateTopiConfigurationResponse) {}
   rpc ListTopiConfigurations(ListTopiConfigurationsRequest) returns (ListTopiConfigurationsResponse) {}
+
+  // Counter-based, bounded historical detector rates.
+  rpc GetRateHistory(GetRateHistoryRequest) returns (GetRateHistoryResponse) {}
 
   // Run Information
   rpc GetRunNumber(GetRunNumberRequest) returns (GetRunNumberResponse) {}
@@ -461,4 +466,43 @@ message GetTestDeviceStatisticsRequest {
 }
 message GetTestDeviceStatisticsResponse {
   TestDeviceStatistics statistics = 1;
+}
+
+// Omit from/to for the full recorded run. Explicit bounds support browser zoom.
+message GetRateHistoryRequest {
+  int32 run = 1;
+  google.protobuf.Timestamp from = 2;
+  google.protobuf.Timestamp to = 3;
+  // 0 selects 1000. The server accepts 1..2000.
+  uint32 max_points = 4;
+  // 0 selects 15 seconds, suitable for the default five-second collector.
+  // Intervals longer than this are gaps, not interpolated measurements.
+  uint32 max_gap_seconds = 5;
+}
+message RateHistoryBin {
+  google.protobuf.Timestamp start = 1;
+  google.protobuf.Timestamp end = 2;
+  // Present only when the full bin is covered by every recorded GDC.
+  optional double trigger_rate_hz = 3;
+  optional double byte_rate = 4;
+  // Fraction of GDC-time covered, relative to response.gdcs.
+  double coverage = 5;
+  bool complete = 6;
+  // Edge bin clipped by the selected window, rather than full bin width.
+  bool partial = 7;
+}
+message GetRateHistoryResponse {
+  int32 run = 1;
+  google.protobuf.Timestamp run_start = 2;
+  google.protobuf.Timestamp run_stop = 3;
+  google.protobuf.Timestamp from = 4;
+  google.protobuf.Timestamp to = 5;
+  google.protobuf.Timestamp latest_sample = 6;
+  uint32 bin_width_seconds = 7;
+  repeated RateHistoryBin bins = 8;
+  repeated string gdcs = 9;
+  // Currently "observed_run_history"; not a configuration snapshot.
+  string coverage_basis = 10;
+  bool has_data = 11;
+  uint32 max_gap_seconds = 12;
 }

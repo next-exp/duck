@@ -782,6 +782,24 @@ func (_m *Querier) InsertRate(ctx context.Context, arg database.InsertRateParams
 	return r0
 }
 
+// InsertRateSample provides a mock function with given fields: ctx, arg
+func (_m *Querier) InsertRateSample(ctx context.Context, arg database.InsertRateSampleParams) error {
+	ret := _m.Called(ctx, arg)
+
+	if len(ret) == 0 {
+		panic("no return value specified for InsertRateSample")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(context.Context, database.InsertRateSampleParams) error); ok {
+		r0 = rf(ctx, arg)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // ListEquipments provides a mock function with given fields: ctx
 func (_m *Querier) ListEquipments(ctx context.Context) ([]database.Equipment, error) {
 	ret := _m.Called(ctx)
