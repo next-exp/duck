@@ -6,6 +6,7 @@ package database
 
 import (
 	"database/sql"
+	"time"
 )
 
 type Datum struct {
@@ -108,6 +109,20 @@ type Rate struct {
 	Avgtriggerrate sql.NullFloat64 `db:"avgtriggerrate" json:"avgtriggerrate"`
 	Bytes          sql.NullInt64   `db:"bytes" json:"bytes"`
 	Events         sql.NullInt64   `db:"events" json:"events"`
+}
+
+type Ratesample struct {
+	Run int32  `db:"run" json:"run"`
+	Gdc string `db:"gdc" json:"gdc"`
+	// UTC source message timestamp
+	SampleTime         time.Time `db:"sample_time" json:"sample_time"`
+	Events             uint64    `db:"events" json:"events"`
+	Bytes              uint64    `db:"bytes" json:"bytes"`
+	CurrentTriggerRate float64   `db:"current_trigger_rate" json:"current_trigger_rate"`
+	CurrentByteRate    float64   `db:"current_byte_rate" json:"current_byte_rate"`
+	AvgTriggerRate     float64   `db:"avg_trigger_rate" json:"avg_trigger_rate"`
+	AvgByteRate        float64   `db:"avg_byte_rate" json:"avg_byte_rate"`
+	CounterReset       bool      `db:"counter_reset" json:"counter_reset"`
 }
 
 type Run struct {

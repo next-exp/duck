@@ -43,6 +43,7 @@ type Querier interface {
 	InsertLDCEvents(ctx context.Context, arg InsertLDCEventsParams) error
 	InsertNewRun(ctx context.Context) error
 	InsertRate(ctx context.Context, arg InsertRateParams) error
+	InsertRateSample(ctx context.Context, arg InsertRateSampleParams) error
 	ListEquipments(ctx context.Context) ([]Equipment, error)
 	ListGDCs(ctx context.Context) ([]Gdc, error)
 	ListLDCs(ctx context.Context) ([]Ldc, error)

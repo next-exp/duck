@@ -9,6 +9,7 @@ package api
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -4407,12 +4408,320 @@ func (x *GetTestDeviceStatisticsResponse) GetStatistics() *TestDeviceStatistics 
 	return nil
 }
 
+// Omit from/to for the full recorded run. Explicit bounds support browser zoom.
+type GetRateHistoryRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Run   int32                  `protobuf:"varint,1,opt,name=run,proto3" json:"run,omitempty"`
+	From  *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=from,proto3" json:"from,omitempty"`
+	To    *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=to,proto3" json:"to,omitempty"`
+	// 0 selects 1000. The server accepts 1..2000.
+	MaxPoints uint32 `protobuf:"varint,4,opt,name=max_points,json=maxPoints,proto3" json:"max_points,omitempty"`
+	// 0 selects 15 seconds, suitable for the default five-second collector.
+	// Intervals longer than this are gaps, not interpolated measurements.
+	MaxGapSeconds uint32 `protobuf:"varint,5,opt,name=max_gap_seconds,json=maxGapSeconds,proto3" json:"max_gap_seconds,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRateHistoryRequest) Reset() {
+	*x = GetRateHistoryRequest{}
+	mi := &file_api_proto_msgTypes[78]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRateHistoryRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRateHistoryRequest) ProtoMessage() {}
+
+func (x *GetRateHistoryRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[78]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRateHistoryRequest.ProtoReflect.Descriptor instead.
+func (*GetRateHistoryRequest) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{78}
+}
+
+func (x *GetRateHistoryRequest) GetRun() int32 {
+	if x != nil {
+		return x.Run
+	}
+	return 0
+}
+
+func (x *GetRateHistoryRequest) GetFrom() *timestamppb.Timestamp {
+	if x != nil {
+		return x.From
+	}
+	return nil
+}
+
+func (x *GetRateHistoryRequest) GetTo() *timestamppb.Timestamp {
+	if x != nil {
+		return x.To
+	}
+	return nil
+}
+
+func (x *GetRateHistoryRequest) GetMaxPoints() uint32 {
+	if x != nil {
+		return x.MaxPoints
+	}
+	return 0
+}
+
+func (x *GetRateHistoryRequest) GetMaxGapSeconds() uint32 {
+	if x != nil {
+		return x.MaxGapSeconds
+	}
+	return 0
+}
+
+type RateHistoryBin struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	Start *timestamppb.Timestamp `protobuf:"bytes,1,opt,name=start,proto3" json:"start,omitempty"`
+	End   *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=end,proto3" json:"end,omitempty"`
+	// Present only when the full bin is covered by every recorded GDC.
+	TriggerRateHz *float64 `protobuf:"fixed64,3,opt,name=trigger_rate_hz,json=triggerRateHz,proto3,oneof" json:"trigger_rate_hz,omitempty"`
+	ByteRate      *float64 `protobuf:"fixed64,4,opt,name=byte_rate,json=byteRate,proto3,oneof" json:"byte_rate,omitempty"`
+	// Fraction of GDC-time covered, relative to response.gdcs.
+	Coverage float64 `protobuf:"fixed64,5,opt,name=coverage,proto3" json:"coverage,omitempty"`
+	Complete bool    `protobuf:"varint,6,opt,name=complete,proto3" json:"complete,omitempty"`
+	// Edge bin clipped by the selected window, rather than full bin width.
+	Partial       bool `protobuf:"varint,7,opt,name=partial,proto3" json:"partial,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RateHistoryBin) Reset() {
+	*x = RateHistoryBin{}
+	mi := &file_api_proto_msgTypes[79]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RateHistoryBin) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RateHistoryBin) ProtoMessage() {}
+
+func (x *RateHistoryBin) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[79]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RateHistoryBin.ProtoReflect.Descriptor instead.
+func (*RateHistoryBin) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{79}
+}
+
+func (x *RateHistoryBin) GetStart() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Start
+	}
+	return nil
+}
+
+func (x *RateHistoryBin) GetEnd() *timestamppb.Timestamp {
+	if x != nil {
+		return x.End
+	}
+	return nil
+}
+
+func (x *RateHistoryBin) GetTriggerRateHz() float64 {
+	if x != nil && x.TriggerRateHz != nil {
+		return *x.TriggerRateHz
+	}
+	return 0
+}
+
+func (x *RateHistoryBin) GetByteRate() float64 {
+	if x != nil && x.ByteRate != nil {
+		return *x.ByteRate
+	}
+	return 0
+}
+
+func (x *RateHistoryBin) GetCoverage() float64 {
+	if x != nil {
+		return x.Coverage
+	}
+	return 0
+}
+
+func (x *RateHistoryBin) GetComplete() bool {
+	if x != nil {
+		return x.Complete
+	}
+	return false
+}
+
+func (x *RateHistoryBin) GetPartial() bool {
+	if x != nil {
+		return x.Partial
+	}
+	return false
+}
+
+type GetRateHistoryResponse struct {
+	state           protoimpl.MessageState `protogen:"open.v1"`
+	Run             int32                  `protobuf:"varint,1,opt,name=run,proto3" json:"run,omitempty"`
+	RunStart        *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=run_start,json=runStart,proto3" json:"run_start,omitempty"`
+	RunStop         *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=run_stop,json=runStop,proto3" json:"run_stop,omitempty"`
+	From            *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=from,proto3" json:"from,omitempty"`
+	To              *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=to,proto3" json:"to,omitempty"`
+	LatestSample    *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=latest_sample,json=latestSample,proto3" json:"latest_sample,omitempty"`
+	BinWidthSeconds uint32                 `protobuf:"varint,7,opt,name=bin_width_seconds,json=binWidthSeconds,proto3" json:"bin_width_seconds,omitempty"`
+	Bins            []*RateHistoryBin      `protobuf:"bytes,8,rep,name=bins,proto3" json:"bins,omitempty"`
+	Gdcs            []string               `protobuf:"bytes,9,rep,name=gdcs,proto3" json:"gdcs,omitempty"`
+	// Currently "observed_run_history"; not a configuration snapshot.
+	CoverageBasis string `protobuf:"bytes,10,opt,name=coverage_basis,json=coverageBasis,proto3" json:"coverage_basis,omitempty"`
+	HasData       bool   `protobuf:"varint,11,opt,name=has_data,json=hasData,proto3" json:"has_data,omitempty"`
+	MaxGapSeconds uint32 `protobuf:"varint,12,opt,name=max_gap_seconds,json=maxGapSeconds,proto3" json:"max_gap_seconds,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetRateHistoryResponse) Reset() {
+	*x = GetRateHistoryResponse{}
+	mi := &file_api_proto_msgTypes[80]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetRateHistoryResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetRateHistoryResponse) ProtoMessage() {}
+
+func (x *GetRateHistoryResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_api_proto_msgTypes[80]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetRateHistoryResponse.ProtoReflect.Descriptor instead.
+func (*GetRateHistoryResponse) Descriptor() ([]byte, []int) {
+	return file_api_proto_rawDescGZIP(), []int{80}
+}
+
+func (x *GetRateHistoryResponse) GetRun() int32 {
+	if x != nil {
+		return x.Run
+	}
+	return 0
+}
+
+func (x *GetRateHistoryResponse) GetRunStart() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RunStart
+	}
+	return nil
+}
+
+func (x *GetRateHistoryResponse) GetRunStop() *timestamppb.Timestamp {
+	if x != nil {
+		return x.RunStop
+	}
+	return nil
+}
+
+func (x *GetRateHistoryResponse) GetFrom() *timestamppb.Timestamp {
+	if x != nil {
+		return x.From
+	}
+	return nil
+}
+
+func (x *GetRateHistoryResponse) GetTo() *timestamppb.Timestamp {
+	if x != nil {
+		return x.To
+	}
+	return nil
+}
+
+func (x *GetRateHistoryResponse) GetLatestSample() *timestamppb.Timestamp {
+	if x != nil {
+		return x.LatestSample
+	}
+	return nil
+}
+
+func (x *GetRateHistoryResponse) GetBinWidthSeconds() uint32 {
+	if x != nil {
+		return x.BinWidthSeconds
+	}
+	return 0
+}
+
+func (x *GetRateHistoryResponse) GetBins() []*RateHistoryBin {
+	if x != nil {
+		return x.Bins
+	}
+	return nil
+}
+
+func (x *GetRateHistoryResponse) GetGdcs() []string {
+	if x != nil {
+		return x.Gdcs
+	}
+	return nil
+}
+
+func (x *GetRateHistoryResponse) GetCoverageBasis() string {
+	if x != nil {
+		return x.CoverageBasis
+	}
+	return ""
+}
+
+func (x *GetRateHistoryResponse) GetHasData() bool {
+	if x != nil {
+		return x.HasData
+	}
+	return false
+}
+
+func (x *GetRateHistoryResponse) GetMaxGapSeconds() uint32 {
+	if x != nil {
+		return x.MaxGapSeconds
+	}
+	return 0
+}
+
 var File_api_proto protoreflect.FileDescriptor
 
 const file_api_proto_rawDesc = "" +
 	"\n" +
 	"\tapi.proto\x12\n" +
-	"apiService\"[\n" +
+	"apiService\x1a\x1fgoogle/protobuf/timestamp.proto\"[\n" +
 	"\x0fSuccessResponse\x12\x18\n" +
 	"\asuccess\x18\x01 \x01(\bR\asuccess\x12\x18\n" +
 	"\amessage\x18\x02 \x01(\tR\amessage\x12\x14\n" +
@@ -4722,7 +5031,39 @@ const file_api_proto_rawDesc = "" +
 	"\x1fGetTestDeviceStatisticsResponse\x12@\n" +
 	"\n" +
 	"statistics\x18\x01 \x01(\v2 .apiService.TestDeviceStatisticsR\n" +
-	"statistics2\x81\x18\n" +
+	"statistics\"\xcc\x01\n" +
+	"\x15GetRateHistoryRequest\x12\x10\n" +
+	"\x03run\x18\x01 \x01(\x05R\x03run\x12.\n" +
+	"\x04from\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
+	"\x02to\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12\x1d\n" +
+	"\n" +
+	"max_points\x18\x04 \x01(\rR\tmaxPoints\x12&\n" +
+	"\x0fmax_gap_seconds\x18\x05 \x01(\rR\rmaxGapSeconds\"\xb3\x02\n" +
+	"\x0eRateHistoryBin\x120\n" +
+	"\x05start\x18\x01 \x01(\v2\x1a.google.protobuf.TimestampR\x05start\x12,\n" +
+	"\x03end\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\x03end\x12+\n" +
+	"\x0ftrigger_rate_hz\x18\x03 \x01(\x01H\x00R\rtriggerRateHz\x88\x01\x01\x12 \n" +
+	"\tbyte_rate\x18\x04 \x01(\x01H\x01R\bbyteRate\x88\x01\x01\x12\x1a\n" +
+	"\bcoverage\x18\x05 \x01(\x01R\bcoverage\x12\x1a\n" +
+	"\bcomplete\x18\x06 \x01(\bR\bcomplete\x12\x18\n" +
+	"\apartial\x18\a \x01(\bR\apartialB\x12\n" +
+	"\x10_trigger_rate_hzB\f\n" +
+	"\n" +
+	"_byte_rate\"\x91\x04\n" +
+	"\x16GetRateHistoryResponse\x12\x10\n" +
+	"\x03run\x18\x01 \x01(\x05R\x03run\x127\n" +
+	"\trun_start\x18\x02 \x01(\v2\x1a.google.protobuf.TimestampR\brunStart\x125\n" +
+	"\brun_stop\x18\x03 \x01(\v2\x1a.google.protobuf.TimestampR\arunStop\x12.\n" +
+	"\x04from\x18\x04 \x01(\v2\x1a.google.protobuf.TimestampR\x04from\x12*\n" +
+	"\x02to\x18\x05 \x01(\v2\x1a.google.protobuf.TimestampR\x02to\x12?\n" +
+	"\rlatest_sample\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\flatestSample\x12*\n" +
+	"\x11bin_width_seconds\x18\a \x01(\rR\x0fbinWidthSeconds\x12.\n" +
+	"\x04bins\x18\b \x03(\v2\x1a.apiService.RateHistoryBinR\x04bins\x12\x12\n" +
+	"\x04gdcs\x18\t \x03(\tR\x04gdcs\x12%\n" +
+	"\x0ecoverage_basis\x18\n" +
+	" \x01(\tR\rcoverageBasis\x12\x19\n" +
+	"\bhas_data\x18\v \x01(\bR\ahasData\x12&\n" +
+	"\x0fmax_gap_seconds\x18\f \x01(\rR\rmaxGapSeconds2\xdc\x18\n" +
 	"\aDuckAPI\x12G\n" +
 	"\bStartRun\x12\x1b.apiService.StartRunRequest\x1a\x1c.apiService.StartRunResponse\"\x00\x12D\n" +
 	"\aStopRun\x12\x1a.apiService.StopRunRequest\x1a\x1b.apiService.StopRunResponse\"\x00\x12S\n" +
@@ -4749,7 +5090,8 @@ const file_api_proto_rawDesc = "" +
 	"\x1aUpdateDecoderConfiguration\x12-.apiService.UpdateDecoderConfigurationRequest\x1a..apiService.UpdateDecoderConfigurationResponse\"\x00\x12k\n" +
 	"\x14GetTopiConfiguration\x12'.apiService.GetTopiConfigurationRequest\x1a(.apiService.GetTopiConfigurationResponse\"\x00\x12t\n" +
 	"\x17UpdateTopiConfiguration\x12*.apiService.UpdateTopiConfigurationRequest\x1a+.apiService.UpdateTopiConfigurationResponse\"\x00\x12q\n" +
-	"\x16ListTopiConfigurations\x12).apiService.ListTopiConfigurationsRequest\x1a*.apiService.ListTopiConfigurationsResponse\"\x00\x12S\n" +
+	"\x16ListTopiConfigurations\x12).apiService.ListTopiConfigurationsRequest\x1a*.apiService.ListTopiConfigurationsResponse\"\x00\x12Y\n" +
+	"\x0eGetRateHistory\x12!.apiService.GetRateHistoryRequest\x1a\".apiService.GetRateHistoryResponse\"\x00\x12S\n" +
 	"\fGetRunNumber\x12\x1f.apiService.GetRunNumberRequest\x1a .apiService.GetRunNumberResponse\"\x00\x12V\n" +
 	"\rCheckDisabled\x12 .apiService.CheckDisabledRequest\x1a!.apiService.CheckDisabledResponse\"\x00\x12G\n" +
 	"\bGetToken\x12\x1b.apiService.GetTokenRequest\x1a\x1c.apiService.GetTokenResponse\"\x00\x12_\n" +
@@ -4771,7 +5113,7 @@ func file_api_proto_rawDescGZIP() []byte {
 	return file_api_proto_rawDescData
 }
 
-var file_api_proto_msgTypes = make([]protoimpl.MessageInfo, 79)
+var file_api_proto_msgTypes = make([]protoimpl.MessageInfo, 82)
 var file_api_proto_goTypes = []any{
 	(*SuccessResponse)(nil),                    // 0: apiService.SuccessResponse
 	(*StartRunRequest)(nil),                    // 1: apiService.StartRunRequest
@@ -4851,7 +5193,11 @@ var file_api_proto_goTypes = []any{
 	(*ListTestDevicesResponse)(nil),            // 75: apiService.ListTestDevicesResponse
 	(*GetTestDeviceStatisticsRequest)(nil),     // 76: apiService.GetTestDeviceStatisticsRequest
 	(*GetTestDeviceStatisticsResponse)(nil),    // 77: apiService.GetTestDeviceStatisticsResponse
-	nil,                                        // 78: apiService.GetTestDevicesStatesResponse.StatesEntry
+	(*GetRateHistoryRequest)(nil),              // 78: apiService.GetRateHistoryRequest
+	(*RateHistoryBin)(nil),                     // 79: apiService.RateHistoryBin
+	(*GetRateHistoryResponse)(nil),             // 80: apiService.GetRateHistoryResponse
+	nil,                                        // 81: apiService.GetTestDevicesStatesResponse.StatesEntry
+	(*timestamppb.Timestamp)(nil),              // 82: google.protobuf.Timestamp
 }
 var file_api_proto_depIdxs = []int32{
 	13, // 0: apiService.GetGDCsResponse.gdcs:type_name -> apiService.GDC
@@ -4867,82 +5213,94 @@ var file_api_proto_depIdxs = []int32{
 	51, // 10: apiService.UpdateTopiConfigurationRequest.configuration:type_name -> apiService.TopiConfiguration
 	56, // 11: apiService.ListTopiConfigurationsResponse.configurations:type_name -> apiService.TopiAvailableConfiguration
 	61, // 12: apiService.CheckDisabledResponse.warnings:type_name -> apiService.DisabledWarning
-	78, // 13: apiService.GetTestDevicesStatesResponse.states:type_name -> apiService.GetTestDevicesStatesResponse.StatesEntry
+	81, // 13: apiService.GetTestDevicesStatesResponse.states:type_name -> apiService.GetTestDevicesStatesResponse.StatesEntry
 	66, // 14: apiService.ListTestDevicesResponse.devices:type_name -> apiService.TestDevice
 	67, // 15: apiService.GetTestDeviceStatisticsResponse.statistics:type_name -> apiService.TestDeviceStatistics
-	1,  // 16: apiService.DuckAPI.StartRun:input_type -> apiService.StartRunRequest
-	3,  // 17: apiService.DuckAPI.StopRun:input_type -> apiService.StopRunRequest
-	5,  // 18: apiService.DuckAPI.ForceStopRun:input_type -> apiService.ForceStopRunRequest
-	7,  // 19: apiService.DuckAPI.GetProcessStates:input_type -> apiService.GetProcessStatesRequest
-	9,  // 20: apiService.DuckAPI.RestartServices:input_type -> apiService.RestartServicesRequest
-	11, // 21: apiService.DuckAPI.GetRunTransitionStatus:input_type -> apiService.GetRunTransitionStatusRequest
-	14, // 22: apiService.DuckAPI.CreateGDC:input_type -> apiService.CreateGDCRequest
-	16, // 23: apiService.DuckAPI.GetGDCs:input_type -> apiService.GetGDCsRequest
-	18, // 24: apiService.DuckAPI.GetGDC:input_type -> apiService.GetGDCRequest
-	20, // 25: apiService.DuckAPI.UpdateGDC:input_type -> apiService.UpdateGDCRequest
-	22, // 26: apiService.DuckAPI.DeleteGDC:input_type -> apiService.DeleteGDCRequest
-	26, // 27: apiService.DuckAPI.CreateLDC:input_type -> apiService.CreateLDCRequest
-	28, // 28: apiService.DuckAPI.GetLDCs:input_type -> apiService.GetLDCsRequest
-	30, // 29: apiService.DuckAPI.GetLDC:input_type -> apiService.GetLDCRequest
-	32, // 30: apiService.DuckAPI.UpdateLDC:input_type -> apiService.UpdateLDCRequest
-	34, // 31: apiService.DuckAPI.DeleteLDC:input_type -> apiService.DeleteLDCRequest
-	36, // 32: apiService.DuckAPI.CreateEquipment:input_type -> apiService.CreateEquipmentRequest
-	38, // 33: apiService.DuckAPI.GetEquipments:input_type -> apiService.GetEquipmentsRequest
-	40, // 34: apiService.DuckAPI.GetEquipment:input_type -> apiService.GetEquipmentRequest
-	42, // 35: apiService.DuckAPI.UpdateEquipment:input_type -> apiService.UpdateEquipmentRequest
-	44, // 36: apiService.DuckAPI.DeleteEquipment:input_type -> apiService.DeleteEquipmentRequest
-	47, // 37: apiService.DuckAPI.GetDecoderConfiguration:input_type -> apiService.GetDecoderConfigurationRequest
-	49, // 38: apiService.DuckAPI.UpdateDecoderConfiguration:input_type -> apiService.UpdateDecoderConfigurationRequest
-	52, // 39: apiService.DuckAPI.GetTopiConfiguration:input_type -> apiService.GetTopiConfigurationRequest
-	54, // 40: apiService.DuckAPI.UpdateTopiConfiguration:input_type -> apiService.UpdateTopiConfigurationRequest
-	57, // 41: apiService.DuckAPI.ListTopiConfigurations:input_type -> apiService.ListTopiConfigurationsRequest
-	59, // 42: apiService.DuckAPI.GetRunNumber:input_type -> apiService.GetRunNumberRequest
-	62, // 43: apiService.DuckAPI.CheckDisabled:input_type -> apiService.CheckDisabledRequest
-	64, // 44: apiService.DuckAPI.GetToken:input_type -> apiService.GetTokenRequest
-	68, // 45: apiService.DuckAPI.StartTestDevices:input_type -> apiService.StartTestDevicesRequest
-	70, // 46: apiService.DuckAPI.StopTestDevices:input_type -> apiService.StopTestDevicesRequest
-	72, // 47: apiService.DuckAPI.GetTestDevicesStates:input_type -> apiService.GetTestDevicesStatesRequest
-	74, // 48: apiService.DuckAPI.ListTestDevices:input_type -> apiService.ListTestDevicesRequest
-	76, // 49: apiService.DuckAPI.GetTestDeviceStatistics:input_type -> apiService.GetTestDeviceStatisticsRequest
-	2,  // 50: apiService.DuckAPI.StartRun:output_type -> apiService.StartRunResponse
-	4,  // 51: apiService.DuckAPI.StopRun:output_type -> apiService.StopRunResponse
-	6,  // 52: apiService.DuckAPI.ForceStopRun:output_type -> apiService.ForceStopRunResponse
-	8,  // 53: apiService.DuckAPI.GetProcessStates:output_type -> apiService.GetProcessStatesResponse
-	10, // 54: apiService.DuckAPI.RestartServices:output_type -> apiService.RestartServicesResponse
-	12, // 55: apiService.DuckAPI.GetRunTransitionStatus:output_type -> apiService.GetRunTransitionStatusResponse
-	15, // 56: apiService.DuckAPI.CreateGDC:output_type -> apiService.CreateGDCResponse
-	17, // 57: apiService.DuckAPI.GetGDCs:output_type -> apiService.GetGDCsResponse
-	19, // 58: apiService.DuckAPI.GetGDC:output_type -> apiService.GetGDCResponse
-	21, // 59: apiService.DuckAPI.UpdateGDC:output_type -> apiService.UpdateGDCResponse
-	23, // 60: apiService.DuckAPI.DeleteGDC:output_type -> apiService.DeleteGDCResponse
-	27, // 61: apiService.DuckAPI.CreateLDC:output_type -> apiService.CreateLDCResponse
-	29, // 62: apiService.DuckAPI.GetLDCs:output_type -> apiService.GetLDCsResponse
-	31, // 63: apiService.DuckAPI.GetLDC:output_type -> apiService.GetLDCResponse
-	33, // 64: apiService.DuckAPI.UpdateLDC:output_type -> apiService.UpdateLDCResponse
-	35, // 65: apiService.DuckAPI.DeleteLDC:output_type -> apiService.DeleteLDCResponse
-	37, // 66: apiService.DuckAPI.CreateEquipment:output_type -> apiService.CreateEquipmentResponse
-	39, // 67: apiService.DuckAPI.GetEquipments:output_type -> apiService.GetEquipmentsResponse
-	41, // 68: apiService.DuckAPI.GetEquipment:output_type -> apiService.GetEquipmentResponse
-	43, // 69: apiService.DuckAPI.UpdateEquipment:output_type -> apiService.UpdateEquipmentResponse
-	45, // 70: apiService.DuckAPI.DeleteEquipment:output_type -> apiService.DeleteEquipmentResponse
-	48, // 71: apiService.DuckAPI.GetDecoderConfiguration:output_type -> apiService.GetDecoderConfigurationResponse
-	50, // 72: apiService.DuckAPI.UpdateDecoderConfiguration:output_type -> apiService.UpdateDecoderConfigurationResponse
-	53, // 73: apiService.DuckAPI.GetTopiConfiguration:output_type -> apiService.GetTopiConfigurationResponse
-	55, // 74: apiService.DuckAPI.UpdateTopiConfiguration:output_type -> apiService.UpdateTopiConfigurationResponse
-	58, // 75: apiService.DuckAPI.ListTopiConfigurations:output_type -> apiService.ListTopiConfigurationsResponse
-	60, // 76: apiService.DuckAPI.GetRunNumber:output_type -> apiService.GetRunNumberResponse
-	63, // 77: apiService.DuckAPI.CheckDisabled:output_type -> apiService.CheckDisabledResponse
-	65, // 78: apiService.DuckAPI.GetToken:output_type -> apiService.GetTokenResponse
-	69, // 79: apiService.DuckAPI.StartTestDevices:output_type -> apiService.StartTestDevicesResponse
-	71, // 80: apiService.DuckAPI.StopTestDevices:output_type -> apiService.StopTestDevicesResponse
-	73, // 81: apiService.DuckAPI.GetTestDevicesStates:output_type -> apiService.GetTestDevicesStatesResponse
-	75, // 82: apiService.DuckAPI.ListTestDevices:output_type -> apiService.ListTestDevicesResponse
-	77, // 83: apiService.DuckAPI.GetTestDeviceStatistics:output_type -> apiService.GetTestDeviceStatisticsResponse
-	50, // [50:84] is the sub-list for method output_type
-	16, // [16:50] is the sub-list for method input_type
-	16, // [16:16] is the sub-list for extension type_name
-	16, // [16:16] is the sub-list for extension extendee
-	0,  // [0:16] is the sub-list for field type_name
+	82, // 16: apiService.GetRateHistoryRequest.from:type_name -> google.protobuf.Timestamp
+	82, // 17: apiService.GetRateHistoryRequest.to:type_name -> google.protobuf.Timestamp
+	82, // 18: apiService.RateHistoryBin.start:type_name -> google.protobuf.Timestamp
+	82, // 19: apiService.RateHistoryBin.end:type_name -> google.protobuf.Timestamp
+	82, // 20: apiService.GetRateHistoryResponse.run_start:type_name -> google.protobuf.Timestamp
+	82, // 21: apiService.GetRateHistoryResponse.run_stop:type_name -> google.protobuf.Timestamp
+	82, // 22: apiService.GetRateHistoryResponse.from:type_name -> google.protobuf.Timestamp
+	82, // 23: apiService.GetRateHistoryResponse.to:type_name -> google.protobuf.Timestamp
+	82, // 24: apiService.GetRateHistoryResponse.latest_sample:type_name -> google.protobuf.Timestamp
+	79, // 25: apiService.GetRateHistoryResponse.bins:type_name -> apiService.RateHistoryBin
+	1,  // 26: apiService.DuckAPI.StartRun:input_type -> apiService.StartRunRequest
+	3,  // 27: apiService.DuckAPI.StopRun:input_type -> apiService.StopRunRequest
+	5,  // 28: apiService.DuckAPI.ForceStopRun:input_type -> apiService.ForceStopRunRequest
+	7,  // 29: apiService.DuckAPI.GetProcessStates:input_type -> apiService.GetProcessStatesRequest
+	9,  // 30: apiService.DuckAPI.RestartServices:input_type -> apiService.RestartServicesRequest
+	11, // 31: apiService.DuckAPI.GetRunTransitionStatus:input_type -> apiService.GetRunTransitionStatusRequest
+	14, // 32: apiService.DuckAPI.CreateGDC:input_type -> apiService.CreateGDCRequest
+	16, // 33: apiService.DuckAPI.GetGDCs:input_type -> apiService.GetGDCsRequest
+	18, // 34: apiService.DuckAPI.GetGDC:input_type -> apiService.GetGDCRequest
+	20, // 35: apiService.DuckAPI.UpdateGDC:input_type -> apiService.UpdateGDCRequest
+	22, // 36: apiService.DuckAPI.DeleteGDC:input_type -> apiService.DeleteGDCRequest
+	26, // 37: apiService.DuckAPI.CreateLDC:input_type -> apiService.CreateLDCRequest
+	28, // 38: apiService.DuckAPI.GetLDCs:input_type -> apiService.GetLDCsRequest
+	30, // 39: apiService.DuckAPI.GetLDC:input_type -> apiService.GetLDCRequest
+	32, // 40: apiService.DuckAPI.UpdateLDC:input_type -> apiService.UpdateLDCRequest
+	34, // 41: apiService.DuckAPI.DeleteLDC:input_type -> apiService.DeleteLDCRequest
+	36, // 42: apiService.DuckAPI.CreateEquipment:input_type -> apiService.CreateEquipmentRequest
+	38, // 43: apiService.DuckAPI.GetEquipments:input_type -> apiService.GetEquipmentsRequest
+	40, // 44: apiService.DuckAPI.GetEquipment:input_type -> apiService.GetEquipmentRequest
+	42, // 45: apiService.DuckAPI.UpdateEquipment:input_type -> apiService.UpdateEquipmentRequest
+	44, // 46: apiService.DuckAPI.DeleteEquipment:input_type -> apiService.DeleteEquipmentRequest
+	47, // 47: apiService.DuckAPI.GetDecoderConfiguration:input_type -> apiService.GetDecoderConfigurationRequest
+	49, // 48: apiService.DuckAPI.UpdateDecoderConfiguration:input_type -> apiService.UpdateDecoderConfigurationRequest
+	52, // 49: apiService.DuckAPI.GetTopiConfiguration:input_type -> apiService.GetTopiConfigurationRequest
+	54, // 50: apiService.DuckAPI.UpdateTopiConfiguration:input_type -> apiService.UpdateTopiConfigurationRequest
+	57, // 51: apiService.DuckAPI.ListTopiConfigurations:input_type -> apiService.ListTopiConfigurationsRequest
+	78, // 52: apiService.DuckAPI.GetRateHistory:input_type -> apiService.GetRateHistoryRequest
+	59, // 53: apiService.DuckAPI.GetRunNumber:input_type -> apiService.GetRunNumberRequest
+	62, // 54: apiService.DuckAPI.CheckDisabled:input_type -> apiService.CheckDisabledRequest
+	64, // 55: apiService.DuckAPI.GetToken:input_type -> apiService.GetTokenRequest
+	68, // 56: apiService.DuckAPI.StartTestDevices:input_type -> apiService.StartTestDevicesRequest
+	70, // 57: apiService.DuckAPI.StopTestDevices:input_type -> apiService.StopTestDevicesRequest
+	72, // 58: apiService.DuckAPI.GetTestDevicesStates:input_type -> apiService.GetTestDevicesStatesRequest
+	74, // 59: apiService.DuckAPI.ListTestDevices:input_type -> apiService.ListTestDevicesRequest
+	76, // 60: apiService.DuckAPI.GetTestDeviceStatistics:input_type -> apiService.GetTestDeviceStatisticsRequest
+	2,  // 61: apiService.DuckAPI.StartRun:output_type -> apiService.StartRunResponse
+	4,  // 62: apiService.DuckAPI.StopRun:output_type -> apiService.StopRunResponse
+	6,  // 63: apiService.DuckAPI.ForceStopRun:output_type -> apiService.ForceStopRunResponse
+	8,  // 64: apiService.DuckAPI.GetProcessStates:output_type -> apiService.GetProcessStatesResponse
+	10, // 65: apiService.DuckAPI.RestartServices:output_type -> apiService.RestartServicesResponse
+	12, // 66: apiService.DuckAPI.GetRunTransitionStatus:output_type -> apiService.GetRunTransitionStatusResponse
+	15, // 67: apiService.DuckAPI.CreateGDC:output_type -> apiService.CreateGDCResponse
+	17, // 68: apiService.DuckAPI.GetGDCs:output_type -> apiService.GetGDCsResponse
+	19, // 69: apiService.DuckAPI.GetGDC:output_type -> apiService.GetGDCResponse
+	21, // 70: apiService.DuckAPI.UpdateGDC:output_type -> apiService.UpdateGDCResponse
+	23, // 71: apiService.DuckAPI.DeleteGDC:output_type -> apiService.DeleteGDCResponse
+	27, // 72: apiService.DuckAPI.CreateLDC:output_type -> apiService.CreateLDCResponse
+	29, // 73: apiService.DuckAPI.GetLDCs:output_type -> apiService.GetLDCsResponse
+	31, // 74: apiService.DuckAPI.GetLDC:output_type -> apiService.GetLDCResponse
+	33, // 75: apiService.DuckAPI.UpdateLDC:output_type -> apiService.UpdateLDCResponse
+	35, // 76: apiService.DuckAPI.DeleteLDC:output_type -> apiService.DeleteLDCResponse
+	37, // 77: apiService.DuckAPI.CreateEquipment:output_type -> apiService.CreateEquipmentResponse
+	39, // 78: apiService.DuckAPI.GetEquipments:output_type -> apiService.GetEquipmentsResponse
+	41, // 79: apiService.DuckAPI.GetEquipment:output_type -> apiService.GetEquipmentResponse
+	43, // 80: apiService.DuckAPI.UpdateEquipment:output_type -> apiService.UpdateEquipmentResponse
+	45, // 81: apiService.DuckAPI.DeleteEquipment:output_type -> apiService.DeleteEquipmentResponse
+	48, // 82: apiService.DuckAPI.GetDecoderConfiguration:output_type -> apiService.GetDecoderConfigurationResponse
+	50, // 83: apiService.DuckAPI.UpdateDecoderConfiguration:output_type -> apiService.UpdateDecoderConfigurationResponse
+	53, // 84: apiService.DuckAPI.GetTopiConfiguration:output_type -> apiService.GetTopiConfigurationResponse
+	55, // 85: apiService.DuckAPI.UpdateTopiConfiguration:output_type -> apiService.UpdateTopiConfigurationResponse
+	58, // 86: apiService.DuckAPI.ListTopiConfigurations:output_type -> apiService.ListTopiConfigurationsResponse
+	80, // 87: apiService.DuckAPI.GetRateHistory:output_type -> apiService.GetRateHistoryResponse
+	60, // 88: apiService.DuckAPI.GetRunNumber:output_type -> apiService.GetRunNumberResponse
+	63, // 89: apiService.DuckAPI.CheckDisabled:output_type -> apiService.CheckDisabledResponse
+	65, // 90: apiService.DuckAPI.GetToken:output_type -> apiService.GetTokenResponse
+	69, // 91: apiService.DuckAPI.StartTestDevices:output_type -> apiService.StartTestDevicesResponse
+	71, // 92: apiService.DuckAPI.StopTestDevices:output_type -> apiService.StopTestDevicesResponse
+	73, // 93: apiService.DuckAPI.GetTestDevicesStates:output_type -> apiService.GetTestDevicesStatesResponse
+	75, // 94: apiService.DuckAPI.ListTestDevices:output_type -> apiService.ListTestDevicesResponse
+	77, // 95: apiService.DuckAPI.GetTestDeviceStatistics:output_type -> apiService.GetTestDeviceStatisticsResponse
+	61, // [61:96] is the sub-list for method output_type
+	26, // [26:61] is the sub-list for method input_type
+	26, // [26:26] is the sub-list for extension type_name
+	26, // [26:26] is the sub-list for extension extendee
+	0,  // [0:26] is the sub-list for field type_name
 }
 
 func init() { file_api_proto_init() }
@@ -4950,13 +5308,14 @@ func file_api_proto_init() {
 	if File_api_proto != nil {
 		return
 	}
+	file_api_proto_msgTypes[79].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_api_proto_rawDesc), len(file_api_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   79,
+			NumMessages:   82,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
