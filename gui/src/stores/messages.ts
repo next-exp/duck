@@ -237,6 +237,9 @@ export const useMessagesStore = defineStore("messages", () => {
           }
           break;
         case "state":
+          // A simulator can keep running while DAQ receivers stop between runs.
+          // Its lifecycle must not disable the acquisition Start/Stop controls.
+          if (evtParsed.host.startsWith("simulator-")) break;
           const stateData: StateType = JSON.parse(evtParsed.value);
           states.value[evtParsed.host] = stateData.state;
 

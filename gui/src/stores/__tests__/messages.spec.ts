@@ -236,6 +236,18 @@ describe('Messages Store', () => {
     })
 
     describe('state messages', () => {
+      it('keeps DAQ controls independent of simulator lifecycle', () => {
+        const state = (host: string, value: string) => simulatePublication({ host, timestamp: '2026-11-04T15:00:00Z', type: 'state', value: JSON.stringify({ state: value }), run: 3 })
+        state('ldc1', 'RUNNING')
+        state('simulator-1', 'INITIALIZED')
+        expect(store.status).toBe('RUNNING')
+        expect(store.stopRunEnabled).toBe(true)
+        state('simulator-1', 'RUNNING')
+        state('ldc1', 'INITIALIZED')
+        expect(store.status).toBe('INITIALIZED')
+        expect(store.startRunEnabled).toBe(true)
+      })
+
       it('should process RUNNING state and update control states', () => {
         simulatePublication({
           ...mockWebSocketMessages.stateMessage,

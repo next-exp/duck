@@ -18,6 +18,7 @@ const mockDuckApiClient = {
   getGDCs: vi.fn(() => Promise.resolve({ gdcs: [] })),
   getEquipments: vi.fn(() => Promise.resolve({ equipments: [] })),
   getProcessStates: vi.fn(() => Promise.resolve({ states: {} })),
+  getRateHistory: vi.fn(() => Promise.resolve({ hasData: false, bins: [], gdcs: [] })),
   getRunNumber: vi.fn(() => Promise.resolve({ runNumber: 0 })),
   updateDecoderConfiguration: vi.fn(() => Promise.resolve({})),
   createGDC: vi.fn(() => Promise.resolve({})),

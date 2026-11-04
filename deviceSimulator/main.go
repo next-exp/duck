@@ -27,7 +27,8 @@ var (
 
 // server implements the RunControl service
 type server struct {
-	mode               string  // "replay" or "generate"
+	rateProfile        string
+	mode               string // "replay" or "generate"
 	equipmentID        int
 	filePath           string
 	rate               float64
@@ -65,6 +66,8 @@ func (s *server) StartRun(ctx context.Context, req *connect.Request[pb.DuckReque
 			state = duck.INITIALIZED
 			return connect.NewResponse(&pb.DuckReply{Message: fmt.Sprintf("Config error: %v", err)}), nil
 		}
+
+		config.RateProfile = s.rateProfile
 
 		// Create generator
 		generator, err := NewGenerator(config)
@@ -190,6 +193,7 @@ func main() {
 	configFilename := flag.String("config", "", "Configuration file path (YAML)")
 	equipmentID := flag.Int("id", 0, "Equipment ID")
 	filePath := flag.String("file", "", "Path to .rd dump file (replay mode)")
+	rateProfile := flag.String("rate-profile", "constant", "Generate-mode rate profile: constant or fluctuating")
 	rate := flag.Float64("rate", 0, "Absolute event rate in Hz (0 = use database config)")
 	loop := flag.Bool("loop", false, "Loop replay continuously (replay mode)")
 	maxEvents := flag.Int("max-events", 0, "Maximum events to send (0 = unlimited)")
@@ -213,6 +217,10 @@ func main() {
 		fmt.Printf("Error: -mode must be 'replay' or 'generate', got '%s'\n", *mode)
 		flag.Usage()
 		os.Exit(1)
+	}
+
+	if *rateProfile != "constant" && *rateProfile != "fluctuating" {
+		log.Fatal("rate-profile must be constant or fluctuating")
 	}
 
 	// Initialize logger
@@ -247,7 +255,7 @@ func main() {
 
 	// If not in server mode, run CLI mode
 	if !*serverMode {
-		runCLI(*mode, *equipmentID, *filePath, *rate, *loop, *maxEvents, *fragmentSize, *packetsPerEvent, *errorInjection)
+		runCLI(*mode, *equipmentID, *filePath, *rate, *loop, *maxEvents, *fragmentSize, *packetsPerEvent, *errorInjection, *rateProfile)
 		return
 	}
 
@@ -274,6 +282,7 @@ func main() {
 	mux := http.NewServeMux()
 	path, handler := pbconnect.NewRunControlHandler(&server{
 		mode:               *mode,
+		rateProfile:        *rateProfile,
 		equipmentID:        *equipmentID,
 		filePath:           *filePath,
 		rate:               *rate,
@@ -311,7 +320,7 @@ func main() {
 }
 
 // runCLI runs in CLI-only mode without ConnectRPC server
-func runCLI(mode string, equipmentID int, filePath string, rate float64, loop bool, maxEvents int, fragmentSize int, packetsPerEvent int, errorInjection float64) {
+func runCLI(mode string, equipmentID int, filePath string, rate float64, loop bool, maxEvents int, fragmentSize int, packetsPerEvent int, errorInjection float64, rateProfile string) {
 	// Get database connection
 	db, err := GetDatabaseConnection()
 	if err != nil {
@@ -336,6 +345,8 @@ func runCLI(mode string, equipmentID int, filePath string, rate float64, loop bo
 		if err != nil {
 			log.Fatalf("Failed to build generator config: %v", err)
 		}
+
+		config.RateProfile = rateProfile
 
 		// Create and start generator
 		generator, err := NewGenerator(config)
