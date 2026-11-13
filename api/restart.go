@@ -67,7 +67,7 @@ func restartServices(configFilename string) error {
 func restartService(name string, role ServerRole, host string) {
 	message := fmt.Sprintf("Restarting services on %s", name)
 	logger.Slog.Info(message)
-	sshClient, err := sshClientCreator("dateuser", host)
+	sshClient, err := sshClientCreator("duck", host)
 	if err != nil {
 		message := fmt.Errorf("could not restart services on %s: %w", name, err)
 		logger.Slog.Error(message.Error())
@@ -90,9 +90,9 @@ func restartDuckSSH(sshClient SSHClient, name string, role ServerRole) error {
 	var cmd string
 	switch role {
 	case GDCRole:
-		cmd = "/home/dateuser/duck/restart_gdc.sh"
+		cmd = "docker compose --project-directory /home/duck/duck-daq -p duck-daq restart gdc"
 	case LDCRole:
-		cmd = "/home/dateuser/duck/restart_ldc.sh"
+		cmd = "docker compose --project-directory /home/duck/duck-daq -p duck-daq restart ldc"
 	}
 	out, err := sshClient.Run(cmd)
 	if err != nil {
