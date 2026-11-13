@@ -47,7 +47,7 @@ func TestRestartService_Success(t *testing.T) {
 	defer func() { sshClientCreator = oldCreator }()
 
 	sshClientCreator = func(user, host string) (SSHClient, error) {
-		assert.Equal(t, "dateuser", user)
+		assert.Equal(t, "duck", user)
 		assert.Equal(t, "test.example.com", host)
 		return mockClient, nil
 	}
@@ -59,7 +59,7 @@ func TestRestartService_Success(t *testing.T) {
 
 	// Assert
 	assert.True(t, mockClient.RunCalled)
-	assert.Equal(t, "/home/dateuser/duck/restart_gdc.sh", mockClient.LastCmd)
+	assert.Equal(t, "docker compose --project-directory /home/duck/duck-daq -p duck-daq restart gdc", mockClient.LastCmd)
 }
 
 // TestRestartService_SSHConnectionError tests SSH connection failure
@@ -109,7 +109,7 @@ func TestRestartService_CommandError(t *testing.T) {
 func TestRestartDuckSSH_GDCRole(t *testing.T) {
 	mockClient := &MockSSHClient{
 		RunFunc: func(cmd string) ([]byte, error) {
-			assert.Equal(t, "/home/dateuser/duck/restart_gdc.sh", cmd)
+			assert.Equal(t, "docker compose --project-directory /home/duck/duck-daq -p duck-daq restart gdc", cmd)
 			return []byte("GDC restarted"), nil
 		},
 	}
@@ -128,7 +128,7 @@ func TestRestartDuckSSH_GDCRole(t *testing.T) {
 func TestRestartDuckSSH_LDCRole(t *testing.T) {
 	mockClient := &MockSSHClient{
 		RunFunc: func(cmd string) ([]byte, error) {
-			assert.Equal(t, "/home/dateuser/duck/restart_ldc.sh", cmd)
+			assert.Equal(t, "docker compose --project-directory /home/duck/duck-daq -p duck-daq restart ldc", cmd)
 			return []byte("LDC restarted"), nil
 		},
 	}
