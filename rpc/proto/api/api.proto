@@ -98,12 +98,23 @@ message GetProcessStatesResponse {
 
 message RestartServicesRequest {}
 message RestartServicesResponse {
+  string operation_id = 3;
   bool success = 1;
   string message = 2;
 }
 
 message GetRunTransitionStatusRequest {}
+message RestartTargetStatus {
+  string name = 1;
+  string host = 2;
+  string role = 3;
+  string state = 4;
+  string detail = 5;
+}
 message GetRunTransitionStatusResponse {
+  string restart_operation_id = 3;
+  repeated RestartTargetStatus restart_targets = 4;
+  string restart_error = 5;
   string state   = 1;
   string message = 2;
 }

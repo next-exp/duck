@@ -1,212 +1,45 @@
 package main
 
 import (
-	"fmt"
-	"os"
-	"testing"
-
-	duck "github.com/jmbenlloch/next_duck/pkg"
-	"github.com/stretchr/testify/assert"
+	"connectrpc.com/connect"
+	"context"
+	"errors"
+	"github.com/jmbenlloch/next_duck/pkg/database"
+	"github.com/jmbenlloch/next_duck/pkg/database/mocks"
+	pb "github.com/jmbenlloch/next_duck/rpc/api"
+	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"testing"
+	"time"
 )
 
-// MockSSHClient implements SSHClient for testing
-type MockSSHClient struct {
-	RunFunc   func(cmd string) ([]byte, error)
-	CloseFunc func() error
-	RunCalled bool
-	LastCmd   string
-}
-
-func (m *MockSSHClient) Run(cmd string) ([]byte, error) {
-	m.RunCalled = true
-	m.LastCmd = cmd
-	if m.RunFunc != nil {
-		return m.RunFunc(cmd)
+func TestRestartCommands(t *testing.T) {
+	for _, role := range []string{"ldc", "gdc"} {
+		for profile, want := range map[string]string{"next100": "docker compose --project-directory /home/duck/duck-daq -p duck-daq restart " + role, "duck-prod": "docker container restart duck-prod-" + role + "-1", "": "/home/dateuser/duck/restart_" + role + ".sh"} {
+			cmd, err := restartCommand(profile, role)
+			require.NoError(t, err)
+			require.Equal(t, want, cmd)
+		}
 	}
-	return []byte("success"), nil
-}
-
-func (m *MockSSHClient) Close() error {
-	if m.CloseFunc != nil {
-		return m.CloseFunc()
-	}
-	return nil
-}
-
-// TestRestartService_Success tests successful service restart
-func TestRestartService_Success(t *testing.T) {
-	mockClient := &MockSSHClient{
-		RunFunc: func(cmd string) ([]byte, error) {
-			return []byte("Service restarted successfully"), nil
-		},
-	}
-
-	// Replace sshClientCreator for this test
-	oldCreator := sshClientCreator
-	defer func() { sshClientCreator = oldCreator }()
-
-	sshClientCreator = func(user, host string) (SSHClient, error) {
-		assert.Equal(t, "duck", user)
-		assert.Equal(t, "test.example.com", host)
-		return mockClient, nil
-	}
-
-	logger = duck.NewDuckLogger("test", nil, 0)
-
-	// Execute
-	restartService("test-gdc", GDCRole, "test.example.com")
-
-	// Assert
-	assert.True(t, mockClient.RunCalled)
-	assert.Equal(t, "docker compose --project-directory /home/duck/duck-daq -p duck-daq restart gdc", mockClient.LastCmd)
-}
-
-// TestRestartService_SSHConnectionError tests SSH connection failure
-func TestRestartService_SSHConnectionError(t *testing.T) {
-	// Replace sshClientCreator for this test
-	oldCreator := sshClientCreator
-	defer func() { sshClientCreator = oldCreator }()
-
-	sshClientCreator = func(user, host string) (SSHClient, error) {
-		return nil, fmt.Errorf("connection refused")
-	}
-
-	logger = duck.NewDuckLogger("test", nil, 0)
-
-	// Execute - should not panic
-	restartService("test-gdc", GDCRole, "test.example.com")
-
-	// No assertions needed - just verifying it handles the error gracefully
-}
-
-// TestRestartService_CommandError tests command execution failure
-func TestRestartService_CommandError(t *testing.T) {
-	mockClient := &MockSSHClient{
-		RunFunc: func(cmd string) ([]byte, error) {
-			return []byte(""), fmt.Errorf("command failed")
-		},
-	}
-
-	// Replace sshClientCreator for this test
-	oldCreator := sshClientCreator
-	defer func() { sshClientCreator = oldCreator }()
-
-	sshClientCreator = func(user, host string) (SSHClient, error) {
-		return mockClient, nil
-	}
-
-	logger = duck.NewDuckLogger("test", nil, 0)
-
-	// Execute - should not panic
-	restartService("test-gdc", GDCRole, "test.example.com")
-
-	// Verify command was attempted
-	assert.True(t, mockClient.RunCalled)
-}
-
-// TestRestartDuckSSH_GDCRole tests correct command for GDC role
-func TestRestartDuckSSH_GDCRole(t *testing.T) {
-	mockClient := &MockSSHClient{
-		RunFunc: func(cmd string) ([]byte, error) {
-			assert.Equal(t, "docker compose --project-directory /home/duck/duck-daq -p duck-daq restart gdc", cmd)
-			return []byte("GDC restarted"), nil
-		},
-	}
-
-	logger = duck.NewDuckLogger("test", nil, 0)
-
-	// Execute
-	err := restartDuckSSH(mockClient, "gdc1", GDCRole)
-
-	// Assert
-	require.NoError(t, err)
-	assert.True(t, mockClient.RunCalled)
-}
-
-// TestRestartDuckSSH_LDCRole tests correct command for LDC role
-func TestRestartDuckSSH_LDCRole(t *testing.T) {
-	mockClient := &MockSSHClient{
-		RunFunc: func(cmd string) ([]byte, error) {
-			assert.Equal(t, "docker compose --project-directory /home/duck/duck-daq -p duck-daq restart ldc", cmd)
-			return []byte("LDC restarted"), nil
-		},
-	}
-
-	logger = duck.NewDuckLogger("test", nil, 0)
-
-	// Execute
-	err := restartDuckSSH(mockClient, "ldc1", LDCRole)
-
-	// Assert
-	require.NoError(t, err)
-	assert.True(t, mockClient.RunCalled)
-}
-
-// TestRestartDuckSSH_CommandError tests error handling
-func TestRestartDuckSSH_CommandError(t *testing.T) {
-	mockClient := &MockSSHClient{
-		RunFunc: func(cmd string) ([]byte, error) {
-			return nil, fmt.Errorf("script execution failed")
-		},
-	}
-
-	logger = duck.NewDuckLogger("test", nil, 0)
-
-	// Execute
-	err := restartDuckSSH(mockClient, "gdc1", GDCRole)
-
-	// Assert
+	_, err := restartCommand("duck-prod", "api")
 	require.Error(t, err)
-	assert.Contains(t, err.Error(), "script execution failed")
-	assert.True(t, mockClient.RunCalled)
 }
-
-// TestRestartDuckSSH_ANSICodeRemoval tests ANSI escape code stripping
-func TestRestartDuckSSH_ANSICodeRemoval(t *testing.T) {
-	outputWithANSI := "[31mError text[39m [32mSuccess text[39m Normal text"
-
-	mockClient := &MockSSHClient{
-		RunFunc: func(cmd string) ([]byte, error) {
-			return []byte(outputWithANSI), nil
-		},
-	}
-
-	logger = duck.NewDuckLogger("test", nil, 0)
-
-	// Execute
-	err := restartDuckSSH(mockClient, "gdc1", GDCRole)
-
-	// Assert
+func TestRestartReturnsBeforeWorkerAndExcludesStart(t *testing.T) {
+	q := mocks.NewQuerier(t)
+	gate := make(chan struct{})
+	q.On("GetLatestRunWithTimestamp", mock.Anything).Return(database.Run{}, nil)
+	q.On("ListGDCs", mock.Anything).Run(func(mock.Arguments) { <-gate }).Return(nil, errors.New("inventory unavailable"))
+	s := NewDuckAPIServerWithMocks(q, &MockRPCClient{}, "", "", false)
+	result, err := s.beginRestart(context.Background())
 	require.NoError(t, err)
-	// The function logs the output, we just verify it doesn't error
-	// The actual ANSI code removal is tested by checking no panic occurs
-}
-
-// TestNewSshClient_KeyNotFound tests behavior when SSH key doesn't exist
-func TestNewSshClient_KeyNotFound(t *testing.T) {
-	// Save original HOME
-	originalHome := os.Getenv("HOME")
-	defer os.Setenv("HOME", originalHome)
-
-	// Set HOME to non-existent directory
-	os.Setenv("HOME", "/nonexistent/home")
-
-	// Execute
-	client, err := NewSshClient("testuser", "testhost")
-
-	// Assert
-	assert.Error(t, err)
-	assert.Nil(t, client)
-}
-
-// TestRestartService_RealCreator tests the public function with the real creator
-func TestRestartService_RealCreator(t *testing.T) {
-	logger = duck.NewDuckLogger("test", nil, 0)
-
-	// This will fail trying to connect, but verifies the function exists and handles errors
-	// We just want to make sure it doesn't panic
-	restartService("test", GDCRole, "nonexistent.host.local")
-
-	// No panic = success
+	require.NotEmpty(t, result.Msg.OperationId)
+	ok, _ := s.runTransition.tryBeginStart()
+	require.False(t, ok)
+	_, err = s.beginRestart(context.Background())
+	require.Error(t, err)
+	close(gate)
+	require.True(t, s.runTransition.WaitForIdle(time.Second))
+	status, err := s.GetRunTransitionStatus(context.Background(), connect.NewRequest(&pb.GetRunTransitionStatusRequest{}))
+	require.NoError(t, err)
+	require.Contains(t, status.Msg.RestartError, "inventory unavailable")
 }

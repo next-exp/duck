@@ -387,6 +387,11 @@ export class RestartServicesRequest extends Message<RestartServicesRequest> {
  */
 export class RestartServicesResponse extends Message<RestartServicesResponse> {
   /**
+   * @generated from field: string operation_id = 3;
+   */
+  operationId = "";
+
+  /**
    * @generated from field: bool success = 1;
    */
   success = false;
@@ -404,6 +409,7 @@ export class RestartServicesResponse extends Message<RestartServicesResponse> {
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "apiService.RestartServicesResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 3, name: "operation_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 1, name: "success", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
     { no: 2, name: "message", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);
@@ -457,9 +463,85 @@ export class GetRunTransitionStatusRequest extends Message<GetRunTransitionStatu
 }
 
 /**
+ * @generated from message apiService.RestartTargetStatus
+ */
+export class RestartTargetStatus extends Message<RestartTargetStatus> {
+  /**
+   * @generated from field: string name = 1;
+   */
+  name = "";
+
+  /**
+   * @generated from field: string host = 2;
+   */
+  host = "";
+
+  /**
+   * @generated from field: string role = 3;
+   */
+  role = "";
+
+  /**
+   * @generated from field: string state = 4;
+   */
+  state = "";
+
+  /**
+   * @generated from field: string detail = 5;
+   */
+  detail = "";
+
+  constructor(data?: PartialMessage<RestartTargetStatus>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.RestartTargetStatus";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "name", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 2, name: "host", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 3, name: "role", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 5, name: "detail", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RestartTargetStatus {
+    return new RestartTargetStatus().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RestartTargetStatus {
+    return new RestartTargetStatus().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RestartTargetStatus {
+    return new RestartTargetStatus().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RestartTargetStatus | PlainMessage<RestartTargetStatus> | undefined, b: RestartTargetStatus | PlainMessage<RestartTargetStatus> | undefined): boolean {
+    return proto3.util.equals(RestartTargetStatus, a, b);
+  }
+}
+
+/**
  * @generated from message apiService.GetRunTransitionStatusResponse
  */
 export class GetRunTransitionStatusResponse extends Message<GetRunTransitionStatusResponse> {
+  /**
+   * @generated from field: string restart_operation_id = 3;
+   */
+  restartOperationId = "";
+
+  /**
+   * @generated from field: repeated apiService.RestartTargetStatus restart_targets = 4;
+   */
+  restartTargets: RestartTargetStatus[] = [];
+
+  /**
+   * @generated from field: string restart_error = 5;
+   */
+  restartError = "";
+
   /**
    * @generated from field: string state = 1;
    */
@@ -478,6 +560,9 @@ export class GetRunTransitionStatusResponse extends Message<GetRunTransitionStat
   static readonly runtime: typeof proto3 = proto3;
   static readonly typeName = "apiService.GetRunTransitionStatusResponse";
   static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 3, name: "restart_operation_id", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 4, name: "restart_targets", kind: "message", T: RestartTargetStatus, repeated: true },
+    { no: 5, name: "restart_error", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 1, name: "state", kind: "scalar", T: 9 /* ScalarType.STRING */ },
     { no: 2, name: "message", kind: "scalar", T: 9 /* ScalarType.STRING */ },
   ]);

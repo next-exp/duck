@@ -1,126 +1,259 @@
 package main
 
 import (
+	"context"
+	"crypto/rand"
+	"errors"
 	"fmt"
+	"net"
+	"net/http"
 	"os"
-	"strings"
+	"path/filepath"
+	"strconv"
 	"sync"
+	"time"
 
-	duck "github.com/jmbenlloch/next_duck/pkg"
-	"github.com/melbahja/goph"
+	"connectrpc.com/connect"
+	pb "github.com/jmbenlloch/next_duck/rpc/api"
+	control "github.com/jmbenlloch/next_duck/rpc/control"
+	"github.com/jmbenlloch/next_duck/rpc/control/controlconnect"
+	"golang.org/x/crypto/ssh"
+	"golang.org/x/crypto/ssh/knownhosts"
 )
 
-type ServerRole int
-
-const (
-	GDCRole ServerRole = iota
-	LDCRole
-)
-
-// SSHClient interface for SSH operations (allows mocking in tests)
-type SSHClient interface {
-	Run(cmd string) ([]byte, error)
-	Close() error
+type restartTarget struct {
+	name, host, role, ip string
+	port                 int32
+	state, detail        string
+}
+type restartOperation struct {
+	id, failure string
+	targets     []restartTarget
 }
 
-// sshClientCreator is a function that creates SSH clients
-// This can be replaced in tests with a mock
-var sshClientCreator = func(user, host string) (SSHClient, error) {
-	return NewSshClient(user, host)
+func (op *restartOperation) snapshot() []*pb.RestartTargetStatus {
+	var result []*pb.RestartTargetStatus
+	for _, t := range op.targets {
+		result = append(result, &pb.RestartTargetStatus{Name: t.name, Host: t.host, Role: t.role, State: t.state, Detail: t.detail})
+	}
+	return result
 }
-
-func restartServices(configFilename string) error {
-	configuration, err := duck.ReadConfiguration(configFilename, nil, nil)
-	if err != nil {
-		message := fmt.Errorf("could not read configuration file: %w", err)
-		return message
+func (s *DuckAPIServer) beginRestart(ctx context.Context) (*connect.Response[pb.RestartServicesResponse], error) {
+	rt := &s.runTransition
+	rt.mu.Lock()
+	defer rt.mu.Unlock()
+	if rt.state != TransitionIdle && rt.state != TransitionError {
+		return nil, connect.NewError(connect.CodeFailedPrecondition, fmt.Errorf("run control is %s", stateString(rt.state)))
 	}
-	enabledLDCs := duck.EnabledLDCs(configuration.LDCs)
-	enabledGDCs := duck.EnabledGDCs(configuration.GDCs)
-
-	var wg sync.WaitGroup
-
-	for _, gdc := range enabledGDCs {
-		wg.Add(1)
-		hub := cloneSentryHub(nil)
-		go func(name, host string) {
-			defer wg.Done()
-			defer recoverBackgroundPanic(hub, map[string]string{"operation": "restart-gdc", "server": name})
-			restartService(name, GDCRole, host)
-		}(gdc.Name, gdc.Host)
-	}
-
-	for _, ldc := range enabledLDCs {
-		wg.Add(1)
-		hub := cloneSentryHub(nil)
-		go func(name, host string) {
-			defer wg.Done()
-			defer recoverBackgroundPanic(hub, map[string]string{"operation": "restart-ldc", "server": name})
-			restartService(name, LDCRole, host)
-		}(ldc.Name, ldc.Host)
-	}
-
-	wg.Wait()
-	return nil
-}
-
-func restartService(name string, role ServerRole, host string) {
-	message := fmt.Sprintf("Restarting services on %s", name)
-	logger.Slog.Info(message)
-	sshClient, err := sshClientCreator("duck", host)
-	if err != nil {
-		message := fmt.Errorf("could not restart services on %s: %w", name, err)
-		logger.Slog.Error(message.Error())
-		return
-	}
-	defer sshClient.Close()
-
-	err = restartDuckSSH(sshClient, name, role)
-	if err != nil {
-		// Error already logged in restartDuckSSH
-		return
-	}
-}
-
-func restartDuckSSH(sshClient SSHClient, name string, role ServerRole) error {
-	// Running sudo over ssh raises an error:
-	// sudo: sorry, you must have a tty to run sudo
-	// To fix this, comment the following line in /etc/sudoers:
-	// #Defaults    requiretty
-	var cmd string
-	switch role {
-	case GDCRole:
-		cmd = "docker compose --project-directory /home/duck/duck-daq -p duck-daq restart gdc"
-	case LDCRole:
-		cmd = "docker compose --project-directory /home/duck/duck-daq -p duck-daq restart ldc"
-	}
-	out, err := sshClient.Run(cmd)
-	if err != nil {
-		message := fmt.Errorf("could not restart %s services: %w", name, err)
-		logger.Slog.Error(message.Error())
-		return err
-	}
-	output := string(out)
-	output = strings.ReplaceAll(output, "[31m", "")
-	output = strings.ReplaceAll(output, "[32m", "")
-	output = strings.ReplaceAll(output, "[39m", "")
-
-	message := fmt.Sprintf("%s:\n %s", name, output)
-	logger.Slog.Info(message)
-	return nil
-}
-
-func NewSshClient(user string, host string) (*goph.Client, error) {
-	// Start new ssh connection with private key.
-	keyPath := fmt.Sprintf("%s/.ssh/id_rsa", os.Getenv("HOME"))
-	auth, err := goph.Key(keyPath, "")
+	run, err := s.queries.GetLatestRunWithTimestamp(ctx)
 	if err != nil {
 		return nil, err
 	}
-
-	client, err := goph.New(user, host, auth)
-
-	// Defer closing the network connection.
-	//	defer client.Close()
-	return client, err
+	if run.Start.Valid && !run.Stop.Valid {
+		return nil, connect.NewError(connect.CodeFailedPrecondition, errors.New("acquisition is active"))
+	}
+	var token [16]byte
+	if _, err = rand.Read(token[:]); err != nil {
+		return nil, err
+	}
+	id := fmt.Sprintf("%x", token)
+	s.restart = restartOperation{id: id}
+	rt.state = TransitionRestarting
+	rt.errMsg = ""
+	go s.runRestart()
+	return connect.NewResponse(&pb.RestartServicesResponse{Success: true, Message: "restarting services", OperationId: id}), nil
+}
+func (s *DuckAPIServer) runRestart() {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Minute)
+	defer cancel()
+	err := s.restartTargets(ctx)
+	rt := &s.runTransition
+	rt.mu.Lock()
+	defer rt.mu.Unlock()
+	rt.state = TransitionIdle
+	if err != nil {
+		s.restart.failure = err.Error()
+	}
+}
+func (s *DuckAPIServer) restartTargets(ctx context.Context) error {
+	gdcs, err := s.queries.ListGDCs(ctx)
+	if err != nil {
+		return err
+	}
+	ldcs, err := s.queries.ListLDCs(ctx)
+	if err != nil {
+		return err
+	}
+	var targets []restartTarget
+	for _, g := range gdcs {
+		if g.Enabled.Bool {
+			targets = append(targets, restartTarget{name: g.Name.String, host: g.Hostname.String, role: "gdc", ip: g.Ip.String, port: g.GrpcPort.Int32, state: "queued"})
+		}
+	}
+	for _, l := range ldcs {
+		if l.Enabled.Bool {
+			targets = append(targets, restartTarget{name: l.Name.String, host: l.Hostname.String, role: "ldc", ip: l.Ip.String, port: l.GrpcPort.Int32, state: "queued"})
+		}
+	}
+	if len(targets) == 0 {
+		return errors.New("no enabled acquisition services")
+	}
+	s.runTransition.mu.Lock()
+	s.restart.targets = append([]restartTarget(nil), targets...)
+	s.runTransition.mu.Unlock()
+	update := func(i int, state, detail string) {
+		s.runTransition.mu.Lock()
+		defer s.runTransition.mu.Unlock()
+		s.restart.targets[i].state = state
+		s.restart.targets[i].detail = detail
+	}
+	// Check the entire detector before sending the first restart command.
+	for i, t := range targets {
+		if err := t.ready(ctx); err != nil {
+			update(i, "failed", err.Error())
+			return fmt.Errorf("%s preflight: %w", t.name, err)
+		}
+	}
+	// Use the control IP to group co-located services even when their SSH aliases differ.
+	byHost := make(map[string][]int)
+	for i, t := range targets {
+		byHost[t.ip] = append(byHost[t.ip], i)
+	}
+	slots := make(chan struct{}, 3)
+	failures := make([]error, len(targets))
+	var wg sync.WaitGroup
+	for _, indices := range byHost {
+		wg.Add(1)
+		go func(indices []int) {
+			defer wg.Done()
+			slots <- struct{}{}
+			defer func() { <-slots }()
+			for _, i := range indices {
+				t := targets[i]
+				if err := ctx.Err(); err != nil {
+					update(i, "timed out", err.Error())
+					failures[i] = err
+					continue
+				}
+				update(i, "restarting", "")
+				targetCtx, cancel := context.WithTimeout(ctx, 30*time.Second)
+				err := t.restartSSH(targetCtx)
+				if err == nil {
+					for {
+						err = t.ready(targetCtx)
+						if err == nil || targetCtx.Err() != nil {
+							break
+						}
+						select {
+						case <-targetCtx.Done():
+						case <-time.After(500 * time.Millisecond):
+						}
+					}
+				}
+				timedOut := targetCtx.Err() != nil
+				cancel()
+				if err != nil {
+					state := "failed"
+					if timedOut {
+						state = "timed out"
+						if probe := t.ready(ctx); probe == nil {
+							err = fmt.Errorf("restart unconfirmed; service currently INITIALIZED: %w", err)
+						}
+					}
+					update(i, state, err.Error())
+					failures[i] = fmt.Errorf("%s: %w", t.name, err)
+					continue
+				}
+				update(i, "ready", "")
+			}
+		}(indices)
+	}
+	wg.Wait()
+	return errors.Join(failures...)
+}
+func (t restartTarget) ready(ctx context.Context) error {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+	addr := net.JoinHostPort(t.ip, strconv.Itoa(int(t.port)))
+	client := controlconnect.NewRunControlClient(http.DefaultClient, "http://"+addr)
+	reply, err := client.GetState(ctx, connect.NewRequest(&control.DuckRequest{}))
+	if err != nil {
+		return err
+	}
+	if reply.Msg.Message != "INITIALIZED" {
+		return fmt.Errorf("state %s", reply.Msg.Message)
+	}
+	return nil
+}
+func restartCommand(profile, role string) (string, error) {
+	if role != "gdc" && role != "ldc" {
+		return "", fmt.Errorf("unsupported service %q", role)
+	}
+	switch profile {
+	case "next100":
+		return "docker compose --project-directory /home/duck/duck-daq -p duck-daq restart " + role, nil
+	case "duck-prod":
+		return "docker container restart duck-prod-" + role + "-1", nil
+	case "", "legacy":
+		return "/home/dateuser/duck/restart_" + role + ".sh", nil
+	default:
+		return "", fmt.Errorf("unknown restart profile %q", profile)
+	}
+}
+func (t restartTarget) restartSSH(ctx context.Context) error {
+	profile := os.Getenv("DUCK_RESTART_PROFILE")
+	cmd, err := restartCommand(profile, t.role)
+	if err != nil {
+		return err
+	}
+	user := os.Getenv("DUCK_RESTART_USER")
+	if user == "" {
+		user = "dateuser"
+		if profile == "next100" {
+			user = "duck"
+		}
+	}
+	dir := os.Getenv("DUCK_RESTART_SSH_DIR")
+	if dir == "" {
+		dir = filepath.Join(os.Getenv("HOME"), ".ssh")
+	}
+	key, err := os.ReadFile(filepath.Join(dir, "id_rsa"))
+	if err != nil {
+		return err
+	}
+	signer, err := ssh.ParsePrivateKey(key)
+	if err != nil {
+		return err
+	}
+	verify, err := knownhosts.New(filepath.Join(dir, "known_hosts"))
+	if err != nil {
+		return err
+	}
+	port := os.Getenv("DUCK_RESTART_SSH_PORT")
+	if port == "" {
+		port = "22"
+	}
+	addr := net.JoinHostPort(t.host, port)
+	conn, err := (&net.Dialer{}).DialContext(ctx, "tcp", addr)
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+	if deadline, ok := ctx.Deadline(); ok {
+		if err := conn.SetDeadline(deadline); err != nil {
+			return err
+		}
+	}
+	c, ch, req, err := ssh.NewClientConn(conn, addr, &ssh.ClientConfig{User: user, Auth: []ssh.AuthMethod{ssh.PublicKeys(signer)}, HostKeyCallback: verify})
+	if err != nil {
+		return err
+	}
+	client := ssh.NewClient(c, ch, req)
+	defer client.Close()
+	session, err := client.NewSession()
+	if err != nil {
+		return err
+	}
+	defer session.Close()
+	return session.Run(cmd)
 }

@@ -66,17 +66,12 @@ func (s *DuckAPIServer) GetProcessStates(ctx context.Context, req *connect.Reque
 }
 
 func (s *DuckAPIServer) RestartServices(ctx context.Context, req *connect.Request[pb.RestartServicesRequest]) (*connect.Response[pb.RestartServicesResponse], error) {
-	restartServices(s.configFilename)
-	return connect.NewResponse(&pb.RestartServicesResponse{
-		Success: true,
-		Message: "restarting services",
-	}), nil
+	return s.beginRestart(ctx)
 }
 
 func (s *DuckAPIServer) GetRunTransitionStatus(ctx context.Context, req *connect.Request[pb.GetRunTransitionStatusRequest]) (*connect.Response[pb.GetRunTransitionStatusResponse], error) {
-	state, errMsg := s.runTransition.Status()
-	return connect.NewResponse(&pb.GetRunTransitionStatusResponse{
-		State:   stateString(state),
-		Message: errMsg,
-	}), nil
+	rt := &s.runTransition
+	rt.mu.Lock()
+	defer rt.mu.Unlock()
+	return connect.NewResponse(&pb.GetRunTransitionStatusResponse{State: stateString(rt.state), Message: rt.errMsg, RestartOperationId: s.restart.id, RestartTargets: s.restart.snapshot(), RestartError: s.restart.failure}), nil
 }

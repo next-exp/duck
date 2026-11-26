@@ -6,11 +6,11 @@ import (
 	"testing"
 	"time"
 
-	duck "github.com/jmbenlloch/next_duck/pkg"
-	pb "github.com/jmbenlloch/next_duck/rpc/api"
 	"connectrpc.com/connect"
+	duck "github.com/jmbenlloch/next_duck/pkg"
 	"github.com/jmbenlloch/next_duck/pkg/database"
 	"github.com/jmbenlloch/next_duck/pkg/database/mocks"
+	pb "github.com/jmbenlloch/next_duck/rpc/api"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -320,43 +320,10 @@ func TestGetProcessStates(t *testing.T) {
 	assert.Equal(t, 2, mockRPC.GetStateCalledCount(), "GetProcessStates should get states from both LDCs and GDCs")
 }
 
-// ===== RestartServices Handler Tests =====
-
-func TestRestartServices(t *testing.T) {
-	mockQuerier := mocks.NewQuerier(t)
-	mockRPC := &MockRPCClient{}
-
-	server := NewDuckAPIServerWithMocks(mockQuerier, mockRPC, "test_config.yml", "test_token", false)
-	logger = duck.NewDuckLogger("test", nil, 0)
-
-	req := connect.NewRequest(&pb.RestartServicesRequest{})
-
-	// Execute
-	resp, err := server.RestartServices(context.Background(), req)
-
-	// Assert
-	require.NoError(t, err)
-	assert.NotNil(t, resp)
-	assert.True(t, resp.Msg.Success)
-	assert.Equal(t, "restarting services", resp.Msg.Message)
-}
-
-func TestRestartServices_WithConfig(t *testing.T) {
-	mockQuerier := mocks.NewQuerier(t)
-	mockRPC := &MockRPCClient{}
-
-	// Create server with specific config file
-	server := NewDuckAPIServerWithMocks(mockQuerier, mockRPC, "specific_config.yml", "test_token", false)
-	logger = duck.NewDuckLogger("test", nil, 0)
-
-	req := connect.NewRequest(&pb.RestartServicesRequest{})
-
-	// Execute
-	resp, err := server.RestartServices(context.Background(), req)
-
-	// Assert
-	require.NoError(t, err)
-	assert.NotNil(t, resp)
-	assert.True(t, resp.Msg.Success)
-	assert.Equal(t, "restarting services", resp.Msg.Message)
+func TestRestartServicesRejectsActiveRun(t *testing.T) {
+	q := mocks.NewQuerier(t)
+	q.On("GetLatestRunWithTimestamp", mock.Anything).Return(database.Run{Start: sql.NullTime{Valid: true}}, nil)
+	server := NewDuckAPIServerWithMocks(q, &MockRPCClient{}, "", "", false)
+	_, err := server.RestartServices(context.Background(), connect.NewRequest(&pb.RestartServicesRequest{}))
+	require.Equal(t, connect.CodeFailedPrecondition, connect.CodeOf(err))
 }
