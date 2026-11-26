@@ -6,184 +6,241 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log"
+	"math"
+	"net"
+	"os"
+	"os/signal"
 	"strings"
+	"sync"
+	"syscall"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
+	"github.com/go-sql-driver/mysql"
 	duck "github.com/jmbenlloch/next_duck/pkg"
 	"github.com/jmbenlloch/next_duck/pkg/database"
 )
 
-func connectToDatabase(dbConf duck.DatabaseConfiguration) (*sql.DB, error) {
-	dbURI := fmt.Sprintf("%s:%s@(%s:%s)/%s?parseTime=true", dbConf.Username,
-		dbConf.Password, dbConf.Hostname, dbConf.Port, dbConf.Database)
-	db, err := sql.Open("mysql", dbURI)
-	return db, err
+const maxPendingSamples = 4096
+
+type sample struct {
+	run       int32
+	host      string
+	timestamp time.Time
+	metric    duck.Metrics
+	reset     bool
 }
 
-var (
-	totalBytes     int64
-	totalEvents    int64
-	totalByteRate  float64
-	totalEventRate float64
-)
-
-type RunTimestamp struct {
-	Run            int       `db:"id"`
-	Timestamp      time.Time `db:"start"`
-	Bytes          int64     `db:"bytes"`
-	Events         int64     `db:"events"`
-	AvgTriggerRate float64   `db:"avgTriggerRate"`
-	AvgByteRate    float64   `db:"avgByteRate"`
+// All mutable subscription state is protected; DB writes use immutable snapshots.
+type sampleKey struct {
+	run  int32
+	host string
 }
 
-func getRun(db *sql.DB) (int, error) {
-	queries := database.New(db)
-	run, err := queries.GetLatestRun(context.Background())
-	return int(run), err
+type collector struct {
+	mu        sync.Mutex
+	period    time.Duration
+	latest    map[string]sample
+	selected  map[sampleKey]sample
+	summaries map[sampleKey]sample
+	pending   []sample
 }
 
-func writeRateData(db *sql.DB) error {
-	queries := database.New(db)
-	ctx := context.Background()
+func newCollector(period time.Duration) *collector {
+	return &collector{period: period, latest: make(map[string]sample), selected: make(map[sampleKey]sample), summaries: make(map[sampleKey]sample)}
+}
 
-	run, err := getRun(db)
-	if err != nil {
-		fmt.Printf("Error getting run: %v\n", err)
+func (c *collector) receive(message *duck.Message) error {
+	if message.Type != duck.MessageMetric || !strings.HasPrefix(message.Host, "gdc") {
+		return nil
+	}
+	if message.RunNumber <= 0 || message.Timestamp.IsZero() {
+		return fmt.Errorf("GDC metric lacks a valid run or source timestamp")
+	}
+	if int64(message.RunNumber) > math.MaxInt32 || len(message.Host) > 100 {
+		return fmt.Errorf("GDC metric identity exceeds database limits")
+	}
+	var metric duck.Metrics
+	if err := json.Unmarshal([]byte(message.Value), &metric); err != nil {
 		return err
 	}
-
-	timestamp := time.Now()
-
-	// Check if rate record exists for this run
-	_, err = queries.GetRateByRun(ctx, int32(run))
-	if err != nil {
-		if err == sql.ErrNoRows {
-			// Insert new rate record
-			err = queries.InsertRate(ctx, database.InsertRateParams{
-				Run:            int32(run),
-				LastUpdate:     sql.NullTime{Time: timestamp, Valid: true},
-				Bytes:          sql.NullInt64{Int64: totalBytes, Valid: true},
-				Events:         sql.NullInt64{Int64: totalEvents, Valid: true},
-				Avgtriggerrate: sql.NullFloat64{Float64: totalEventRate, Valid: true},
-				Avgbyterate:    sql.NullFloat64{Float64: totalByteRate, Valid: true},
-			})
-			if err != nil {
-				fmt.Printf("Error inserting rate data: %v\n", err)
-			}
-		} else {
-			fmt.Printf("Error checking rate data: %v\n", err)
+	if metric.EventCounter < 0 || metric.ByteCounter < 0 {
+		return fmt.Errorf("negative GDC counter")
+	}
+	for _, rate := range []float64{metric.CurrentTrgRate, metric.CurrentDataRate, metric.AvgTrgRate, metric.AvgDataRate} {
+		if rate < 0 || math.IsNaN(rate) || math.IsInf(rate, 0) {
+			return fmt.Errorf("invalid GDC rate")
 		}
-		return err
 	}
-
-	// Update existing rate record
-	err = queries.UpdateRate(ctx, database.UpdateRateParams{
-		LastUpdate:     sql.NullTime{Time: timestamp, Valid: true},
-		Bytes:          sql.NullInt64{Int64: totalBytes, Valid: true},
-		Events:         sql.NullInt64{Int64: totalEvents, Valid: true},
-		Avgtriggerrate: sql.NullFloat64{Float64: totalEventRate, Valid: true},
-		Avgbyterate:    sql.NullFloat64{Float64: totalByteRate, Valid: true},
-		Run:            int32(run),
-	})
-	if err != nil {
-		fmt.Printf("Error updating rate data: %v\n", err)
+	s := sample{run: int32(message.RunNumber), host: message.Host, timestamp: message.Timestamp.UTC().Truncate(time.Microsecond), metric: metric}
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	previous, exists := c.latest[s.host]
+	if exists && (s.run < previous.run || !s.timestamp.After(previous.timestamp)) {
+		return nil
 	}
-	return err
+	s.reset = exists && s.run == previous.run && (metric.EventCounter < previous.metric.EventCounter || metric.ByteCounter < previous.metric.ByteCounter)
+	c.latest[s.host] = s
+	key := sampleKey{s.run, s.host}
+	c.summaries[key] = s
+	last, selected := c.selected[key]
+	if selected && last.run == s.run && !s.reset && s.timestamp.Sub(last.timestamp) < c.period {
+		return nil
+	}
+	if len(c.pending) >= maxPendingSamples {
+		return fmt.Errorf("rate history queue full: dropping new sample for run %d GDC %s", s.run, s.host)
+	}
+	c.pending = append(c.pending, s)
+	c.selected[key] = s
+	return nil
 }
 
-func updateDatabase(dbConfiguration duck.DatabaseConfiguration, period int, verbose bool) {
-	ticker := time.NewTicker(time.Duration(period) * time.Second)
-	defer ticker.Stop()
+func connectToDatabase(conf duck.DatabaseConfiguration) (*sql.DB, error) {
+	cfg := mysql.NewConfig()
+	cfg.User, cfg.Passwd = conf.Username, conf.Password
+	cfg.Net, cfg.Addr, cfg.DBName = "tcp", net.JoinHostPort(conf.Hostname, conf.Port), conf.Database
+	cfg.ParseTime, cfg.Loc = true, time.UTC
+	cfg.Params = map[string]string{"time_zone": "'+00:00'"}
+	cfg.Timeout, cfg.ReadTimeout, cfg.WriteTimeout = 5*time.Second, 5*time.Second, 5*time.Second
+	return sql.Open("mysql", cfg.FormatDSN())
+}
 
-	dbConn, err := connectToDatabase(dbConfiguration)
-	if err != nil {
-		fmt.Printf("Error connecting to database: %v\n", err)
-		return
+func (c *collector) flush(ctx context.Context, db *sql.DB) error {
+	c.mu.Lock()
+	pending := append([]sample(nil), c.pending...)
+	latest := make([]sample, 0, len(c.summaries))
+	for _, s := range c.summaries {
+		latest = append(latest, s)
 	}
-	defer dbConn.Close()
-
-	for range ticker.C {
-		if verbose {
-			fmt.Printf("Updating database with totalBytes: %d, totalEvents: %d, totalByteRate: %.2f, totalEventRate: %.2f\n",
-				totalBytes, totalEvents, totalByteRate, totalEventRate)
+	c.mu.Unlock()
+	if len(pending) == 0 {
+		return nil
+	}
+	tx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+	q := database.New(tx)
+	for _, s := range pending {
+		if err := q.InsertRateSample(ctx, database.InsertRateSampleParams{
+			Run: s.run, Gdc: s.host, SampleTime: s.timestamp,
+			Events: uint64(s.metric.EventCounter), Bytes: uint64(s.metric.ByteCounter),
+			CurrentTriggerRate: s.metric.CurrentTrgRate, CurrentByteRate: s.metric.CurrentDataRate,
+			AvgTriggerRate: s.metric.AvgTrgRate, AvgByteRate: s.metric.AvgDataRate, CounterReset: s.reset,
+		}); err != nil {
+			return err
 		}
-
-		// Add database update logic here
-		err = writeRateData(dbConn)
+	}
+	// Keep the existing run summaries, grouping hosts by their actual message run.
+	totals := make(map[int32]sample)
+	stale := make(map[int32]bool)
+	now := time.Now()
+	for _, s := range latest {
+		if now.Sub(s.timestamp) > 3*c.period {
+			stale[s.run] = true
+		}
+		t := totals[s.run]
+		if s.timestamp.After(t.timestamp) {
+			t.timestamp = s.timestamp
+		}
+		t.metric.EventCounter += s.metric.EventCounter
+		t.metric.ByteCounter += s.metric.ByteCounter
+		t.metric.AvgTrgRate += s.metric.AvgTrgRate
+		t.metric.AvgDataRate += s.metric.AvgDataRate
+		totals[s.run] = t
+	}
+	for run, t := range totals {
+		if stale[run] {
+			continue
+		}
+		_, err := q.GetRateByRun(ctx, run)
+		switch err {
+		case sql.ErrNoRows:
+			err = q.InsertRate(ctx, database.InsertRateParams{Run: run, LastUpdate: sql.NullTime{Time: t.timestamp, Valid: true}, Bytes: sql.NullInt64{Int64: int64(t.metric.ByteCounter), Valid: true}, Events: sql.NullInt64{Int64: int64(t.metric.EventCounter), Valid: true}, Avgtriggerrate: sql.NullFloat64{Float64: t.metric.AvgTrgRate, Valid: true}, Avgbyterate: sql.NullFloat64{Float64: t.metric.AvgDataRate, Valid: true}})
+		case nil:
+			err = q.UpdateRate(ctx, database.UpdateRateParams{Run: run, LastUpdate: sql.NullTime{Time: t.timestamp, Valid: true}, Bytes: sql.NullInt64{Int64: int64(t.metric.ByteCounter), Valid: true}, Events: sql.NullInt64{Int64: int64(t.metric.EventCounter), Valid: true}, Avgtriggerrate: sql.NullFloat64{Float64: t.metric.AvgTrgRate, Valid: true}, Avgbyterate: sql.NullFloat64{Float64: t.metric.AvgDataRate, Valid: true}})
+		}
 		if err != nil {
-			fmt.Printf("Reconnecting to database due to error: %v\n", err)
-			dbConn.Close()
-			dbConn, err = connectToDatabase(dbConfiguration)
-			if err != nil {
-				fmt.Printf("Error reconnecting to database: %v\n", err)
-			}
+			return err
 		}
 	}
+	if err := tx.Commit(); err != nil {
+		return err
+	}
+	c.mu.Lock()
+	c.pending = c.pending[len(pending):]
+	// Retire completed runs only after their final queued samples were committed.
+	activeRuns := make(map[int32]bool)
+	for _, s := range c.latest {
+		activeRuns[s.run] = true
+	}
+	for _, s := range c.pending {
+		activeRuns[s.run] = true
+	}
+	for key := range c.summaries {
+		if !activeRuns[key.run] {
+			delete(c.summaries, key)
+			delete(c.selected, key)
+		}
+	}
+	c.mu.Unlock()
+	return nil
 }
 
 func main() {
 	configFilename := flag.String("config", "", "Configuration file path")
-	period := flag.Int("period", 5, "Period to update database in seconds")
+	period := flag.Int("period", 5, "Minimum source-time spacing between stored GDC samples, in seconds")
 	verbose := flag.Bool("verbose", false, "Verbose output")
 	flag.Parse()
-
+	if *period <= 0 {
+		log.Fatal("period must be positive")
+	}
 	configuration, err := duck.ReadConfigurationFile(*configFilename)
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
-
-	bytes := make(map[string]int64)
-	events := make(map[string]int64)
-	byteRate := make(map[string]float64)
-	eventRate := make(map[string]float64)
-
-	userCentrifugal := "rateReader"
-	fn := func(message *duck.Message) {
-		if message.Type == duck.MessageMetric {
-			var metric duck.Metrics
-			err := json.Unmarshal([]byte(message.Value), &metric)
-			if err != nil {
-				fmt.Printf("Error unmarshalling message value: %v\n", err)
-				return
-			}
-
-			// Use only GDC data
-			if !strings.HasPrefix(message.Host, "gdc") {
-				return
-			}
-
-			bytes[message.Host] = int64(metric.ByteCounter)
-			events[message.Host] = int64(metric.EventCounter)
-			byteRate[message.Host] = metric.AvgDataRate
-			eventRate[message.Host] = metric.AvgTrgRate
-
-			// Update total counters
-			totalBytes = 0
-			for _, v := range bytes {
-				totalBytes += v
-			}
-
-			totalEvents = 0
-			for _, v := range events {
-				totalEvents += v
-			}
-
-			totalByteRate = 0
-			for _, v := range byteRate {
-				totalByteRate += v
-			}
-
-			totalEventRate = 0
-			for _, v := range eventRate {
-				totalEventRate += v
-			}
+	db, err := connectToDatabase(configuration.Database)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	if err := db.PingContext(ctx); err != nil {
+		log.Fatal(err)
+	}
+	// Fail before subscribing if the additive history migration has not been applied.
+	if _, err := db.ExecContext(ctx, "SELECT run FROM rateSamples LIMIT 0"); err != nil {
+		log.Fatalf("rateSamples unavailable; apply database/migrations/20261104_add_rate_samples.sql: %v", err)
+	}
+	c := newCollector(time.Duration(*period) * time.Second)
+	_, err = duck.CreateNewSubscriptionWithFnReadout(configuration.Centrifugal, "rateReader", func(m *duck.Message) {
+		if err := c.receive(m); err != nil {
+			log.Printf("metric rejected: %v", err)
+		}
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
+	ticker := time.NewTicker(c.period)
+	defer ticker.Stop()
+	flush := func() {
+		writeCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+		defer cancel()
+		if err := c.flush(writeCtx, db); err != nil {
+			log.Printf("database write failed; retaining samples for retry: %v", err)
+		} else if *verbose {
+			log.Print("rate samples flushed")
 		}
 	}
-	_, err = duck.CreateNewSubscriptionWithFnReadout(configuration.Centrifugal, userCentrifugal, fn)
-	if err != nil {
-		panic(err)
+	for {
+		select {
+		case <-ticker.C:
+			flush()
+		case <-ctx.Done():
+			flush()
+			return
+		}
 	}
-
-	updateDatabase(configuration.Database, *period, *verbose)
 }

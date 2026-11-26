@@ -6,6 +6,8 @@ import { useLDCStore } from '../stores/ldc'
 import { useMessagesStore } from "@/stores/messages";
 import { storeToRefs } from 'pinia'
 
+defineProps<{ compact?: boolean }>()
+
 const gdcStore = useGDCStore()
 const ldcStore = useLDCStore()
 const messagesStore = useMessagesStore()
@@ -25,7 +27,7 @@ function formatBytes(bytes: number, decimals: number) {
 </script>
 
 <template>
-  <div data-testid="run-statistics-container" class="rounded-lg w-fit mx-auto p-2">
+  <div data-testid="run-statistics-container" :class="{ 'compact-statistics': compact }" class="rounded-lg w-fit mx-auto p-2">
     <div class="hidden max-lg:block">
       <table data-testid="statistics-table-mobile" class="table table-zebra">
         <thead>
@@ -70,7 +72,7 @@ function formatBytes(bytes: number, decimals: number) {
       </table>
     </div>
 
-    <table data-testid="statistics-table-desktop" class="table table-zebra max-2xl:hidden">
+    <table data-testid="statistics-table-desktop" class="statistics-combined table table-zebra max-2xl:hidden">
       <thead>
         <tr>
           <th>Server</th>
@@ -122,7 +124,7 @@ function formatBytes(bytes: number, decimals: number) {
       </tbody>
     </table>
 
-    <div class="hidden lg:max-2xl:block">
+    <div class="statistics-split hidden lg:max-2xl:block">
       <h2 class="text-center text-2xl">GDCs</h2>
       <table class="table table-zebra">
         <thead>
@@ -214,3 +216,10 @@ function formatBytes(bytes: number, decimals: number) {
     </div>
   </div>
 </template>
+
+<style scoped>
+@media (min-width: 1200px) {
+  .compact-statistics .statistics-combined { display: table; }
+  .compact-statistics .statistics-split { display: none; }
+}
+</style>

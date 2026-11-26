@@ -481,3 +481,52 @@ npm run dev
 - [DaisyUI Components](https://daisyui.com/components/)
 - [Vitest](https://vitest.dev/)
 - [Playwright](https://playwright.dev/)
+
+## Trigger rate history
+
+The data-taking page includes a lazy-loaded ECharts plot below the run statistics.
+Deploy the history-enabled Duck API, rateReader and `rateSamples` migration first.
+The existing `VITE_API_SERVER` setting is used for history requests.
+
+- **Auto** shows the full selected run and requests updated, server-rebinned data
+  every five seconds after the previous request completes. The response budget
+  follows the chart width, up to 2000 bins. Polling pauses in background tabs.
+- Zoom using the slider, **Select range**, or Ctrl + mouse wheel. This
+  switches to **Manual**, debounces the selected time range and requests finer
+  data from the API. The full-run navigation domain is retained, allowing zoom
+  back out beyond the currently loaded detail window.
+- **Select range** lets you drag across the plot. **Back** restores the previous
+  view, including after detailed data has loaded. Zoom history is managed by the
+  query state, independently of chart updates.
+- Manual mode also provides keyboard-accessible From/To inputs in UTC. **Auto**
+  restores the full-run view; **Refresh** reloads the selected window.
+- The plot follows the current acquisition automatically; historical run selection
+  is not exposed. After Stop, the previous run remains visible;
+  polling allows final collector writes to arrive before ending once a stopped
+  run's latest timestamp has been unchanged for three polls.
+- Horizontal segments show each bin's counter-derived interval average in Hz.
+  Missing coverage is a gap, not zero; a measured zero remains zero. Tooltip
+  intervals and coverage describe the API bins. Coverage is relative to the GDCs
+  recorded in that run, not an expected-configuration snapshot.
+- Superseded requests are aborted and stale responses ignored. A refresh error
+  preserves the last successful result with a visible error message. Leaving the
+  page stops polling and disconnects observers.
+
+`src/composables/useRateHistory.ts` manages query state and polling;
+`RateHistory.vue` owns controls and status; `RateHistoryChart.vue` renders the
+series and emits zoom/resize events. Existing WebSocket statistics stay separate.
+
+Run `npm run type-check`, `npm run test:unit -- --run`, and
+`npm run test:history:e2e`. The browser test mocks HTTP API responses, so it does
+not require a detector or database. If Chromium is installed at a custom path,
+set `PLAYWRIGHT_CHROMIUM_EXECUTABLE` when running the browser test. It verifies
+actual zoom gestures, detailed time-window requests, Auto mode, UTC window
+inputs, current-run display and mobile layout.
+
+For short local demonstrations, build with `VITE_RATE_HISTORY_MAX_POINTS=30`
+to exercise automatic rebinning after a few minutes. The setting accepts limits
+from 10 to 2000; omitting it retains the normal width-based point budget.
+
+At viewport widths of at least 1200 pixels, configurations with up to four
+GDCs/LDCs in total show a combined statistics table beside a smaller plot.
+Larger configurations and narrower screens keep the table above the plot.

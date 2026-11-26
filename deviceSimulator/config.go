@@ -21,6 +21,7 @@ type SimulatorParams struct {
 
 // GeneratorConfig holds configuration for generate mode
 type GeneratorConfig struct {
+	RateProfile        string // "constant" (default) or "fluctuating"
 	EquipmentID        int
 	Equipment          duck.Equipment
 	RateHz             float64 // Absolute event rate in Hz (events per second)

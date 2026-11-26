@@ -323,3 +323,123 @@ go test -v ./api/ -run TestStartRun
 - **Non-blocking**: Async RPC calls to LDCs/GDCs
 - **Connection Pooling**: Database connection reuse
 - **Response Time**: <100ms for most operations
+
+## Historical trigger and byte rates
+
+`POST /apiService.DuckAPI/GetRateHistory` returns bounded, counter-derived rates
+summed across the GDCs recorded for a single run. Apply the `rateSamples`
+migration and deploy the history-enabled `rateReader` before collecting history.
+This endpoint is read-only; it does not start acquisition or change TOPI.
+The generated Go and TypeScript clients expose `getRateHistory`/`GetRateHistory`.
+
+### Request and browser modes
+
+Whole-run auto mode:
+
+```json
+{"run": 16191, "maxPoints": 1000}
+```
+
+Fixed-window manual/zoom mode:
+
+```json
+{
+  "run": 16191,
+  "from": "2026-11-04T12:00:00Z",
+  "to": "2026-11-04T12:30:00Z",
+  "maxPoints": 1000
+}
+```
+
+Omitting `from` selects the run start (or earliest sample if start is unknown).
+Omitting `to` selects the latest recorded sample, limited by the recorded stop
+when present. Explicit bounds are clamped to that range, and windows entirely
+outside it return no bins. `from` is inclusive and `to` is exclusive; a sample
+at `to` can provide the counter endpoint for the preceding interval.
+
+`maxPoints=0` defaults to 1000; values from 1 through 2000 are accepted. The API
+selects a bin width from 5, 10, 15, 30 seconds, 1, 2, 5, 10, 15, 30 minutes,
+1, 2, 6, 12 hours, 1 day, then wider daily multiples as necessary. Bins are
+anchored to the run start. Both clipped edge bins count against the point
+budget, so an unaligned zoom does not produce an extra point. The minimum
+resolution is five seconds; zooming further cannot recover finer measurements.
+
+The same RPC supports both browser modes; no persistent server-side mode is
+needed. Auto mode can poll every five seconds, replacing the series and adapting
+the time axis and bin width. Manual mode holds its selected window, cancels
+superseded zoom requests and requests the same point budget over the smaller
+window. A browser can return to auto by omitting the bounds again. The frontend
+plot itself is not implemented by this API change.
+
+### Response and aggregation
+
+The response includes the selected `from`/`to`, `runStart`/`runStop` when known,
+`latestSample`, `binWidthSeconds`, `gdcs`, `coverageBasis`, `hasData`,
+`maxGapSeconds`, and at most `maxPoints` ordered `bins`.
+
+Each bin contains `start`, `end`, `coverage`, `complete`, `partial`, and optional
+`triggerRateHz` and `byteRate` (bytes/second). `partial` means the selected window
+clips the bin width; it is independent of missing telemetry. Rate fields are
+present only when all the bin's GDC-time is covered. A true zero rate remains
+present as zero; an incomplete bin has absent rate fields. Plot these as gaps,
+not as zero and not as a line bridged through the gap.
+
+For each GDC, the API differences consecutive unsigned event/byte counters before
+converting their deltas to floating point. It assumes a constant rate between
+each pair of measurements and distributes the deltas to overlapping bins in
+proportion to their time overlap. It then sums the GDC contributions and divides
+by the actual bin duration. This produces time-weighted interval averages;
+current sliding-window rate values and whole-run averages are not used.
+
+Zoom queries include one predecessor and one successor per GDC so window-edge
+intervals can be calculated without snapping the requested window to samples.
+Counter decreases and `counter_reset=true` invalidate the interval ending at the
+reset sample; the next interval may recover normally. Intervals exceeding
+`maxGapSeconds` are unknown, not interpolated. The default is 15 seconds for the
+five-second writer; an explicit value from 1 to 3600 seconds supports different
+collector periods or stricter gap policies.
+
+`coverage` is covered GDC-seconds divided by bin duration times roster size.
+For now the roster consists of distinct GDCs recorded anywhere in the run,
+including outside a manual window. `coverageBasis="observed_run_history"`
+explicitly identifies this limitation: a GDC that never reported is unknown.
+The endpoint does not substitute today's enabled-GDC configuration for a
+historical configuration snapshot. Completed bins are complete relative to the
+recorded roster, not a guarantee that every configured GDC reported. Persisting
+an expected per-run roster can strengthen this in a later migration.
+
+### Database access and limits
+
+Queries use one repeatable-read, read-only transaction, so the roster, bounds and
+counter streams share a snapshot while acquisition continues. The roster query
+uses the `(run,gdc,sample_time)` primary key. Per-GDC window reads and the scalar
+predecessor/successor lookups use the same key. The secondary `(run,sample_time)`
+index remains available for other single-run time queries.
+
+Rows are streamed into at most 2000 in-memory bin accumulators, rather than
+loading all raw samples into a Go slice or sending them to the browser. Memory
+therefore does not grow with raw sample count. Work still scales with the
+selected window's raw samples: indexing avoids other runs, but it does not make
+a full long-run scan constant-time. A ten-second query deadline and a roster
+limit of 256 bound each request. Measured demand can justify caching or stored
+rollups without changing this contract. A corrupt/implausible span exceeding
+100 years is rejected before bin arithmetic.
+
+An existing run with no history returns `hasData=false`, no bins and run metadata
+when available. One sample can establish history bounds but cannot establish a
+rate. Unknown runs return `not_found`; invalid arguments return
+`invalid_argument`; a missing history table returns `failed_precondition`.
+Canceling a request cancels its database work.
+
+### History API validation
+
+Run `go test -race ./api -run '^TestRateHistory' -timeout 60s`.
+For the real MySQL/ConnectRPC test, set `RATE_HISTORY_TEST_DSN` to a disposable
+schema and run the same command. The test creates and drops `runs` and
+`rateSamples`; never point it at production. It verifies zoom boundary samples,
+aggregate counter rates, gaps, reset recovery, run isolation, native resolution,
+point limits and an indexed query plan.
+
+`go test ./api -run '^$' -bench '^BenchmarkRateHistoryRebin$' -benchtime=1x -benchmem`
+measures only the Go aggregation step for seven GDCs with 120000 intervals each;
+it is not a database or end-to-end latency measurement.

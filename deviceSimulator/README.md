@@ -380,3 +380,20 @@ For issues or questions:
 4. Check network connectivity to LDC
 5. Review database configuration
 6. Monitor Prometheus metrics
+
+### Fluctuating-rate generator profile
+
+For rate-history plotting tests, add `-mode generate -rate-profile fluctuating`.
+`-rate` (or the database `event_rate_ms` value) remains the base rate. The profile
+changes its target every two seconds, combining random steps, slower drift and
+short bursts. Targets are bounded between 0.15 and 2.5 times the base rate. This
+makes fine-bin fluctuations visible while coarser bins smooth them by averaging.
+The default `-rate-profile constant` preserves fixed-rate generation.
+
+A generator now retries UDP connection-refused errors while a DAQ receiver is
+stopped. It resumes sending when the receiver reopens for the next run, instead
+of exiting silently while the control service still reports RUNNING. No real
+hardware or production detector configuration is changed by this option.
+
+Run `go test -race ./deviceSimulator` to check profile bounds and recovery after
+a UDP receiver restart.

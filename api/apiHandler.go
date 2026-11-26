@@ -10,6 +10,7 @@ import (
 
 // DuckAPIServer implements DuckAPIHandler interface
 type DuckAPIServer struct {
+	historyDB        *sql.DB
 	queries          database.Querier
 	rpcClient        RPCClient
 	configFilename   string
@@ -25,6 +26,7 @@ func NewDuckAPIServer(db *sql.DB, configFilename string, centrifugalToken string
 	queries := database.New(db)
 	return &DuckAPIServer{
 		queries:          queries,
+		historyDB:        db,
 		rpcClient:        NewRealRPCClient(),
 		configFilename:   configFilename,
 		centrifugalToken: centrifugalToken,

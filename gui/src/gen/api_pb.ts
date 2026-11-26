@@ -4,7 +4,7 @@
 // @ts-nocheck
 
 import type { BinaryReadOptions, FieldList, JsonReadOptions, JsonValue, PartialMessage, PlainMessage } from "@bufbuild/protobuf";
-import { Message, proto3, protoInt64 } from "@bufbuild/protobuf";
+import { Message, proto3, protoInt64, Timestamp } from "@bufbuild/protobuf";
 
 /**
  * @generated from message apiService.SuccessResponse
@@ -3606,6 +3606,258 @@ export class GetTestDeviceStatisticsResponse extends Message<GetTestDeviceStatis
 
   static equals(a: GetTestDeviceStatisticsResponse | PlainMessage<GetTestDeviceStatisticsResponse> | undefined, b: GetTestDeviceStatisticsResponse | PlainMessage<GetTestDeviceStatisticsResponse> | undefined): boolean {
     return proto3.util.equals(GetTestDeviceStatisticsResponse, a, b);
+  }
+}
+
+/**
+ * Omit from/to for the full recorded run. Explicit bounds support browser zoom.
+ *
+ * @generated from message apiService.GetRateHistoryRequest
+ */
+export class GetRateHistoryRequest extends Message<GetRateHistoryRequest> {
+  /**
+   * @generated from field: int32 run = 1;
+   */
+  run = 0;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp from = 2;
+   */
+  from?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp to = 3;
+   */
+  to?: Timestamp;
+
+  /**
+   * 0 selects 1000. The server accepts 1..2000.
+   *
+   * @generated from field: uint32 max_points = 4;
+   */
+  maxPoints = 0;
+
+  /**
+   * 0 selects 15 seconds, suitable for the default five-second collector.
+   * Intervals longer than this are gaps, not interpolated measurements.
+   *
+   * @generated from field: uint32 max_gap_seconds = 5;
+   */
+  maxGapSeconds = 0;
+
+  constructor(data?: PartialMessage<GetRateHistoryRequest>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.GetRateHistoryRequest";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "run", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "from", kind: "message", T: Timestamp },
+    { no: 3, name: "to", kind: "message", T: Timestamp },
+    { no: 4, name: "max_points", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 5, name: "max_gap_seconds", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetRateHistoryRequest {
+    return new GetRateHistoryRequest().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetRateHistoryRequest {
+    return new GetRateHistoryRequest().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetRateHistoryRequest {
+    return new GetRateHistoryRequest().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetRateHistoryRequest | PlainMessage<GetRateHistoryRequest> | undefined, b: GetRateHistoryRequest | PlainMessage<GetRateHistoryRequest> | undefined): boolean {
+    return proto3.util.equals(GetRateHistoryRequest, a, b);
+  }
+}
+
+/**
+ * @generated from message apiService.RateHistoryBin
+ */
+export class RateHistoryBin extends Message<RateHistoryBin> {
+  /**
+   * @generated from field: google.protobuf.Timestamp start = 1;
+   */
+  start?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp end = 2;
+   */
+  end?: Timestamp;
+
+  /**
+   * Present only when the full bin is covered by every recorded GDC.
+   *
+   * @generated from field: optional double trigger_rate_hz = 3;
+   */
+  triggerRateHz?: number;
+
+  /**
+   * @generated from field: optional double byte_rate = 4;
+   */
+  byteRate?: number;
+
+  /**
+   * Fraction of GDC-time covered, relative to response.gdcs.
+   *
+   * @generated from field: double coverage = 5;
+   */
+  coverage = 0;
+
+  /**
+   * @generated from field: bool complete = 6;
+   */
+  complete = false;
+
+  /**
+   * Edge bin clipped by the selected window, rather than full bin width.
+   *
+   * @generated from field: bool partial = 7;
+   */
+  partial = false;
+
+  constructor(data?: PartialMessage<RateHistoryBin>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.RateHistoryBin";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "start", kind: "message", T: Timestamp },
+    { no: 2, name: "end", kind: "message", T: Timestamp },
+    { no: 3, name: "trigger_rate_hz", kind: "scalar", T: 1 /* ScalarType.DOUBLE */, opt: true },
+    { no: 4, name: "byte_rate", kind: "scalar", T: 1 /* ScalarType.DOUBLE */, opt: true },
+    { no: 5, name: "coverage", kind: "scalar", T: 1 /* ScalarType.DOUBLE */ },
+    { no: 6, name: "complete", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 7, name: "partial", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): RateHistoryBin {
+    return new RateHistoryBin().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): RateHistoryBin {
+    return new RateHistoryBin().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): RateHistoryBin {
+    return new RateHistoryBin().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: RateHistoryBin | PlainMessage<RateHistoryBin> | undefined, b: RateHistoryBin | PlainMessage<RateHistoryBin> | undefined): boolean {
+    return proto3.util.equals(RateHistoryBin, a, b);
+  }
+}
+
+/**
+ * @generated from message apiService.GetRateHistoryResponse
+ */
+export class GetRateHistoryResponse extends Message<GetRateHistoryResponse> {
+  /**
+   * @generated from field: int32 run = 1;
+   */
+  run = 0;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp run_start = 2;
+   */
+  runStart?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp run_stop = 3;
+   */
+  runStop?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp from = 4;
+   */
+  from?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp to = 5;
+   */
+  to?: Timestamp;
+
+  /**
+   * @generated from field: google.protobuf.Timestamp latest_sample = 6;
+   */
+  latestSample?: Timestamp;
+
+  /**
+   * @generated from field: uint32 bin_width_seconds = 7;
+   */
+  binWidthSeconds = 0;
+
+  /**
+   * @generated from field: repeated apiService.RateHistoryBin bins = 8;
+   */
+  bins: RateHistoryBin[] = [];
+
+  /**
+   * @generated from field: repeated string gdcs = 9;
+   */
+  gdcs: string[] = [];
+
+  /**
+   * Currently "observed_run_history"; not a configuration snapshot.
+   *
+   * @generated from field: string coverage_basis = 10;
+   */
+  coverageBasis = "";
+
+  /**
+   * @generated from field: bool has_data = 11;
+   */
+  hasData = false;
+
+  /**
+   * @generated from field: uint32 max_gap_seconds = 12;
+   */
+  maxGapSeconds = 0;
+
+  constructor(data?: PartialMessage<GetRateHistoryResponse>) {
+    super();
+    proto3.util.initPartial(data, this);
+  }
+
+  static readonly runtime: typeof proto3 = proto3;
+  static readonly typeName = "apiService.GetRateHistoryResponse";
+  static readonly fields: FieldList = proto3.util.newFieldList(() => [
+    { no: 1, name: "run", kind: "scalar", T: 5 /* ScalarType.INT32 */ },
+    { no: 2, name: "run_start", kind: "message", T: Timestamp },
+    { no: 3, name: "run_stop", kind: "message", T: Timestamp },
+    { no: 4, name: "from", kind: "message", T: Timestamp },
+    { no: 5, name: "to", kind: "message", T: Timestamp },
+    { no: 6, name: "latest_sample", kind: "message", T: Timestamp },
+    { no: 7, name: "bin_width_seconds", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+    { no: 8, name: "bins", kind: "message", T: RateHistoryBin, repeated: true },
+    { no: 9, name: "gdcs", kind: "scalar", T: 9 /* ScalarType.STRING */, repeated: true },
+    { no: 10, name: "coverage_basis", kind: "scalar", T: 9 /* ScalarType.STRING */ },
+    { no: 11, name: "has_data", kind: "scalar", T: 8 /* ScalarType.BOOL */ },
+    { no: 12, name: "max_gap_seconds", kind: "scalar", T: 13 /* ScalarType.UINT32 */ },
+  ]);
+
+  static fromBinary(bytes: Uint8Array, options?: Partial<BinaryReadOptions>): GetRateHistoryResponse {
+    return new GetRateHistoryResponse().fromBinary(bytes, options);
+  }
+
+  static fromJson(jsonValue: JsonValue, options?: Partial<JsonReadOptions>): GetRateHistoryResponse {
+    return new GetRateHistoryResponse().fromJson(jsonValue, options);
+  }
+
+  static fromJsonString(jsonString: string, options?: Partial<JsonReadOptions>): GetRateHistoryResponse {
+    return new GetRateHistoryResponse().fromJsonString(jsonString, options);
+  }
+
+  static equals(a: GetRateHistoryResponse | PlainMessage<GetRateHistoryResponse> | undefined, b: GetRateHistoryResponse | PlainMessage<GetRateHistoryResponse> | undefined): boolean {
+    return proto3.util.equals(GetRateHistoryResponse, a, b);
   }
 }
 
