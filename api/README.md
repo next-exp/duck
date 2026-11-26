@@ -443,3 +443,21 @@ point limits and an indexed query plan.
 `go test ./api -run '^$' -bench '^BenchmarkRateHistoryRebin$' -benchtime=1x -benchmem`
 measures only the Go aggregation step for seven GDCs with 120000 intervals each;
 it is not a database or end-to-end latency measurement.
+
+### Restarting acquisition services
+
+RestartServices returns an operation ID after reserving run control. Poll
+GetRunTransitionStatus for the matching restartOperationId, restartTargets and
+restartError. The API retains the latest result in memory. Start Run conflicts
+with an active restart. Every enabled process must answer INITIALIZED before
+any restart command is issued. Up to three hosts can restart concurrently.
+Services sharing a control IP restart sequentially.
+
+Set DUCK_RESTART_PROFILE to next100 for the duck-daq Compose deployment or
+duck-prod for DEMO and HDDemo. An omitted profile selects the legacy dateuser
+scripts. DUCK_RESTART_USER selects the remote SSH account. DUCK_RESTART_SSH_DIR
+holds the private key named id_rsa and the pinned known_hosts file, defaulting
+to the API user's .ssh directory. DUCK_RESTART_SSH_PORT defaults to 22.
+Authorize the key only for the GDC and LDC commands of the selected profile.
+The duck-prod profile requests docker container restart duck-prod-gdc-1 or
+docker container restart duck-prod-ldc-1.

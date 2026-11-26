@@ -11,10 +11,11 @@ import (
 type RunTransitionState int
 
 const (
-	TransitionIdle     RunTransitionState = iota
-	TransitionStarting RunTransitionState = iota
-	TransitionStopping RunTransitionState = iota
-	TransitionError    RunTransitionState = iota
+	TransitionIdle       RunTransitionState = iota
+	TransitionStarting   RunTransitionState = iota
+	TransitionStopping   RunTransitionState = iota
+	TransitionError      RunTransitionState = iota
+	TransitionRestarting RunTransitionState = iota
 )
 
 type RunTransition struct {
@@ -27,6 +28,8 @@ func (rt *RunTransition) tryBeginStart() (ok bool, msg string) {
 	rt.mu.Lock()
 	defer rt.mu.Unlock()
 	switch rt.state {
+	case TransitionRestarting:
+		return false, "service restart in progress"
 	case TransitionStarting:
 		return false, "start already in progress"
 	case TransitionStopping:
@@ -44,6 +47,8 @@ func (rt *RunTransition) tryBeginStop() (ok bool, msg string) {
 	switch rt.state {
 	case TransitionStopping:
 		return false, "stop already in progress"
+	case TransitionRestarting:
+		return false, "service restart in progress"
 	case TransitionStarting:
 		return false, "start in progress, cannot stop"
 	default:
@@ -89,6 +94,8 @@ func (rt *RunTransition) WaitForIdle(timeout time.Duration) bool {
 
 func stateString(s RunTransitionState) string {
 	switch s {
+	case TransitionRestarting:
+		return "restarting"
 	case TransitionStarting:
 		return "starting"
 	case TransitionStopping:

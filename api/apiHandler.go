@@ -17,6 +17,7 @@ type DuckAPIServer struct {
 	centrifugalToken string
 	devVersion       bool
 	runTransition    RunTransition
+	restart          restartOperation
 	topiHTTPClient   *http.Client
 	topiPublisher    topiPublisher
 }
